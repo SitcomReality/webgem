@@ -78,6 +78,9 @@ class UIManager {
     const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
     const remixCount = project.raw?.project?.stats?.remixes || 0;
 
+    // Check if image exists by trying to load it
+    const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
+    
     card.innerHTML = `
       <div class="project-header">
         <h3 class="project-title">
@@ -101,7 +104,9 @@ class UIManager {
 
       ${project.description ? `
         <p class="project-description">${this.escapeHtml(project.description)}</p>
-      ` : ''}
+      ` : `
+        <p class="project-description">No description available.</p>
+      `}
 
       ${isTemplateBased || hasDerivatives ? `
         <div class="template-info">
@@ -121,9 +126,10 @@ class UIManager {
       ` : ''}
 
       <div class="project-image">
-        <img src="https://images.websim.com/v1/site/${project.id}/600" 
+        <img src="${imageUrl}" 
              alt="${this.escapeHtml(project.title)}"
              loading="lazy"
+             onload="this.style.display='block'"
              onerror="this.style.display='none'">
       </div>
 
