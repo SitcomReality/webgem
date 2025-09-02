@@ -6,8 +6,8 @@
       ...params
     }).toString();
     
-    // Ensure search parameter is not empty
-    const searchTerm = search || '*';
-    return this.fetch(`/feed/search/${sort}/${encodeURIComponent(searchTerm)}?${query}`);
+    // Ensure search is not empty - use a wildcard or fallback
+    const searchTerm = search && search.trim() ? encodeURIComponent(search) : '*';
+    return this.fetch(`/feed/search/${sort}/${searchTerm}?${query}`);
   }
 

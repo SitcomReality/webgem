@@ -138,32 +138,12 @@ class HiddenGemsApp {
     return projects;
   }
 
-  async fetchGeneralProjects() {
-    const projects = [];
-    
-    try {
-      // Mix of different sources
-      const [quality, older] = await Promise.all([
-        window.websimAPI.getSearchFeed('quality', 'interactive', { limit: 50 }),
-        window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
-      ]);
-      
-      if (quality.data) projects.push(...quality.data);
-      if (older.data) projects.push(...older.data);
-      
-    } catch (error) {
-      console.warn('Failed to fetch general projects:', error);
-    }
-    
-    return projects;
-  }
-
   async fetchUnderratedProjects() {
     const projects = [];
     
     try {
       // Get projects sorted by quality rather than popularity
-      const qualityResults = await window.websimAPI.getSearchFeed('quality', 'creative', { limit: 100 });
+      const qualityResults = await window.websimAPI.getSearchFeed('quality', 'project', { limit: 100 });
       if (qualityResults.data) projects.push(...qualityResults.data);
       
       // Get some older projects that might be overlooked
@@ -175,6 +155,26 @@ class HiddenGemsApp {
       
     } catch (error) {
       console.warn('Failed to fetch underrated projects:', error);
+    }
+    
+    return projects;
+  }
+
+  async fetchGeneralProjects() {
+    const projects = [];
+    
+    try {
+      // Mix of different sources - use '*' for general search
+      const [quality, older] = await Promise.all([
+        window.websimAPI.getSearchFeed('quality', 'project', { limit: 50 }),
+        window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
+      ]);
+      
+      if (quality.data) projects.push(...quality.data);
+      if (older.data) projects.push(...older.data);
+      
+    } catch (error) {
+      console.warn('Failed to fetch general projects:', error);
     }
     
     return projects;
