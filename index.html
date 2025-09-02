@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="matrix-bg"></div>
@@ -15,10 +15,10 @@
     <header class="header">
         <div class="container">
             <h1 class="title">
-                Hidden Gems
+                <span class="rainbow-text">Hidden Gems</span>
                 <span class="subtitle">Websim Discovery Platform</span>
             </h1>
-            <p class="tagline">Discover technically sophisticated projects beyond the algorithmic noise</p>
+            <p class="tagline">Discover technically sophisticated projects beyond the trending noise</p>
         </div>
     </header>
 
@@ -26,7 +26,7 @@
         <div class="container">
             <div class="controls">
                 <div class="filter-group">
-                    <label class="filter-label">Minimum Revisions</label>
+                    <label class="filter-label">Minimum Versions</label>
                     <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
                     <span id="minVersionsDisplay" class="value-display">50</span>
                 </div>
@@ -43,11 +43,7 @@
                 </div>
 
                 <button id="refreshBtn" class="btn-primary">
-                    <span>Discover</span>
-                    <svg class="btn-icon" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                    </svg>
+                    <span class="btn-text">Discover</span>
                 </button>
             </div>
 
@@ -61,15 +57,15 @@
                     <span id="gemsFound" class="stat-value">0</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Quality Score</span>
+                    <span class="stat-label">Avg Quality</span>
                     <span id="avgQuality" class="stat-value">0.0</span>
                 </div>
             </div>
 
             <div id="loading" class="loading hidden">
-                <div class="loading-content">
-                    <div class="loading-spinner"></div>
-                    <div class="loading-text">Analyzing projects</div>
+                <div class="loading-text">Analyzing projects</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
                 </div>
             </div>
 
@@ -81,7 +77,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>Crafted for the discerning developer • Built with precision</p>
+            <p>Crafted for developers who appreciate technical excellence over viral trends</p>
         </div>
     </footer>
 
