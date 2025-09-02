@@ -101,11 +101,11 @@ class UIManager {
       
       <div class="project-stats">
         <div class="meta-item">
-          <span class="meta-label">Likes</span>
+          <span class="meta-label">👍</span>
           <span class="meta-value">${likes.toLocaleString()}</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Views</span>
+          <span class="meta-label">👀</span>
           <span class="meta-value">${views.toLocaleString()}</span>
         </div>
         <div class="meta-item">
