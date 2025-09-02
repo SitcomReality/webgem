@@ -375,6 +375,11 @@ body {
   color: var(--text-primary);
   text-decoration: none;
   transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.6em; /* 2 lines * 1.3 line-height */
 }
 
 .project-title a:hover {
@@ -611,4 +616,5 @@ body {
   .stats-bar {
     flex-direction: column;
     align-items: flex-start;
-   
+  }
+}
