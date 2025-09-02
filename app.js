@@ -90,6 +90,9 @@ class HiddenGemsApp {
         case 'underrated':
           sources.push(...await this.fetchUnderratedProjects());
           break;
+        case 'templates':
+          sources.push(...await this.fetchTemplateProjects());
+          break;
         default: // gems
           sources.push(...await this.fetchGeneralProjects());
       }
@@ -109,74 +112,47 @@ class HiddenGemsApp {
   async fetchTechnicalProjects() {
     const projects = [];
     const technicalTerms = ['algorithm', 'simulation', 'visualization', 'physics', 'ai', 'ml', 'data'];
-    
-    for (const term of technicalTerms.slice(0, 3)) { // Limit to avoid rate limits
-      try {
-        const results = await window.websimAPI.getSearchFeed('new', term, { limit: 20 });
-        if (results.data) projects.push(...results.data);
-      } catch (error) {
-        console.warn(`Failed to fetch technical projects for term: ${term}`, error);
-      }
+    for (const term of technicalTerms.slice(0, 3)) {
+      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: 20 });
+      if (results.data) projects.push(...results.data);
     }
-    
     return projects;
   }
 
   async fetchArtisticProjects() {
     const projects = [];
     const artisticTerms = ['art', 'creative', 'design', 'visual', 'interactive', 'animation'];
-    
     for (const term of artisticTerms.slice(0, 3)) {
-      try {
-        const results = await window.websimAPI.getSearchFeed('new', term, { limit: 20 });
-        if (results.data) projects.push(...results.data);
-      } catch (error) {
-        console.warn(`Failed to fetch artistic projects for term: ${term}`, error);
-      }
+      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: 20 });
+      if (results.data) projects.push(...results.data);
     }
-    
     return projects;
   }
 
   async fetchUnderratedProjects() {
     const projects = [];
-    
-    try {
-      // Get projects sorted by quality rather than popularity
-      const qualityResults = await window.websimAPI.getSearchFeed('new', 'a', { limit: 100 });
-      if (qualityResults.data) projects.push(...qualityResults.data);
-      
-      // Get some older projects that might be overlooked
-      const olderResults = await window.websimAPI.getTrendingFeed({ 
-        limit: 50, 
-        range: 'week' // Older range
-      });
-      if (olderResults.data) projects.push(...olderResults.data);
-      
-    } catch (error) {
-      console.warn('Failed to fetch underrated projects:', error);
-    }
-    
+    const qualityResults = await window.websimAPI.getSearchFeed('newest', 'a', { limit: 100 });
+    if (qualityResults.data) projects.push(...qualityResults.data);
+    const olderResults = await window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' });
+    if (olderResults.data) projects.push(...olderResults.data);
     return projects;
   }
 
   async fetchGeneralProjects() {
     const projects = [];
-    
-    try {
-      // Mix of different sources
-      const [quality, older] = await Promise.all([
-        window.websimAPI.getSearchFeed('new', 'a', { limit: 50 }),
-        window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
-      ]);
-      
-      if (quality.data) projects.push(...quality.data);
-      if (older.data) projects.push(...older.data);
-      
-    } catch (error) {
-      console.warn('Failed to fetch general projects:', error);
-    }
-    
+    const [quality, older] = await Promise.all([
+      window.websimAPI.getSearchFeed('newest', 'a', { limit: 50 }),
+      window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
+    ]);
+    if (quality.data) projects.push(...quality.data);
+    if (older.data) projects.push(...older.data);
+    return projects;
+  }
+
+  async fetchTemplateProjects() {
+    const projects = [];
+    const res = await window.websimAPI.getSearchFeed('best_template', 'a', { limit: 100 });
+    if (res.data) projects.push(...res.data);
     return projects;
   }
 

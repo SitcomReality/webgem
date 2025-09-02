@@ -49,7 +49,9 @@ class WebsimAPI {
   }
 
   async getSearchFeed(sort, search, params = {}) {
-    const safeSort = ['hot', 'new', 'top'].includes((sort || '').toLowerCase()) ? sort : 'new';
+    const requested = (sort || '').toLowerCase();
+    const normalized = requested === 'new' ? 'newest' : requested;
+    const safeSort = ['best', 'newest', 'best_template'].includes(normalized) ? normalized : 'newest';
     const safeSearch = (search && String(search).trim().length > 0) ? search : 'a';
     const query = new URLSearchParams({
       limit: params.limit || 50,
