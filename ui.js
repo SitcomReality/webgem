@@ -78,6 +78,11 @@ class UIManager {
     const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
     const remixCount = project.raw?.project?.stats?.remixes || 0;
 
+    // Creator information
+    const creator = project.raw?.project?.created_by || project.raw?.site?.owner;
+    const creatorUsername = creator?.username || 'unknown';
+    const creatorAvatar = creator?.avatar_url || null;
+
     // Check if image exists by trying to load it
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
     
@@ -100,6 +105,15 @@ class UIManager {
           <span class="meta-label">Created:</span>
           <span class="meta-value">${this.formatDate(project.created_at)}</span>
         </div>
+      </div>
+
+      <div class="project-creator">
+        <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link">
+          ${creatorAvatar ? `
+            <img src="${creatorAvatar}" alt="${creatorUsername}" class="creator-avatar">
+          ` : ''}
+          <span class="creator-username">@${creatorUsername}</span>
+        </a>
       </div>
 
       ${project.description ? `

@@ -443,6 +443,44 @@ body {
   border-radius: 2px;
 }
 
+.project-creator {
+  margin: var(--space-md) 0;
+  display: flex;
+  align-items: center;
+}
+
+.creator-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  transition: all 0.2s ease;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  background: rgba(91, 124, 250, 0.1);
+  border: 1px solid rgba(91, 124, 250, 0.2);
+}
+
+.creator-link:hover {
+  color: var(--accent-sapphire);
+  background: rgba(91, 124, 250, 0.2);
+  transform: translateY(-1px);
+}
+
+.creator-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.creator-username {
+  font-weight: 500;
+}
+
 /* Template Info - Refined */
 .template-info {
   margin: var(--space-lg) 0;
@@ -573,21 +611,4 @@ body {
   .stats-bar {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-lg);
-  }
-  
-  .results {
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-  }
-}
-
-/* Utility Classes */
-.hidden {
-  display: none !important;
-}
-
-/* When image is hidden, expand description */
-.project-card:has(.project-image[style*="display: none"]) .project-description {
-  height: 300px;
-}
+   
