@@ -355,6 +355,7 @@ body {
 
 /* Project Cards - Refined */
 .project-card {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius);
@@ -376,6 +377,7 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--space-lg);
+  padding-right: 80px; /* Space for template badges */
 }
 
 .project-title {
@@ -518,32 +520,38 @@ body {
 
 /* Template Info - Refined */
 .template-info {
-  margin: var(--space-lg) 0;
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-xs);
+  z-index: 10;
 }
 
 .template-badge {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--border-radius-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1;
+  backdrop-filter: blur(4px);
+  border: 1px solid;
 }
 
 .template-badge.template-based {
-  background: rgba(155, 89, 182, 0.1);
+  background: rgba(155, 89, 182, 0.15);
   color: var(--accent-amethyst);
-  border: 1px solid rgba(155, 89, 182, 0.2);
+  border-color: rgba(155, 89, 182, 0.3);
 }
 
 .template-badge.derivatives {
-  background: rgba(0, 212, 170, 0.1);
+  background: rgba(0, 212, 170, 0.15);
   color: var(--accent-emerald);
-  border: 1px solid rgba(0, 212, 170, 0.2);
+  border-color: rgba(0, 212, 170, 0.3);
 }
 
 .project-image {

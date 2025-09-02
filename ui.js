@@ -90,6 +90,21 @@ class UIManager {
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
     
     card.innerHTML = `
+      ${isTemplateBased || hasDerivatives ? `
+        <div class="template-info">
+          ${isTemplateBased ? `
+            <span class="template-badge template-based">
+              Template
+            </span>
+          ` : ''}
+          ${hasDerivatives ? `
+            <span class="template-badge derivatives">
+              ${remixCount} ${remixCount === 1 ? 'remix' : 'remixes'}
+            </span>
+          ` : ''}
+        </div>
+      ` : ''}
+
       <div class="project-header">
         <h3 class="project-title">
           <a href="https://websim.com/c/${project.id}" target="_blank">${this.escapeHtml(project.title)}</a>
@@ -132,23 +147,6 @@ class UIManager {
       ` : `
         <p class="project-description">No description available.</p>
       `}
-
-      ${isTemplateBased || hasDerivatives ? `
-        <div class="template-info">
-          ${isTemplateBased ? `
-            <span class="template-badge template-based">
-              <span class="template-icon">🔗</span>
-              Based on template
-            </span>
-          ` : ''}
-          ${hasDerivatives ? `
-            <span class="template-badge derivatives">
-              <span class="template-icon">🧬</span>
-              ${remixCount} ${remixCount === 1 ? 'derivative' : 'derivatives'}
-            </span>
-          ` : ''}
-        </div>
-      ` : ''}
 
       <div class="project-image">
         <img src="${imageUrl}" 
