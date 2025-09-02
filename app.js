@@ -73,38 +73,60 @@ class HiddenGemsApp {
 
   async fetchProjectSources(mode) {
     const sources = [];
+    console.log(`🎯 Discovery mode: ${mode}`);
     
     try {
       // Always get some trending projects for comparison/filtering
+      console.log('🔍 Fetching trending feed...');
       const trending = await window.websimAPI.getTrendingFeed({ limit: 100 });
-      if (trending.data) sources.push(...trending.data);
+      console.log(`📈 Trending feed: ${trending.data?.length || 0} projects`);
       
+      if (trending.data) {
+        sources.push(...trending.data);
+        console.log(`✅ Added ${trending.data.length} from trending`);
+      } else {
+        console.warn('⚠️ No data in trending response:', trending);
+      }
+
       // Mode-specific additional sources
+      console.log(`🎭 Fetching mode-specific sources for: ${mode}`);
+      let additionalProjects = [];
+      
       switch (mode) {
         case 'technical':
-          sources.push(...await this.fetchTechnicalProjects());
+          additionalProjects = await this.fetchTechnicalProjects();
           break;
         case 'artistic':
-          sources.push(...await this.fetchArtisticProjects());
+          additionalProjects = await this.fetchArtisticProjects();
           break;
         case 'underrated':
-          sources.push(...await this.fetchUnderratedProjects());
+          additionalProjects = await this.fetchUnderratedProjects();
           break;
         case 'templates':
-          sources.push(...await this.fetchTemplateProjects());
+          additionalProjects = await this.fetchTemplateProjects();
           break;
         default: // gems
-          sources.push(...await this.fetchGeneralProjects());
+          additionalProjects = await this.fetchGeneralProjects();
+      }
+      
+      console.log(`📦 Additional projects for ${mode}: ${additionalProjects.length}`);
+      
+      if (additionalProjects.length > 0) {
+        sources.push(...additionalProjects);
       }
       
     } catch (error) {
-      console.error('Error fetching project sources:', error);
+      console.error('❌ Error fetching project sources:', error);
     }
+    
+    console.log(`📊 Total raw sources before deduplication: ${sources.length}`);
     
     // Remove duplicates
     const uniqueProjects = sources.filter((project, index, array) => 
       array.findIndex(p => p.id === project.id) === index
     );
+    
+    console.log(`🎯 Unique projects after deduplication: ${uniqueProjects.length}`);
     
     return uniqueProjects;
   }
@@ -112,47 +134,92 @@ class HiddenGemsApp {
   async fetchTechnicalProjects() {
     const projects = [];
     const technicalTerms = ['algorithm', 'simulation', 'visualization', 'physics', 'ai', 'ml', 'data'];
+    
+    console.log(`🔧 Fetching technical projects with terms: ${technicalTerms.slice(0, 3)}`);
+    
     for (const term of technicalTerms.slice(0, 3)) {
+      console.log(`📡 Searching for: ${term}`);
       const results = await window.websimAPI.getSearchFeed('newest', term, { limit: 20 });
-      if (results.data) projects.push(...results.data);
+      console.log(`📊 Results for "${term}": ${results.data?.length || 0} projects`);
+      
+      if (results.data) {
+        projects.push(...results.data);
+      }
     }
+    
+    console.log(`🔧 Total technical projects: ${projects.length}`);
     return projects;
   }
 
   async fetchArtisticProjects() {
     const projects = [];
     const artisticTerms = ['art', 'creative', 'design', 'visual', 'interactive', 'animation'];
+    
+    console.log(`🎨 Fetching artistic projects with terms: ${artisticTerms.slice(0, 3)}`);
+    
     for (const term of artisticTerms.slice(0, 3)) {
+      console.log(`📡 Searching for: ${term}`);
       const results = await window.websimAPI.getSearchFeed('newest', term, { limit: 20 });
-      if (results.data) projects.push(...results.data);
+      console.log(`📊 Results for "${term}": ${results.data?.length || 0} projects`);
+      
+      if (results.data) {
+        projects.push(...results.data);
+      }
     }
+    
+    console.log(`🎨 Total artistic projects: ${projects.length}`);
     return projects;
   }
 
   async fetchUnderratedProjects() {
+    console.log(`⭐ Fetching underrated projects...`);
+    
     const projects = [];
     const qualityResults = await window.websimAPI.getSearchFeed('newest', 'a', { limit: 100 });
+    console.log(`📊 Underrated - quality results: ${qualityResults.data?.length || 0}`);
+    
     if (qualityResults.data) projects.push(...qualityResults.data);
+    
     const olderResults = await window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' });
+    console.log(`📊 Underrated - older trending: ${olderResults.data?.length || 0}`);
+    
     if (olderResults.data) projects.push(...olderResults.data);
+    
+    console.log(`⭐ Total underrated projects: ${projects.length}`);
     return projects;
   }
 
   async fetchGeneralProjects() {
+    console.log(`🌟 Fetching general projects...`);
+    
     const projects = [];
+    console.log(`📡 Calling getSearchFeed with 'newest' and 'a'`);
+    
     const [quality, older] = await Promise.all([
       window.websimAPI.getSearchFeed('newest', 'a', { limit: 50 }),
       window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
     ]);
+    
+    console.log(`📊 General - search feed results: ${quality.data?.length || 0}`);
+    console.log(`📊 General - trending feed results: ${older.data?.length || 0}`);
+    
     if (quality.data) projects.push(...quality.data);
     if (older.data) projects.push(...older.data);
+    
+    console.log(`🌟 Total general projects: ${projects.length}`);
     return projects;
   }
 
   async fetchTemplateProjects() {
+    console.log(`📐 Fetching template projects...`);
+    
     const projects = [];
     const res = await window.websimAPI.getSearchFeed('best_template', 'a', { limit: 100 });
+    console.log(`📊 Template projects response: ${res.data?.length || 0}`);
+    
     if (res.data) projects.push(...res.data);
+    
+    console.log(`📐 Total template projects: ${projects.length}`);
     return projects;
   }
 

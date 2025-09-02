@@ -10,11 +10,16 @@ class WebsimAPI {
     const cached = this.cache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+      console.log(`📦 Cache hit for: ${endpoint}`);
       return cached.data;
     }
 
+    const fullUrl = `${this.baseURL}${endpoint}`;
+    console.log(`🌐 API Call: ${fullUrl}`);
+    console.log(`📋 Options:`, options);
+
     try {
-      const response = await fetch(`${this.baseURL}${endpoint}`, {
+      const response = await fetch(fullUrl, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -23,16 +28,19 @@ class WebsimAPI {
         ...options
       });
 
+      console.log(`📡 Response: ${response.status} ${response.statusText}`);
+      
       if (!response.ok) {
         throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      this.cache.set(cacheKey, { data, timestamp: Date.now() });
+      console.log(`📊 Response data:`, data);
       
+      this.cache.set(cacheKey, { data, timestamp: Date.now() });
       return data;
     } catch (error) {
-      console.error(`API Error for ${endpoint}:`, error);
+      console.error(`❌ API Error for ${endpoint}:`, error);
       throw error;
     }
   }
