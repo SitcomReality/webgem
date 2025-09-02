@@ -83,6 +83,11 @@ class UIManager {
     const creatorUsername = creator?.username || 'unknown';
     const creatorAvatar = creator?.avatar_url || null;
 
+    // Stats
+    const stats = project.raw?.project?.stats || project.raw?.site?.stats || {};
+    const likes = stats.likes || 0;
+    const views = stats.views || 0;
+
     // Check if image exists by trying to load it
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
     
@@ -104,6 +109,19 @@ class UIManager {
         <div class="meta-item">
           <span class="meta-label">Created:</span>
           <span class="meta-value">${this.formatDate(project.created_at)}</span>
+        </div>
+      </div>
+
+      <div class="project-stats">
+        <div class="stat-item">
+          <span class="stat-icon">❤️</span>
+          <span class="stat-value">${likes.toLocaleString()}</span>
+          <span class="stat-label">likes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon">👁️</span>
+          <span class="stat-value">${views.toLocaleString()}</span>
+          <span class="stat-label">views</span>
         </div>
       </div>
 
