@@ -99,39 +99,14 @@ class GemFilter {
   }
 
   calculateVersionScore(project) {
-    // We'll need to fetch version info - for now estimate based on available data
-    const estimatedVersions = this.estimateVersionCount(project);
+    const currentVersion = project.currentVersion || 1;
     
-    if (estimatedVersions < 10) return 0.1;
-    if (estimatedVersions < 25) return 0.3;
-    if (estimatedVersions < 50) return 0.5;
-    if (estimatedVersions < 100) return 0.7;
-    if (estimatedVersions < 200) return 0.9;
+    if (currentVersion < 10) return 0.1;
+    if (currentVersion < 25) return 0.3;
+    if (currentVersion < 50) return 0.5;
+    if (currentVersion < 100) return 0.7;
+    if (currentVersion < 200) return 0.9;
     return 1.0;
-  }
-
-  estimateVersionCount(project) {
-    // Heuristic based on description length, complexity indicators, etc.
-    let estimate = 10;
-    
-    const text = `${project.title} ${project.description || ''}`.toLowerCase();
-    
-    // Length indicators
-    if (text.length > 100) estimate += 10;
-    if (text.length > 200) estimate += 15;
-    if (text.length > 500) estimate += 25;
-    
-    // Complexity indicators
-    this.qualityTerms.forEach(term => {
-      if (text.includes(term)) estimate += 20;
-    });
-    
-    // Time indicators
-    if (text.includes('day') || text.includes('week') || text.includes('month')) {
-      estimate += 30;
-    }
-    
-    return estimate;
   }
 
   calculateContentScore(project) {
@@ -204,4 +179,3 @@ class GemFilter {
 
 // Global filter instance
 window.gemFilter = new GemFilter();
-

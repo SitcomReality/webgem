@@ -247,9 +247,9 @@ class HiddenGemsApp {
       // Quality score threshold
       if (project.qualityScore < 0.4) return false;
       
-      // Version threshold (estimated)
-      const estimatedVersions = window.gemFilter.estimateVersionCount(project);
-      if (estimatedVersions < Math.max(10, minVersions)) return false;
+      // Use actual version count instead of estimated
+      const actualVersions = project.currentVersion || 1;
+      if (actualVersions < Math.max(10, minVersions)) return false;
       
       // Remove projects that are too popular (anti-trending bias)
       const text = `${project.title} ${project.description || ''}`.toLowerCase();

@@ -71,9 +71,8 @@ class UIManager {
 
     const qualityScore = project.qualityScore || 0;
     const scoreColor = this.getScoreColor(qualityScore);
-    const estimatedVersions = window.gemFilter.estimateVersionCount(project);
-    
-    // Template information
+    const actualVersions = project.currentVersion || 1;
+
     const isTemplateBased = project.raw?.project?.parent_id || project.project?.parent_id;
     const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
     const remixCount = project.raw?.project?.stats?.remixes || 0;
@@ -81,12 +80,10 @@ class UIManager {
     const likes = project.raw?.project?.stats?.likes || 0
     const views = project.raw?.project?.stats?.views || 0
 
-    // Creator information
     const creator = project.raw?.project?.created_by || project.raw?.site?.owner;
     const creatorUsername = creator?.username || 'unknown';
     const creatorAvatar = creator?.avatar_url || null;
 
-    // Check if image exists by trying to load it
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
     
     card.innerHTML = `
@@ -109,8 +106,8 @@ class UIManager {
           <span class="meta-value">${views.toLocaleString()}</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Est. Versions:</span>
-          <span class="meta-value">${estimatedVersions}</span>
+          <span class="meta-label">Versions:</span>
+          <span class="meta-value">${actualVersions}</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Created:</span>
@@ -228,7 +225,6 @@ class UIManager {
   }
 }
 
-// Add project card styles to the document
 const additionalStyles = `
 .project-card {
   background: var(--bg-secondary);
@@ -375,10 +371,8 @@ const additionalStyles = `
 }
 `;
 
-// Inject additional styles
 const style = document.createElement('style');
 style.textContent = additionalStyles;
 document.head.appendChild(style);
 
-// Global UI instance
 window.uiManager = new UIManager();
