@@ -133,13 +133,12 @@ class HiddenGemsApp {
 
   async fetchTechnicalProjects() {
     const projects = [];
-    const technicalTerms = ['algorithm', 'simulation', 'visualization', 'physics', 'ai', 'ml', 'data'];
     
-    console.log(`🔧 Fetching technical projects with terms: ${technicalTerms.slice(0, 3)}`);
+    console.log(`🔧 Fetching technical projects with terms: ${technicalSearchTerms.slice(0, 3)}`);
     
-    for (const term of technicalTerms.slice(0, 3)) {
+    for (const term of technicalSearchTerms.slice(0, 3)) {
       console.log(`📡 Searching for: ${term}`);
-      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: 20 });
+      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: projectsPerSearchTerm });
       console.log(`📊 Results for "${term}": ${results.data?.length || 0} projects`);
       
       if (results.data) {
@@ -153,13 +152,12 @@ class HiddenGemsApp {
 
   async fetchArtisticProjects() {
     const projects = [];
-    const artisticTerms = ['art', 'creative', 'design', 'visual', 'interactive', 'animation'];
     
-    console.log(`🎨 Fetching artistic projects with terms: ${artisticTerms.slice(0, 3)}`);
+    console.log(`🎨 Fetching artistic projects with terms: ${artisticSearchTerms.slice(0, 3)}`);
     
-    for (const term of artisticTerms.slice(0, 3)) {
+    for (const term of artisticSearchTerms.slice(0, 3)) {
       console.log(`📡 Searching for: ${term}`);
-      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: 20 });
+      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: projectsPerSearchTerm });
       console.log(`📊 Results for "${term}": ${results.data?.length || 0} projects`);
       
       if (results.data) {
@@ -175,12 +173,12 @@ class HiddenGemsApp {
     console.log(`⭐ Fetching underrated projects...`);
     
     const projects = [];
-    const qualityResults = await window.websimAPI.getSearchFeed('newest', 'a', { limit: 100 });
+    const qualityResults = await window.websimAPI.getSearchFeed('newest', genericFallbackTerm, { limit: searchResultsLimit });
     console.log(`📊 Underrated - quality results: ${qualityResults.data?.length || 0}`);
     
     if (qualityResults.data) projects.push(...qualityResults.data);
     
-    const olderResults = await window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' });
+    const olderResults = await window.websimAPI.getTrendingFeed({ limit: searchResultsLimit / 2, range: trendingRange });
     console.log(`📊 Underrated - older trending: ${olderResults.data?.length || 0}`);
     
     if (olderResults.data) projects.push(...olderResults.data);
@@ -193,11 +191,10 @@ class HiddenGemsApp {
     console.log(`🌟 Fetching general projects...`);
     
     const projects = [];
-    console.log(`📡 Calling getSearchFeed with 'newest' and 'a'`);
     
     const [quality, older] = await Promise.all([
-      window.websimAPI.getSearchFeed('newest', 'a', { limit: 50 }),
-      window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
+      window.websimAPI.getSearchFeed('newest', genericFallbackTerm, { limit: searchResultsLimit }),
+      window.websimAPI.getTrendingFeed({ limit: searchResultsLimit / 2, range: trendingRange })
     ]);
     
     console.log(`📊 General - search feed results: ${quality.data?.length || 0}`);
@@ -214,7 +211,7 @@ class HiddenGemsApp {
     console.log(`📐 Fetching template projects...`);
     
     const projects = [];
-    const res = await window.websimAPI.getSearchFeed('best_template', 'a', { limit: 100 });
+    const res = await window.websimAPI.getSearchFeed('best_template', genericFallbackTerm, { limit: templateSearchLimit });
     console.log(`📊 Template projects response: ${res.data?.length || 0}`);
     
     if (res.data) projects.push(...res.data);
@@ -278,3 +275,30 @@ console.log('📡 API endpoints ready');
 console.log('🔍 Gem filtering algorithms loaded');
 console.log('🎨 Pride Matrix aesthetic active');
 console.log('⚡ Ready to discover overlooked treasures...');
+
+/* @tweakable Technical search terms for technical discovery mode */
+const technicalSearchTerms = ['algorithm', 'simulation', 'visualization', 'physics', 'ai', 'ml', 'data'];
+
+/* @tweakable Artistic search terms for artistic discovery mode */
+const artisticSearchTerms = ['art', 'creative', 'design', 'visual', 'interactive', 'animation'];
+
+/* @tweakable Generic fallback search term when no specific terms are needed */
+const genericFallbackTerm = 'a';
+
+/* @tweakable Maximum projects to fetch per search term */
+const projectsPerSearchTerm = 20;
+
+/* @tweakable Limit for trending feed data */
+const trendingFeedLimit = 100;
+
+/* @tweakable Limit for search results */
+const searchResultsLimit = 50;
+
+/* @tweakable Range parameter for trending feed (day, week, month) */
+const trendingRange = 'week';
+
+/* @tweakable Maximum age in days for underrated projects */
+const maxProjectAge = 30;
+
+/* @tweakable Template search limit for template discovery mode */
+const templateSearchLimit = 100;
