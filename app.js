@@ -276,29 +276,20 @@ console.log('🔍 Gem filtering algorithms loaded');
 console.log('🎨 Pride Matrix aesthetic active');
 console.log('⚡ Ready to discover overlooked treasures...');
 
-/* @tweakable Technical search terms for technical discovery mode */
 const technicalSearchTerms = ['algorithm', 'simulation', 'visualization', 'physics', 'ai', 'ml', 'data'];
 
-/* @tweakable Artistic search terms for artistic discovery mode */
 const artisticSearchTerms = ['art', 'creative', 'design', 'visual', 'interactive', 'animation'];
 
-/* @tweakable Generic fallback search term when no specific terms are needed */
-const genericFallbackTerm = 'a';
+const genericFallbackTerm = "*";
 
-/* @tweakable Maximum projects to fetch per search term */
 const projectsPerSearchTerm = 20;
 
-/* @tweakable Limit for trending feed data */
 const trendingFeedLimit = 100;
 
-/* @tweakable Limit for search results */
 const searchResultsLimit = 50;
 
-/* @tweakable Range parameter for trending feed (day, week, month) */
 const trendingRange = 'week';
 
-/* @tweakable Maximum age in days for underrated projects */
 const maxProjectAge = 30;
 
-/* @tweakable Template search limit for template discovery mode */
 const templateSearchLimit = 100;
