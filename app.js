@@ -112,7 +112,7 @@ class HiddenGemsApp {
     
     for (const term of technicalTerms.slice(0, 3)) { // Limit to avoid rate limits
       try {
-        const results = await window.websimAPI.getSearchFeed('quality', term, { limit: 20 });
+        const results = await window.websimAPI.getSearchFeed('new', term, { limit: 20 });
         if (results.data) projects.push(...results.data);
       } catch (error) {
         console.warn(`Failed to fetch technical projects for term: ${term}`, error);
@@ -128,7 +128,7 @@ class HiddenGemsApp {
     
     for (const term of artisticTerms.slice(0, 3)) {
       try {
-        const results = await window.websimAPI.getSearchFeed('quality', term, { limit: 20 });
+        const results = await window.websimAPI.getSearchFeed('new', term, { limit: 20 });
         if (results.data) projects.push(...results.data);
       } catch (error) {
         console.warn(`Failed to fetch artistic projects for term: ${term}`, error);
@@ -142,9 +142,8 @@ class HiddenGemsApp {
     const projects = [];
     
     try {
-      // Get projects sorted by quality (using a broad search term)
-      // The API's getSearchFeed requires a search term, so using a general one like 'creative'
-      const qualityResults = await window.websimAPI.getSearchFeed('quality', 'creative', { limit: 100 });
+      // Get projects sorted by quality rather than popularity
+      const qualityResults = await window.websimAPI.getSearchFeed('new', 'a', { limit: 100 });
       if (qualityResults.data) projects.push(...qualityResults.data);
       
       // Get some older projects that might be overlooked
@@ -165,9 +164,9 @@ class HiddenGemsApp {
     const projects = [];
     
     try {
-      // Mix of different sources, using a broad search term for 'quality' feed
+      // Mix of different sources
       const [quality, older] = await Promise.all([
-        window.websimAPI.getSearchFeed('quality', 'interactive', { limit: 50 }), // Use a broad term
+        window.websimAPI.getSearchFeed('new', 'a', { limit: 50 }),
         window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
       ]);
       

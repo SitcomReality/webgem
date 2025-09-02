@@ -49,14 +49,15 @@ class WebsimAPI {
   }
 
   async getSearchFeed(sort, search, params = {}) {
+    const safeSort = ['hot', 'new', 'top'].includes((sort || '').toLowerCase()) ? sort : 'new';
+    const safeSearch = (search && String(search).trim().length > 0) ? search : 'a';
     const query = new URLSearchParams({
       limit: params.limit || 50,
       offset: params.offset || 0,
       range: params.range || 'day',
       ...params
     }).toString();
-    
-    return this.fetch(`/feed/search/${sort}/${encodeURIComponent(search)}?${query}`);
+    return this.fetch(`/feed/search/${safeSort}/${encodeURIComponent(safeSearch)}?${query}`);
   }
 
   async getTopSearches(params = {}) {
@@ -113,4 +114,3 @@ class WebsimAPI {
 
 // Global API instance
 window.websimAPI = new WebsimAPI();
-
