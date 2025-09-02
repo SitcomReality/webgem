@@ -45,6 +45,24 @@ class WebsimAPI {
     }
   }
 
+  // Normalize feed items (trending/search) to a flat shape our UI expects
+  normalizeFeedItems(items = []) {
+    return items.map((it) => {
+      const site = it.site || it; // some endpoints may return site directly
+      const project = it.project || it.project_revision?.project || it.project_data || it.project;
+      const id = site?.id || project?.site_id || project?.id; // prefer site.id for images/links
+      return {
+        id, // treat as site id for UI/link/image
+        siteId: site?.id || null,
+        projectId: project?.id || it.project_id || null,
+        title: project?.title || site?.title || it.title || 'Untitled',
+        description: project?.description || it.description || '',
+        created_at: site?.created_at || project?.created_at || it.created_at || new Date().toISOString(),
+        raw: it
+      };
+    });
+  }
+
   async getTrendingFeed(params = {}) {
     const query = new URLSearchParams({
       limit: params.limit || 50,
@@ -53,7 +71,11 @@ class WebsimAPI {
       ...params
     }).toString();
     
-    return this.fetch(`/feed/trending?${query}`);
+    const raw = await this.fetch(`/feed/trending?${query}`);
+    const items = raw.feed?.data || raw.data || [];
+    const normalized = this.normalizeFeedItems(items);
+    console.log(`🧭 Normalized trending: ${normalized.length} items`);
+    return { data: normalized };
   }
 
   async getSearchFeed(sort, search, params = {}) {
@@ -67,7 +89,13 @@ class WebsimAPI {
       range: params.range || 'day',
       ...params
     }).toString();
-    return this.fetch(`/feed/search/${safeSort}/${encodeURIComponent(safeSearch)}?${query}`);
+    
+    const endpoint = `/feed/search/${safeSort}/${encodeURIComponent(safeSearch)}?${query}`;
+    const raw = await this.fetch(endpoint);
+    const items = raw.feed?.data || raw.data || [];
+    const normalized = this.normalizeFeedItems(items);
+    console.log(`🧭 Normalized search (${safeSort}/${safeSearch}): ${normalized.length} items`);
+    return { data: normalized };
   }
 
   async getTopSearches(params = {}) {
