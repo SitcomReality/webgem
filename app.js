@@ -142,8 +142,9 @@ class HiddenGemsApp {
     const projects = [];
     
     try {
-      // Get projects sorted by quality rather than popularity
-      const qualityResults = await window.websimAPI.getSearchFeed('quality', '', { limit: 100 });
+      // Get projects sorted by quality (using a broad search term)
+      // The API's getSearchFeed requires a search term, so using a general one like 'creative'
+      const qualityResults = await window.websimAPI.getSearchFeed('quality', 'creative', { limit: 100 });
       if (qualityResults.data) projects.push(...qualityResults.data);
       
       // Get some older projects that might be overlooked
@@ -164,9 +165,9 @@ class HiddenGemsApp {
     const projects = [];
     
     try {
-      // Mix of different sources
+      // Mix of different sources, using a broad search term for 'quality' feed
       const [quality, older] = await Promise.all([
-        window.websimAPI.getSearchFeed('quality', '', { limit: 50 }),
+        window.websimAPI.getSearchFeed('quality', 'interactive', { limit: 50 }), // Use a broad term
         window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
       ]);
       
@@ -235,4 +236,3 @@ console.log('📡 API endpoints ready');
 console.log('🔍 Gem filtering algorithms loaded');
 console.log('🎨 Pride Matrix aesthetic active');
 console.log('⚡ Ready to discover overlooked treasures...');
-
