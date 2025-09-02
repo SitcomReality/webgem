@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websim Hidden Gems - Discover the Overlooked Treasures</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <header class="header">
+        <div class="container">
+            <h1 class="title">
+                <span class="rainbow-text">Hidden Gems</span>
+                <span class="subtitle">Websim's Overlooked Treasures</span>
+            </h1>
+            <p class="tagline">Where technical excellence meets artistic vision, away from the trending noise.</p>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="controls">
+                <div class="filter-group">
+                    <label class="filter-label">Minimum Versions:</label>
+                    <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
+                    <span id="minVersionsDisplay" class="value-display">50</span>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Discovery Mode:</label>
+                    <select id="discoveryMode" class="select">
+                        <option value="gems">Hidden Gems</option>
+                        <option value="technical">Technical Marvels</option>
+                        <option value="artistic">Artistic Spectacles</option>
+                        <option value="underrated">Underrated All</option>
+                    </select>
+                </div>
+
+                <button id="refreshBtn" class="btn-primary">
+                    <span class="btn-text">Discover Gems</span>
+                </button>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Analyzing:</span>
+                    <span id="analyzingCount" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Gems Found:</span>
+                    <span id="gemsFound" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Avg Quality Score:</span>
+                    <span id="avgQuality" class="stat-value">0.0</span>
+                </div>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="loading-text">Scanning the matrix for hidden treasures...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="results" class="results">
+                <!-- Projects will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Built by hackers, for hackers. Preserving technical artistry in the age of algorithmic mediocrity.</p>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="filters.js"></script>
+    <script src="ui.js"></script>
+    <script src="app.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
