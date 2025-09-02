@@ -78,15 +78,13 @@ class UIManager {
     const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
     const remixCount = project.raw?.project?.stats?.remixes || 0;
 
+    const likes = project.raw?.project?.stats?.likes || 0
+    const views = project.raw?.project?.stats?.views || 0
+
     // Creator information
     const creator = project.raw?.project?.created_by || project.raw?.site?.owner;
     const creatorUsername = creator?.username || 'unknown';
     const creatorAvatar = creator?.avatar_url || null;
-
-    // Stats
-    const stats = project.raw?.project?.stats || project.raw?.site?.stats || {};
-    const likes = stats.likes || 0;
-    const views = stats.views || 0;
 
     // Check if image exists by trying to load it
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
@@ -101,7 +99,15 @@ class UIManager {
         </div>
       </div>
       
-      <div class="project-meta">
+      <div class="project-stats">
+        <div class="meta-item">
+          <span class="meta-label">Likes</span>
+          <span class="meta-value">${likes.toLocaleString()}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Views</span>
+          <span class="meta-value">${views.toLocaleString()}</span>
+        </div>
         <div class="meta-item">
           <span class="meta-label">Est. Versions:</span>
           <span class="meta-value">${estimatedVersions}</span>
@@ -109,19 +115,6 @@ class UIManager {
         <div class="meta-item">
           <span class="meta-label">Created:</span>
           <span class="meta-value">${this.formatDate(project.created_at)}</span>
-        </div>
-      </div>
-
-      <div class="project-stats">
-        <div class="stat-item">
-          <span class="stat-icon">❤️</span>
-          <span class="stat-value">${likes.toLocaleString()}</span>
-          <span class="stat-label">likes</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-icon">👁️</span>
-          <span class="stat-value">${views.toLocaleString()}</span>
-          <span class="stat-label">views</span>
         </div>
       </div>
 
