@@ -73,15 +73,14 @@ class WebsimAPI {
     
     const raw = await this.fetch(`/feed/trending?${query}`);
     const items = raw.feed?.data || raw.data || [];
-    const normalized = this.normalizeFeedItems(items);
-    console.log(`🧭 Normalized trending: ${normalized.length} items`);
-    return { data: normalized };
+    const feedItems = this.normalizeFeedItems(items);
+    console.log(`🧭 Normalized trending: ${feedItems.length} items`);
+    return { data: feedItems };
   }
 
   async getSearchFeed(sort, search, params = {}) {
     const requested = (sort || '').toLowerCase();
-    const normalized = requested === 'new' ? 'newest' : requested;
-    const safeSort = ['best', 'newest', 'best_template'].includes(normalized) ? normalized : 'newest';
+    const safeSort = ['best', 'newest', 'best_template'].includes(requested) ? requested : 'newest';
     const safeSearch = (search && String(search).trim().length > 0) ? search : 'a';
     const query = new URLSearchParams({
       limit: params.limit || 50,
@@ -93,9 +92,9 @@ class WebsimAPI {
     const endpoint = `/feed/search/${safeSort}/${encodeURIComponent(safeSearch)}?${query}`;
     const raw = await this.fetch(endpoint);
     const items = raw.feed?.data || raw.data || [];
-    const normalized = this.normalizeFeedItems(items);
-    console.log(`🧭 Normalized search (${safeSort}/${safeSearch}): ${normalized.length} items`);
-    return { data: normalized };
+    const searchItems = this.normalizeFeedItems(items);
+    console.log(`🧭 Normalized search (${safeSort}/${safeSearch}): ${searchItems.length} items`);
+    return { data: searchItems };
   }
 
   async getTopSearches(params = {}) {
