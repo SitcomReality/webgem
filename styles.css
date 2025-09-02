@@ -598,23 +598,12 @@ body {
   letter-spacing: 0.02em;
 }
 
+/* Utility Classes */
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+
 /* Responsive - Refined */
 @media (max-width: 768px) {
-  .container {
-    padding: 0 var(--space-lg);
-  }
-  
-  .title {
-    font-size: 32px;
-  }
-  
-  .controls {
-    grid-template-columns: 1fr;
-    padding: var(--space-lg);
-  }
-  
-  .stats-bar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
+  .
