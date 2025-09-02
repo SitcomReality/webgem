@@ -247,8 +247,8 @@ class HiddenGemsApp {
       // Quality score threshold
       if (project.qualityScore < 0.4) return false;
       
-      // Use actual version count instead of estimated
-      const actualVersions = project.currentVersion || 1;
+      // Use actual version count from API data
+      const actualVersions = project.raw?.project?.current_version || 1;
       if (actualVersions < Math.max(10, minVersions)) return false;
       
       // Remove projects that are too popular (anti-trending bias)

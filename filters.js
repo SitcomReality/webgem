@@ -99,14 +99,20 @@ class GemFilter {
   }
 
   calculateVersionScore(project) {
-    const currentVersion = project.currentVersion || 1;
+    // Use actual version count from API data
+    const actualVersions = project.raw?.project?.current_version || 1;
     
-    if (currentVersion < 10) return 0.1;
-    if (currentVersion < 25) return 0.3;
-    if (currentVersion < 50) return 0.5;
-    if (currentVersion < 100) return 0.7;
-    if (currentVersion < 200) return 0.9;
+    if (actualVersions < 10) return 0.1;
+    if (actualVersions < 25) return 0.3;
+    if (actualVersions < 50) return 0.5;
+    if (actualVersions < 100) return 0.7;
+    if (actualVersions < 200) return 0.9;
     return 1.0;
+  }
+
+  estimateVersionCount(project) {
+    // Fallback to actual version if available, otherwise use basic heuristic
+    return project.raw?.project?.current_version || 1;
   }
 
   calculateContentScore(project) {
