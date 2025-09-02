@@ -73,10 +73,10 @@ class UIManager {
     const scoreColor = this.getScoreColor(qualityScore);
     const estimatedVersions = window.gemFilter.estimateVersionCount(project);
     
-    // Template info
-    const isTemplateBased = project.raw?.project?.parent_id || project.raw?.site?.parent_id;
-    const hasDerivatives = project.raw?.project?.stats?.remixes > 0 || project.raw?.remixes > 0;
-    const remixCount = project.raw?.project?.stats?.remixes || project.raw?.remixes || 0;
+    // Template information
+    const isTemplateBased = project.raw?.project?.parent_id || project.project?.parent_id;
+    const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
+    const remixCount = project.raw?.project?.stats?.remixes || 0;
 
     card.innerHTML = `
       <div class="project-header">
@@ -97,22 +97,27 @@ class UIManager {
           <span class="meta-label">Created:</span>
           <span class="meta-value">${this.formatDate(project.created_at)}</span>
         </div>
-        ${isTemplateBased ? `
-        <div class="meta-item template-info">
-          <span class="meta-label">Template:</span>
-          <span class="meta-value">Based on Template</span>
-        </div>
-        ` : ''}
-        ${hasDerivatives ? `
-        <div class="meta-item derivatives-info">
-          <span class="meta-label">Forks:</span>
-          <span class="meta-value">${remixCount} derivative${remixCount === 1 ? '' : 's'}</span>
-        </div>
-        ` : ''}
       </div>
 
       ${project.description ? `
         <p class="project-description">${this.escapeHtml(project.description)}</p>
+      ` : ''}
+
+      ${isTemplateBased || hasDerivatives ? `
+        <div class="template-info">
+          ${isTemplateBased ? `
+            <span class="template-badge template-based">
+              <span class="template-icon">🔗</span>
+              Based on template
+            </span>
+          ` : ''}
+          ${hasDerivatives ? `
+            <span class="template-badge derivatives">
+              <span class="template-icon">🧬</span>
+              ${remixCount} ${remixCount === 1 ? 'derivative' : 'derivatives'}
+            </span>
+          ` : ''}
+        </div>
       ` : ''}
 
       <div class="project-image">
@@ -124,7 +129,7 @@ class UIManager {
 
       <div class="project-footer">
         <div class="project-tags">
-          ${this.generateQualityTags(project, qualityScore, isTemplateBased, hasDerivatives)}
+          ${this.generateQualityTags(project, qualityScore)}
         </div>
       </div>
     `;
@@ -140,7 +145,7 @@ class UIManager {
     return 'var(--rainbow-red)';
   }
 
-  generateQualityTags(project, score, isTemplateBased, hasDerivatives) {
+  generateQualityTags(project, score) {
     const tags = [];
     
     if (score >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
@@ -156,15 +161,6 @@ class UIManager {
     const estimatedVersions = window.gemFilter.estimateVersionCount(project);
     if (estimatedVersions > 100) {
       tags.push('<span class="tag tag-effort">High Effort</span>');
-    }
-    
-    if (isTemplateBased) {
-      tags.push('<span class="tag tag-template">Template-Based</span>');
-    }
-    
-    if (hasDerivatives) {
-      const remixCount = project.raw?.project?.stats?.remixes || project.raw?.remixes || 0;
-      tags.push(`<span class="tag tag-derivatives">${remixCount} Fork${remixCount === 1 ? '' : 's'}</span>`);
     }
     
     return tags.join('');
