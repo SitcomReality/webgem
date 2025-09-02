@@ -204,3 +204,4 @@ class GemFilter {
 
 // Global filter instance
 window.gemFilter = new GemFilter();
+

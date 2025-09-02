@@ -3,66 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Websim Hidden Gems - Discover the Overlooked Treasures</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>WebGem | Prestige Project Discovery</title>
+    
+    <!-- Refactored CSS modules -->
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components/buttons.css">
+    <link rel="stylesheet" href="components/forms.css">
+    <link rel="stylesheet" href="components/cards.css">
+    <link rel="stylesheet" href="components/controls.css">
+    <link rel="stylesheet" href="components/filters.css">
+    <link rel="stylesheet" href="components/loading.css">
+    <link rel="stylesheet" href="components/tags.css">
+    <link rel="stylesheet" href="components/stats.css">
+    <link rel="stylesheet" href="components/curation.css">
+    <link rel="stylesheet" href="components/toolbar.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="assistant/styles.css">
+
+    <style>
+      /* Smooth scrolling for anchor links */
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="matrix-bg"></div>
     
     <header class="header">
-        <div class="container">
-            <h1 class="title">
-                <span class="rainbow-text">Hidden Gems</span>
-                <span class="subtitle">Websim's Overlooked Treasures</span>
-            </h1>
-            <p class="tagline">Where technical excellence meets artistic vision, away from the trending noise.</p>
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="title">
+                    <span class="rainbow-text">WebGem</span>
+                </h1>
+                <div class="subtitle-section">
+                    <span class="subtitle">Prestige Project Discovery</span>
+                    <p class="tagline">Discover technically sophisticated projects beyond the trending noise</p>
+                </div>
+            </div>
+            
+            <div class="stats-compact header-stats">
+                <span class="stat-chip"><span class="k">Analyzing</span><span id="analyzingCount">0</span></span>
+                <span class="stat-chip"><span class="k">Gems</span><span id="gemsFound">0</span></span>
+            </div>
+            
+            <div class="controls-section">
+                <div class="controls toolbar compact">
+                    <div class="toolbar-group-left">
+                        <div class="inline-group view-controls">
+                            <div class="segmented small" id="viewToggle">
+                                <button class="seg-btn view-btn" data-view="grid" title="Grid View" aria-selected="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"></path></svg>
+                                </button>
+                                <button class="seg-btn view-btn" data-view="list" title="List View">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 4h18v2H3zM3 11h18v2H3zM3 18h18v2H3z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <button id="filterToggle" class="filter-toggle-btn compact">⚙️ Filters</button>
+                        <button id="infoToggle" class="info-toggle-btn compact" title="About This Platform">ℹ️ Info</button>
+                    </div>
+
+                    <button id="refreshBtn" class="btn-primary compact"><span class="btn-text">Refresh</span></button>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="main">
         <div class="container">
-            <div class="controls">
-                <div class="filter-group">
-                    <label class="filter-label">Minimum Versions:</label>
-                    <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
-                    <span id="minVersionsDisplay" class="value-display">50</span>
-                </div>
-                
-                <div class="filter-group">
-                    <label class="filter-label">Discovery Mode:</label>
-                    <select id="discoveryMode" class="select">
-                        <option value="gems">Hidden Gems</option>
-                        <option value="technical">Technical Marvels</option>
-                        <option value="artistic">Artistic Spectacles</option>
-                        <option value="underrated">Underrated All</option>
-                    </select>
-                </div>
-
-                <button id="refreshBtn" class="btn-primary">
-                    <span class="btn-text">Discover Gems</span>
-                </button>
-            </div>
-
-            <div class="stats-bar">
-                <div class="stat">
-                    <span class="stat-label">Analyzing:</span>
-                    <span id="analyzingCount" class="stat-value">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Gems Found:</span>
-                    <span id="gemsFound" class="stat-value">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Avg Quality Score:</span>
-                    <span id="avgQuality" class="stat-value">0.0</span>
-                </div>
-            </div>
-
             <div id="loading" class="loading hidden">
-                <div class="loading-text">Scanning the matrix for hidden treasures...</div>
+                <div class="loading-text">Analyzing projects</div>
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
                 </div>
@@ -71,20 +88,51 @@
             <div id="results" class="results">
                 <!-- Projects will be populated here -->
             </div>
+            <div id="loadMoreContainer" class="load-more-container hidden">
+                <button id="loadMoreBtn" class="btn-primary">Load More Gems</button>
+            </div>
         </div>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>Built by hackers, for hackers. Preserving technical artistry in the age of algorithmic mediocrity.</p>
+            <p>Crafted for developers who appreciate technical excellence over viral trends</p>
         </div>
     </footer>
 
+    <!-- Load scripts in correct order -->
     <script src="api.js"></script>
     <script src="filters.js"></script>
-    <script src="ui.js"></script>
+    <script src="ui-controls/info-panel.js"></script>
+    <script src="ui-controls/filter-panel.js"></script>
+    <script src="ui-controls/grid-renderer.js"></script>
+    <script src="ui-controls/curation-ui.js"></script>
+    <script src="ui-controls.js"></script>
+    <script src="curations.js"></script>
     <script src="app.js"></script>
+    <script src="assistant/prompt.js"></script>
+    <script src="assistant/llm.js"></script>
+    <script src="assistant/ui.js"></script>
+    <script src="assistant/index.js"></script>
+    
+    <!-- Initialize after all scripts load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure all global objects exist before initializing
+            const initInterval = setInterval(() => {
+                if (window.websimAPI && window.gemFilter && window.uiManager && window.curationsDB) {
+                    clearInterval(initInterval);
+                    window.app = new HiddenGemsApp();
+                    window.app.initialize();
+                    
+                    // Re-initialize curation UI now that DB is available
+                    if (window.curationUI) {
+                        window.curationUI.setup();
+                    }
+                }
+            }, 100);
+        });
+    </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
-
