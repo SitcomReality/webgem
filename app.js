@@ -110,7 +110,7 @@ class HiddenGemsApp {
     const projects = [];
     const technicalTerms = ['algorithm', 'simulation', 'visualization', 'physics', 'ai', 'ml', 'data'];
     
-    for (const term of technicalTerms.slice(0, 3)) { // Limit to avoid rate limits
+    for (const term of technicalTerms.slice(0, 3)) {
       try {
         const results = await window.websimAPI.getSearchFeed('quality', term, { limit: 20 });
         if (results.data) projects.push(...results.data);
@@ -138,12 +138,32 @@ class HiddenGemsApp {
     return projects;
   }
 
+  async fetchGeneralProjects() {
+    const projects = [];
+    
+    try {
+      // Mix of different sources
+      const [quality, older] = await Promise.all([
+        window.websimAPI.getSearchFeed('quality', 'interactive', { limit: 50 }),
+        window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
+      ]);
+      
+      if (quality.data) projects.push(...quality.data);
+      if (older.data) projects.push(...older.data);
+      
+    } catch (error) {
+      console.warn('Failed to fetch general projects:', error);
+    }
+    
+    return projects;
+  }
+
   async fetchUnderratedProjects() {
     const projects = [];
     
     try {
       // Get projects sorted by quality rather than popularity
-      const qualityResults = await window.websimAPI.getSearchFeed('quality', '', { limit: 100 });
+      const qualityResults = await window.websimAPI.getSearchFeed('quality', 'creative', { limit: 100 });
       if (qualityResults.data) projects.push(...qualityResults.data);
       
       // Get some older projects that might be overlooked
@@ -155,26 +175,6 @@ class HiddenGemsApp {
       
     } catch (error) {
       console.warn('Failed to fetch underrated projects:', error);
-    }
-    
-    return projects;
-  }
-
-  async fetchGeneralProjects() {
-    const projects = [];
-    
-    try {
-      // Mix of different sources
-      const [quality, older] = await Promise.all([
-        window.websimAPI.getSearchFeed('quality', '', { limit: 50 }),
-        window.websimAPI.getTrendingFeed({ limit: 50, range: 'week' })
-      ]);
-      
-      if (quality.data) projects.push(...quality.data);
-      if (older.data) projects.push(...older.data);
-      
-    } catch (error) {
-      console.warn('Failed to fetch general projects:', error);
     }
     
     return projects;
@@ -235,4 +235,3 @@ console.log('📡 API endpoints ready');
 console.log('🔍 Gem filtering algorithms loaded');
 console.log('🎨 Pride Matrix aesthetic active');
 console.log('⚡ Ready to discover overlooked treasures...');
-
