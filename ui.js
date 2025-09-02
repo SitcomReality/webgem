@@ -72,6 +72,11 @@ class UIManager {
     const qualityScore = project.qualityScore || 0;
     const scoreColor = this.getScoreColor(qualityScore);
     const estimatedVersions = window.gemFilter.estimateVersionCount(project);
+    
+    // Template info
+    const isTemplateBased = project.raw?.project?.parent_id || project.raw?.site?.parent_id;
+    const hasDerivatives = project.raw?.project?.stats?.remixes > 0 || project.raw?.remixes > 0;
+    const remixCount = project.raw?.project?.stats?.remixes || project.raw?.remixes || 0;
 
     card.innerHTML = `
       <div class="project-header">
@@ -92,6 +97,18 @@ class UIManager {
           <span class="meta-label">Created:</span>
           <span class="meta-value">${this.formatDate(project.created_at)}</span>
         </div>
+        ${isTemplateBased ? `
+        <div class="meta-item template-info">
+          <span class="meta-label">Template:</span>
+          <span class="meta-value">Based on Template</span>
+        </div>
+        ` : ''}
+        ${hasDerivatives ? `
+        <div class="meta-item derivatives-info">
+          <span class="meta-label">Forks:</span>
+          <span class="meta-value">${remixCount} derivative${remixCount === 1 ? '' : 's'}</span>
+        </div>
+        ` : ''}
       </div>
 
       ${project.description ? `
@@ -107,7 +124,7 @@ class UIManager {
 
       <div class="project-footer">
         <div class="project-tags">
-          ${this.generateQualityTags(project, qualityScore)}
+          ${this.generateQualityTags(project, qualityScore, isTemplateBased, hasDerivatives)}
         </div>
       </div>
     `;
@@ -123,7 +140,7 @@ class UIManager {
     return 'var(--rainbow-red)';
   }
 
-  generateQualityTags(project, score) {
+  generateQualityTags(project, score, isTemplateBased, hasDerivatives) {
     const tags = [];
     
     if (score >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
@@ -139,6 +156,15 @@ class UIManager {
     const estimatedVersions = window.gemFilter.estimateVersionCount(project);
     if (estimatedVersions > 100) {
       tags.push('<span class="tag tag-effort">High Effort</span>');
+    }
+    
+    if (isTemplateBased) {
+      tags.push('<span class="tag tag-template">Template-Based</span>');
+    }
+    
+    if (hasDerivatives) {
+      const remixCount = project.raw?.project?.stats?.remixes || project.raw?.remixes || 0;
+      tags.push(`<span class="tag tag-derivatives">${remixCount} Fork${remixCount === 1 ? '' : 's'}</span>`);
     }
     
     return tags.join('');
@@ -329,4 +355,3 @@ document.head.appendChild(style);
 
 // Global UI instance
 window.uiManager = new UIManager();
-
