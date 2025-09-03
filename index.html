@@ -13,59 +13,61 @@
     <div class="matrix-bg"></div>
     
     <header class="header">
-        <div class="container">
-            <h1 class="title">
-                <span class="rainbow-text">WebGem</span>
-                <span class="subtitle">Prestige Project Discovery</span>
-            </h1>
-            <p class="tagline">Discover technically sophisticated projects beyond the trending noise</p>
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="title">
+                    <span class="rainbow-text">WebGem</span>
+                    <span class="subtitle">Prestige Project Discovery</span>
+                </h1>
+                <p class="tagline">Discover technically sophisticated projects beyond the trending noise</p>
+            </div>
+            
+            <div class="controls-section">
+                <div class="controls">
+                    <div class="controls-grid">
+                        <div class="filter-group">
+                            <label class="filter-label">Minimum Versions</label>
+                            <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
+                            <span id="minVersionsDisplay" class="value-display">50</span>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Discovery Mode</label>
+                            <select id="discoveryMode" class="select">
+                                <option value="gems">Hidden Gems</option>
+                                <option value="technical">Technical Marvels</option>
+                                <option value="artistic">Artistic Spectacles</option>
+                                <option value="underrated">Underrated All</option>
+                                <option value="templates">Template Originals</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-controls">
+                        <div class="stat-item">
+                            <span class="stat-label">Analyzing</span>
+                            <span id="analyzingCount" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Gems Found</span>
+                            <span id="gemsFound" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg Quality</span>
+                            <span id="avgQuality" class="stat-value">0.0</span>
+                        </div>
+                        
+                        <button id="refreshBtn" class="btn-primary">
+                            <span class="btn-text">Discover</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="main">
         <div class="container">
-            <div class="controls">
-                <div class="controls-left">
-                    <div class="filter-group">
-                        <label class="filter-label">Minimum Versions</label>
-                        <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
-                        <span id="minVersionsDisplay" class="value-display">50</span>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Discovery Mode</label>
-                        <select id="discoveryMode" class="select">
-                            <option value="gems">Hidden Gems</option>
-                            <option value="technical">Technical Marvels</option>
-                            <option value="artistic">Artistic Spectacles</option>
-                            <option value="underrated">Underrated All</option>
-                            <option value="templates">Template Originals</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="controls-right">
-                    <div class="stats-bar">
-                        <div class="stat">
-                            <span class="stat-label">Analyzing</span>
-                            <span id="analyzingCount" class="stat-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Gems Found</span>
-                            <span id="gemsFound" class="stat-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Avg Quality</span>
-                            <span id="avgQuality" class="stat-value">0.0</span>
-                        </div>
-                    </div>
-                    
-                    <button id="refreshBtn" class="btn-primary">
-                        <span class="btn-text">Discover</span>
-                    </button>
-                </div>
-            </div>
-
             <div id="loading" class="loading hidden">
                 <div class="loading-text">Analyzing projects</div>
                 <div class="progress-bar">
