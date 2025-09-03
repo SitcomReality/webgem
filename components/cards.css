@@ -22,11 +22,13 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
 }
 
 .project-title {
   flex: 1;
   margin-right: var(--space-md);
+  min-width: 0;
 }
 
 .project-title a {
@@ -107,4 +109,52 @@
 
 .creator-link:hover .creator-avatar {
   box-shadow: 0 0 0 2px var(--accent-sapphire);
+}
+
+/* Ensure proper stacking order */
+.project-footer {
+  order: 3;
+  margin-top: auto;
+}
+
+.project-score {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.template-info {
+  order: 2;
+  margin-top: var(--space-sm);
+}
+
+.template-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  backdrop-filter: blur(4px);
+  border: 1px solid;
+  transition: var(--component-transition);
+}
+
+.template-badge.template-based {
+  background: rgba(155, 89, 182, 0.15);
+  color: var(--accent-amethyst);
+  border-color: rgba(155, 89, 182, 0.3);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.template-badge.template-based:hover {
+  background: rgba(155, 89, 182, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3);
 }

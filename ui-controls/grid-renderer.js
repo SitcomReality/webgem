@@ -11,9 +11,7 @@ class GridRenderer {
 
     const isTemplateBased = project.raw?.project?.parent_id || project.project?.parent_id;
     const parentProjectId = project.raw?.project?.parent_id || project.project?.parent_id;
-    const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
-    const remixCount = project.raw?.project?.stats?.remixes || 0;
-
+    
     const creator = project.raw?.project?.created_by || project.raw?.site?.owner;
     const creatorUsername = creator?.username || 'unknown';
     const creatorAvatar = creator?.avatar_url || null;
@@ -21,31 +19,24 @@ class GridRenderer {
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
 
     card.innerHTML = `
-      ${isTemplateBased ? `
-        <div class="template-info">
-          <a href="https://websim.com/p/${parentProjectId}" 
-             target="_blank" 
-             class="template-badge template-based"
-             title="View original template">
-            <span class="template-text">fork</span>
-          </a>
-        </div>
-      ` : ''}
-      
-      ${hasDerivatives ? `
-        <div class="template-info">
-          <span class="template-badge derivatives">
-            ${remixCount} ${remixCount === 1 ? 'remix' : 'remixes'}
-          </span>
-        </div>
-      ` : ''}
-
       <div class="project-header">
         <h3 class="project-title">
           <a href="https://websim.com/c/${project.id}" target="_blank">${GridRenderer.escapeHtml(project.title)}</a>
         </h3>
-        <div class="project-score" style="color: ${scoreColor}">
-          ${(qualityScore * 100).toFixed(0)}%
+        <div class="score-section">
+          <div class="project-score" style="color: ${scoreColor}">
+            ${(qualityScore * 100).toFixed(0)}%
+          </div>
+          ${isTemplateBased ? `
+            <div class="template-info">
+              <a href="https://websim.com/p/${parentProjectId}" 
+                 target="_blank" 
+                 class="template-badge template-based"
+                 title="View original template">
+                <span class="template-text">fork</span>
+              </a>
+            </div>
+          ` : ''}
         </div>
       </div>
       
