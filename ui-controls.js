@@ -45,11 +45,11 @@ class UIManager {
 
     const filterToggle = document.getElementById('filterToggle');
     filterToggle.addEventListener('click', () => {
-        this.filterPanel.show();
+      this.filterPanel.show();
     });
 
-    // Curation UI
-    this.curationUI = new window.CurationUI(window.curationsDB);
+    // Curation UI - use the new CurationUIManager
+    this.curationUI = new window.CurationUIManager(window.curationsDB);
   }
 
   bindSegmentButtons(selector, formId) {
