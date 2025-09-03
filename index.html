@@ -33,13 +33,12 @@
                 <div class="controls toolbar">
                     <div class="main-controls">
                         <div class="control-group">
-                            <label class="control-label">Discovery Mode</label>
-                            <div class="segmented" role="tablist" aria-label="Discovery Mode">
-                                <button class="seg-btn" data-mode="gems" aria-selected="true">Gems</button>
-                                <button class="seg-btn" data-mode="technical">Technical</button>
-                                <button class="seg-btn" data-mode="artistic">Artistic</button>
-                                <button class="seg-btn" data-mode="underrated">Underrated</button>
-                                <button class="seg-btn" data-mode="templates">Templates</button>
+                            <label class="control-label">Time Range</label>
+                            <div class="segmented" role="tablist" aria-label="Time Range">
+                                <button class="seg-btn" data-range="day" aria-selected="true">Day</button>
+                                <button class="seg-btn" data-range="week">Week</button>
+                                <button class="seg-btn" data-range="month">Month</button>
+                                <button class="seg-btn" data-range="year">Year</button>
                             </div>
                         </div>
                         <div class="control-group versions-group">
@@ -72,14 +71,13 @@
                         <button id="filterToggle" class="filter-toggle-btn">⚙️ Filters</button>
                     </div>
 
-                    <!-- Hidden form controls for app logic compatibility -->
+                    <!-- Hidden form controls -->
                     <div class="visually-hidden">
-                        <select id="discoveryMode">
-                            <option value="gems" selected>Hidden Gems</option>
-                            <option value="technical">Technical Marvels</option>
-                            <option value="artistic">Artistic Spectacles</option>
-                            <option value="underrated">Underrated All</option>
-                            <option value="templates">Template Originals</option>
+                        <select id="timeRange">
+                            <option value="day" selected>Day</option>
+                            <option value="week">Week</option>
+                            <option value="month">Month</option>
+                            <option value="year">Year</option>
                         </select>
                         <select id="sortBy">
                             <option value="views" selected>Views</option>

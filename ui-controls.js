@@ -11,7 +11,8 @@ class UIManager {
       discoveryMode: document.getElementById('discoveryMode'),
       sortBy: document.getElementById('sortBy'),
       sortOrder: document.getElementById('sortOrder'),
-      refreshBtn: document.getElementById('refreshBtn')
+      refreshBtn: document.getElementById('refreshBtn'),
+      timeRange: document.getElementById('timeRange')
     };
 
     this.initializeControls();
@@ -34,15 +35,17 @@ class UIManager {
       window.app.discoverGems();
     });
 
-    document.querySelectorAll('.seg-btn[data-mode]').forEach(btn => {
+    // Time range buttons
+    document.querySelectorAll('.seg-btn[data-range]').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.seg-btn[data-mode]').forEach(b => b.setAttribute('aria-selected','false'));
+        document.querySelectorAll('.seg-btn[data-range]').forEach(b => b.setAttribute('aria-selected','false'));
         btn.setAttribute('aria-selected','true');
-        this.elements.discoveryMode.value = btn.dataset.mode;
+        this.elements.timeRange.value = btn.dataset.range;
         window.app.discoverGems();
       });
     });
 
+    // Sort buttons
     document.querySelectorAll('.seg-btn[data-sort]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.seg-btn[data-sort]').forEach(b => b.setAttribute('aria-selected','false'));

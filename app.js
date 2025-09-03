@@ -35,19 +35,19 @@ class HiddenGemsApp {
       
       // Get discovery parameters
       const minVersions = parseInt(window.uiManager.elements.minVersions.value);
-      const discoveryMode = window.uiManager.elements.discoveryMode.value;
+      const timeRange = window.uiManager.elements.timeRange.value;
       const sortBy = window.uiManager.elements.sortBy.value;
       const sortOrder = window.uiManager.elements.sortOrder.value;
       
       // Fetch and score projects
-      const projectSources = await this.fetchProjectSources(discoveryMode);
+      const projectSources = await this.fetchProjectSources(timeRange);
       const scoredProjects = await this.scoreProjects(projectSources);
       const gems = this.filterGems(scoredProjects, minVersions);
       
       // Sort the gems
       const sortedGems = this.sortProjects(gems, sortBy, sortOrder);
       
-      console.log(`💎 Found ${sortedGems.length} hidden gems`);
+      console.log(`💎 Found ${sortedGems.length} hidden gems in ${timeRange} range`);
       
       // Calculate average quality
       const avgQuality = sortedGems.length > 0 
@@ -70,153 +70,69 @@ class HiddenGemsApp {
     }
   }
 
-  async fetchProjectSources(mode) {
+  async fetchProjectSources(range) {
     const sources = [];
-    console.log(`🎯 Discovery mode: ${mode}`);
+    console.log(`🎯 Time range: ${range}`);
     
     try {
-      // Always get some trending projects for comparison/filtering
-      console.log('🔍 Fetching trending feed...');
-      const trending = await window.websimAPI.getTrendingFeed({ limit: 100 });
-      console.log(`📈 Trending feed: ${trending.data?.length || 0} projects`);
+      // Get projects from the selected time range
+      console.log('🔍 Fetching projects from time range...');
+      const results = await window.websimAPI.getTrendingFeed({ 
+        limit: 100,
+        range: range 
+      });
+      console.log(`📈 Projects from ${range} range: ${results.data?.length || 0}`);
       
-      if (trending.data) {
-        sources.push(...trending.data);
-        console.log(`✅ Added ${trending.data.length} from trending`);
-      } else {
-        console.warn('⚠️ No data in trending response:', trending);
-      }
-
-      // Mode-specific additional sources
-      console.log(`🎭 Fetching mode-specific sources for: ${mode}`);
-      let additionalProjects = [];
-      
-      switch (mode) {
-        case 'technical':
-          additionalProjects = await this.fetchTechnicalProjects();
-          break;
-        case 'artistic':
-          additionalProjects = await this.fetchArtisticProjects();
-          break;
-        case 'underrated':
-          additionalProjects = await this.fetchUnderratedProjects();
-          break;
-        case 'templates':
-          additionalProjects = await this.fetchTemplateProjects();
-          break;
-        default: // gems
-          additionalProjects = await this.fetchGeneralProjects();
+      if (results.data) {
+        sources.push(...results.data);
       }
       
-      console.log(`📦 Additional projects for ${mode}: ${additionalProjects.length}`);
+      // Also get some search results to ensure diversity
+      const searchResults = await window.websimAPI.getSearchFeed('newest', '*', { 
+        limit: 50,
+        range: range 
+      });
       
-      if (additionalProjects.length > 0) {
-        sources.push(...additionalProjects);
+      if (searchResults.data) {
+        sources.push(...searchResults.data);
       }
       
     } catch (error) {
       console.error('❌ Error fetching project sources:', error);
     }
     
-    console.log(`📊 Total raw sources before deduplication: ${sources.length}`);
-    
     // Remove duplicates
     const uniqueProjects = sources.filter((project, index, array) => 
       array.findIndex(p => p.id === project.id) === index
     );
     
-    console.log(`🎯 Unique projects after deduplication: ${uniqueProjects.length}`);
-    
+    console.log(`🎯 Unique projects: ${uniqueProjects.length}`);
     return uniqueProjects;
   }
 
   async fetchTechnicalProjects() {
-    const projects = [];
-    
-    console.log(`🔧 Fetching technical projects with terms: ${technicalSearchTerms.slice(0, 3)}`);
-    
-    for (const term of technicalSearchTerms.slice(0, 3)) {
-      console.log(`📡 Searching for: ${term}`);
-      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: projectsPerSearchTerm });
-      console.log(`📊 Results for "${term}": ${results.data?.length || 0} projects`);
-      
-      if (results.data) {
-        projects.push(...results.data);
-      }
-    }
-    
-    console.log(`🔧 Total technical projects: ${projects.length}`);
-    return projects;
+    // Removed - no longer needed with time-based discovery
+    return [];
   }
 
   async fetchArtisticProjects() {
-    const projects = [];
-    
-    console.log(`🎨 Fetching artistic projects with terms: ${artisticSearchTerms.slice(0, 3)}`);
-    
-    for (const term of artisticSearchTerms.slice(0, 3)) {
-      console.log(`📡 Searching for: ${term}`);
-      const results = await window.websimAPI.getSearchFeed('newest', term, { limit: projectsPerSearchTerm });
-      console.log(`📊 Results for "${term}": ${results.data?.length || 0} projects`);
-      
-      if (results.data) {
-        projects.push(...results.data);
-      }
-    }
-    
-    console.log(`🎨 Total artistic projects: ${projects.length}`);
-    return projects;
+    // Removed - no longer needed with time-based discovery
+    return [];
   }
 
   async fetchUnderratedProjects() {
-    console.log(`⭐ Fetching underrated projects...`);
-    
-    const projects = [];
-    const qualityResults = await window.websimAPI.getSearchFeed('newest', genericFallbackTerm, { limit: searchResultsLimit });
-    console.log(`📊 Underrated - quality results: ${qualityResults.data?.length || 0}`);
-    
-    if (qualityResults.data) projects.push(...qualityResults.data);
-    
-    const olderResults = await window.websimAPI.getTrendingFeed({ limit: searchResultsLimit / 2, range: trendingRange });
-    console.log(`📊 Underrated - older trending: ${olderResults.data?.length || 0}`);
-    
-    if (olderResults.data) projects.push(...olderResults.data);
-    
-    console.log(`⭐ Total underrated projects: ${projects.length}`);
-    return projects;
+    // Removed - no longer needed with time-based discovery
+    return [];
   }
 
   async fetchGeneralProjects() {
-    console.log(`🌟 Fetching general projects...`);
-    
-    const projects = [];
-    
-    const [quality, older] = await Promise.all([
-      window.websimAPI.getSearchFeed('newest', genericFallbackTerm, { limit: searchResultsLimit }),
-      window.websimAPI.getTrendingFeed({ limit: searchResultsLimit / 2, range: trendingRange })
-    ]);
-    
-    console.log(`📊 General - search feed results: ${quality.data?.length || 0}`);
-    console.log(`📊 General - trending feed results: ${older.data?.length || 0}`);
-    
-    if (quality.data) projects.push(...quality.data);
-    if (older.data) projects.push(...older.data);
-    
-    console.log(`🌟 Total general projects: ${projects.length}`);
-    return projects;
+    // Removed - no longer needed with time-based discovery
+    return [];
   }
 
   async fetchTemplateProjects() {
-    console.log(`📐 Fetching template projects...`);
-    
-    const projects = [];
-    const res = await window.websimAPI.getSearchFeed('best_template', genericFallbackTerm, { limit: templateSearchLimit });
-    console.log(`📊 Template projects response: ${res.data?.length || 0}`);
-    
-    if (res.data) projects.push(...res.data);
-    
-    console.log(`📐 Total template projects: ${projects.length}`);
-    return projects;
+    // Removed - no longer needed with time-based discovery
+    return [];
   }
 
   async scoreProjects(projects) {
