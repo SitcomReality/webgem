@@ -1,0 +1,75 @@
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .header-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+  
+  .controls-section {
+    max-width: none;
+    min-width: auto;
+  }
+  
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .controls {
+    padding: var(--space-md);
+  }
+  
+  .stats-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .stat-item {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+  
+  .btn-primary {
+    width: 100%;
+    margin-top: var(--space-sm);
+  }
+  
+  .results {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+  
+  .filter-panel {
+    width: 95vw;
+    max-height: 90vh;
+  }
+  
+  .filter-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    padding: 0 var(--space-md);
+  }
+  
+  .controls {
+    padding: var(--space-sm);
+  }
+  
+  .title {
+    font-size: 36px;
+  }
+  
+  .subtitle {
+    font-size: 16px;
+  }
+  
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+

@@ -1,0 +1,47 @@
+/* Design Tokens & Variables */
+:root {
+  /* Sophisticated Color Palette */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #161616;
+  --bg-tertiary: #1e1e1e;
+  --bg-card: #1a1a1a;
+  --bg-hover: #252525;
+  
+  /* Refined Accent Colors - Muted Jewel Tones */
+  --accent-emerald: #00d4aa;
+  --accent-sapphire: #5b7cfa;
+  --accent-amethyst: #9b59b6;
+  --accent-ruby: #e74c3c;
+  --accent-gold: #f39c12;
+  
+  /* Typography Colors */
+  --text-primary: #e8e8e8;
+  --text-secondary: #b0b0b0;
+  --text-muted: #7a7a7a;
+  --text-dim: #555555;
+  
+  /* Border & Shadow */
+  --border-subtle: #2a2a2a;
+  --border-accent: #3a3a3a;
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.2);
+  
+  /* Typography */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Spacing - Refined Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-3xl: 48px;
+  
+  /* Layout */
+  --container-width: 1400px;
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+}
