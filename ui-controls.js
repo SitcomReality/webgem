@@ -62,6 +62,98 @@ class UIManager {
         window.app.discoverGems();
       });
     }
+
+    // Filter toggle button
+    const filterToggle = document.getElementById('filterToggle');
+    const filterPanel = document.createElement('div');
+    filterPanel.className = 'filter-panel';
+    filterPanel.innerHTML = `
+        <div class="filter-header">
+            <h3>Filter Terms</h3>
+            <button class="filter-close" aria-label="Close filters">×</button>
+        </div>
+        <div class="filter-content">
+            ${this.generateFilterCategories()}
+        </div>
+        <div class="filter-actions">
+            <button class="filter-btn" onclick="window.uiManager.resetFilters()">Reset All</button>
+            <button class="filter-btn primary" onclick="window.uiManager.applyFilters()">Apply Filters</button>
+        </div>
+    `;
+    
+    document.body.appendChild(filterPanel);
+    
+    filterToggle.addEventListener('click', () => {
+        filterPanel.classList.toggle('active');
+    });
+    
+    filterPanel.querySelector('.filter-close').addEventListener('click', () => {
+        filterPanel.classList.remove('active');
+    });
+    
+    // Close on outside click
+    filterPanel.addEventListener('click', (e) => {
+        if (e.target === filterPanel) {
+            filterPanel.classList.remove('active');
+        }
+    });
+  }
+
+  generateFilterCategories() {
+    let html = '';
+    Object.entries(window.gemFilter.filterCategories).forEach(([key, category]) => {
+        const isActive = window.gemFilter.isCategoryActive(key);
+        html += `
+            <div class="filter-category">
+                <div class="category-header">
+                    <label class="category-label">
+                        <input type="checkbox" 
+                               ${isActive ? 'checked' : ''} 
+                               onchange="window.uiManager.toggleCategory('${key}')">
+                        ${category.name}
+                    </label>
+                </div>
+                <div class="category-terms">
+                    ${Array.from(category.terms).map(term => `
+                        <label class="term-label">
+                            <input type="checkbox" 
+                                   ${window.gemFilter.isTermActive(term) ? 'checked' : ''} 
+                                   onchange="window.uiManager.toggleTerm('${term}')">
+                            ${term}
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    });
+    return html;
+  }
+
+  toggleTerm(term) {
+    window.gemFilter.toggleTerm(term);
+    this.generateFilterCategories();
+  }
+
+  toggleCategory(categoryKey) {
+    window.gemFilter.toggleCategory(categoryKey);
+    this.generateFilterCategories();
+  }
+
+  resetFilters() {
+    window.gemFilter.blockedTerms.clear();
+    Object.values(window.gemFilter.filterCategories).forEach(category => {
+        category.terms.forEach(term => {
+            window.gemFilter.blockedTerms.delete(term);
+        });
+    });
+    window.gemFilter.saveFilterState();
+    this.generateFilterCategories();
+    window.app.discoverGems();
+  }
+
+  applyFilters() {
+    document.querySelector('.filter-panel').classList.remove('active');
+    window.app.discoverGems();
   }
 
   showLoading() {
