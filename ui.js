@@ -1,3 +1,163 @@
+class FilterUIManager {
+  constructor() {
+    this.isOpen = false;
+    this.createFilterPanel();
+    this.createToggleButton();
+  }
+
+  createToggleButton() {
+    const button = document.createElement('button');
+    button.id = 'filterToggle';
+    button.innerHTML = '⚙️ Filters';
+    button.className = 'filter-toggle-btn';
+    button.addEventListener('click', () => this.togglePanel());
+    
+    // Insert after refresh button
+    const refreshBtn = document.getElementById('refreshBtn');
+    refreshBtn.parentNode.insertBefore(button, refreshBtn.nextSibling);
+  }
+
+  createFilterPanel() {
+    const panel = document.createElement('div');
+    panel.id = 'filterPanel';
+    panel.className = 'filter-panel hidden';
+    
+    const header = document.createElement('div');
+    header.className = 'filter-header';
+    header.innerHTML = `
+      <h3>Content Filters</h3>
+      <button id="closeFilters" class="filter-close">×</button>
+    `;
+
+    const content = document.createElement('div');
+    content.className = 'filter-content';
+
+    // Create categories
+    Object.entries(window.gemFilter.filterCategories).forEach(([key, category]) => {
+      const categoryDiv = this.createCategorySection(key, category);
+      content.appendChild(categoryDiv);
+    });
+
+    // Add quick actions
+    const actions = document.createElement('div');
+    actions.className = 'filter-actions';
+    actions.innerHTML = `
+      <button class="filter-btn" onclick="window.filterUI.selectAll()">Select All</button>
+      <button class="filter-btn" onclick="window.filterUI.deselectAll()">Clear All</button>
+      <button class="filter-btn primary" onclick="window.filterUI.applyFilters()">Apply</button>
+    `;
+
+    panel.appendChild(header);
+    panel.appendChild(content);
+    panel.appendChild(actions);
+    
+    document.body.appendChild(panel);
+
+    // Close button
+    document.getElementById('closeFilters').addEventListener('click', () => this.togglePanel());
+  }
+
+  createCategorySection(key, category) {
+    const div = document.createElement('div');
+    div.className = 'filter-category';
+    div.style.borderLeftColor = category.color;
+
+    const header = document.createElement('div');
+    header.className = 'category-header';
+    header.innerHTML = `
+      <label class="category-label">
+        <input type="checkbox" 
+               ${window.gemFilter.isCategoryActive(key) ? 'checked' : ''}
+               onchange="window.filterUI.toggleCategory('${key}')">
+        <span>${category.name}</span>
+      </label>
+    `;
+
+    const terms = document.createElement('div');
+    terms.className = 'category-terms';
+    
+    Array.from(category.terms).sort().forEach(term => {
+      const termLabel = document.createElement('label');
+      termLabel.className = 'term-label';
+      termLabel.innerHTML = `
+        <input type="checkbox" 
+               ${window.gemFilter.isTermActive(term) ? 'checked' : ''}
+               onchange="window.filterUI.toggleTerm('${term}')">
+        <span>${term}</span>
+      `;
+      terms.appendChild(termLabel);
+    });
+
+    div.appendChild(header);
+    div.appendChild(terms);
+    return div;
+  }
+
+  togglePanel() {
+    const panel = document.getElementById('filterPanel');
+    this.isOpen = !this.isOpen;
+    
+    if (this.isOpen) {
+      panel.classList.remove('hidden');
+      this.refreshDisplay();
+    } else {
+      panel.classList.add('hidden');
+    }
+  }
+
+  toggleTerm(term) {
+    window.gemFilter.toggleTerm(term);
+    this.refreshDisplay();
+  }
+
+  toggleCategory(key) {
+    window.gemFilter.toggleCategory(key);
+    this.refreshDisplay();
+  }
+
+  selectAll() {
+    Object.entries(window.gemFilter.filterCategories).forEach(([key, category]) => {
+      category.terms.forEach(term => window.gemFilter.blockedTerms.add(term));
+    });
+    window.gemFilter.saveFilterState();
+    this.refreshDisplay();
+  }
+
+  deselectAll() {
+    window.gemFilter.blockedTerms.clear();
+    window.gemFilter.saveFilterState();
+    this.refreshDisplay();
+  }
+
+  applyFilters() {
+    this.togglePanel();
+    window.app.discoverGems();
+  }
+
+  refreshDisplay() {
+    // Update category checkboxes
+    Object.keys(window.gemFilter.filterCategories).forEach(key => {
+      const checkbox = document.querySelector(`.category-label input[type="checkbox"][onchange*="${key}"]`);
+      if (checkbox) {
+        checkbox.checked = window.gemFilter.isCategoryActive(key);
+      }
+    });
+
+    // Update term checkboxes
+    Array.from(window.gemFilter.blockedTerms).forEach(term => {
+      const checkbox = document.querySelector(`input[type="checkbox"][onchange*="${term}"]`);
+      if (checkbox) checkbox.checked = true;
+    });
+  }
+}
+
+// Update UIManager to include filter UI
+const originalInitialize = UIManager.prototype.initializeControls;
+UIManager.prototype.initializeControls = function() {
+  originalInitialize.call(this);
+  window.filterUI = new FilterUIManager();
+};
+
 class UIManager {
   constructor() {
     this.elements = {

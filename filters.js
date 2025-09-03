@@ -4,6 +4,54 @@ class GemFilter {
     this.memeIndicators = new Set();
     this.qualityIndicators = new Set();
     this.initializeKeywordSets();
+    
+    // Define filter categories
+    this.filterCategories = {
+      memes: {
+        name: 'Meme Culture',
+        color: '#ff6b6b',
+        terms: new Set(['meme', 'brainrot', 'cringe', 'waifu', 'dumbest', 'meme', 'shitpost', 'ragebait'])
+      },
+      gaming: {
+        name: 'Gaming',
+        color: '#4ecdc4',
+        terms: new Set(['minecraft', 'roblox', 'robux', 'mario', 'fnaf', 'fnf', 'fortnite', 'funkin', 'pokémon', 'pokemon', 'fakemon', 'undertale', 'deltarune', 'knuckles', 'stickman', 'kirby', 'geometry dash', 'smash bro'])
+      },
+      social: {
+        name: 'Social Media',
+        color: '#45b7d1',
+        terms: new Set(['youtube', 'reddit', 'tiktok', 'instagram', 'facebook', '4chan', 'twitch', 'discord', 'wikipedia'])
+      },
+      entertainment: {
+        name: 'Entertainment',
+        color: '#f9ca24',
+        terms: new Set(['spongebob', 'squidward', 'simpsons', 'family guy', 'south park', 'phineas', 'digital circus', 'bimo', 'labubu', 'bfdi', 'dream island', 'dandy', 'caillou', 'gumball', 'squid game', 'kronos database'])
+      },
+      content: {
+        name: 'Content Terms',
+        color: '#a55eea',
+        terms: new Set(['chibi', 'jerma', 'markiplier', 'little timmy', 'fandom', 'crossover', 'mashup', 'backrooms', 'drip out', 'plushie', 'plushify', 'doesn\'t exist', 'does not exist', 'windows'])
+      },
+      lowQuality: {
+        name: 'Low Quality',
+        color: '#fd79a8',
+        terms: new Set(['emoji', 'noob', 'ytp', 'forsaken', 'sprunki', 'character clash', 'banned', 'poop', '____'])
+      },
+      promotional: {
+        name: 'Promotional',
+        color: '#fd9644',
+        terms: new Set(['donate', 'donations', 'credits', '♦'])
+      }
+    };
+
+    // Initialize all blocked terms
+    this.blockedTerms = new Set();
+    Object.values(this.filterCategories).forEach(category => {
+      category.terms.forEach(term => this.blockedTerms.add(term));
+    });
+
+    // Load saved state
+    this.loadFilterState();
   }
 
   initializeKeywordSets() {
@@ -147,6 +195,13 @@ class GemFilter {
         score -= 0.15;
       }
     });
+
+    // Penalize blocked terms
+    this.blockedTerms.forEach(term => {
+      if (text.includes(term.toLowerCase())) {
+        score -= 0.3;
+      }
+    });
     
     // Penalize very short titles (likely generic)
     if (project.title.length < 20) score -= 0.2;
@@ -156,7 +211,8 @@ class GemFilter {
       /^(simple|basic|easy|quick)\s+/,
       /\b(test|demo|example)\b/,
       /\b(copy|clone)\b/,
-      /\bmeme\b/
+      /\bmeme\b/,
+      /_{4,}/ // 4+ underscores
     ];
     
     genericPatterns.forEach(pattern => {
@@ -180,6 +236,70 @@ class GemFilter {
         qualityScore: this.calculateQualityScore(project)
       }))
       .sort((a, b) => b.qualityScore - a.qualityScore);
+  }
+
+  // Save/Load filter state
+  saveFilterState() {
+    const state = {
+      blockedTerms: Array.from(this.blockedTerms),
+      categories: {}
+    };
+    
+    Object.keys(this.filterCategories).forEach(key => {
+      const category = this.filterCategories[key];
+      const activeTerms = Array.from(category.terms).filter(term => this.blockedTerms.has(term));
+      state.categories[key] = activeTerms.length === category.terms.size;
+    });
+    
+    localStorage.setItem('hiddenGemsFilters', JSON.stringify(state));
+  }
+
+  loadFilterState() {
+    try {
+      const saved = localStorage.getItem('hiddenGemsFilters');
+      if (saved) {
+        const state = JSON.parse(saved);
+        this.blockedTerms = new Set(state.blockedTerms);
+      }
+    } catch (e) {
+      console.warn('Failed to load filter state', e);
+    }
+  }
+
+  // Filter management methods
+  toggleTerm(term) {
+    const lowerTerm = term.toLowerCase();
+    if (this.blockedTerms.has(lowerTerm)) {
+      this.blockedTerms.delete(lowerTerm);
+    } else {
+      this.blockedTerms.add(lowerTerm);
+    }
+    this.saveFilterState();
+  }
+
+  toggleCategory(categoryKey) {
+    const category = this.filterCategories[categoryKey];
+    const allActive = Array.from(category.terms).every(term => this.blockedTerms.has(term));
+    
+    if (allActive) {
+      category.terms.forEach(term => this.blockedTerms.delete(term));
+    } else {
+      category.terms.forEach(term => this.blockedTerms.add(term));
+    }
+    this.saveFilterState();
+  }
+
+  getActiveFilters() {
+    return Array.from(this.blockedTerms);
+  }
+
+  isCategoryActive(categoryKey) {
+    const category = this.filterCategories[categoryKey];
+    return Array.from(category.terms).every(term => this.blockedTerms.has(term));
+  }
+
+  isTermActive(term) {
+    return this.blockedTerms.has(term.toLowerCase());
   }
 }
 
