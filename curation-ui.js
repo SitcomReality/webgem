@@ -95,7 +95,10 @@ class CurationUI {
 
   async refreshCurationsPanel() {
     const listEl = this.panel?.querySelector('#curationsList');
-    if (!listEl || !this.curationsDB) return;
+    if (!listEl || !this.curationsDB) {
+      console.warn('Curation panel or curationsDB not ready');
+      return;
+    }
 
     try {
       const data = await this.curationsDB.load();
