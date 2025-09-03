@@ -74,8 +74,9 @@ class UIManager {
     const scoreColor = this.getScoreColor(qualityScore);
     const estimatedVersions = window.gemFilter.estimateVersionCount(project);
     
-    // Template information
+    // Template information - get parent project ID
     const isTemplateBased = project.raw?.project?.parent_id || project.project?.parent_id;
+    const parentProjectId = project.raw?.project?.parent_id || project.project?.parent_id;
     const hasDerivatives = project.raw?.project?.stats?.remixes > 0;
     const remixCount = project.raw?.project?.stats?.remixes || 0;
 
@@ -91,18 +92,22 @@ class UIManager {
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
     
     card.innerHTML = `
-      ${isTemplateBased || hasDerivatives ? `
+      ${isTemplateBased ? `
         <div class="template-info">
-          ${isTemplateBased ? `
-            <span class="template-badge template-based">
-              Template
-            </span>
-          ` : ''}
-          ${hasDerivatives ? `
-            <span class="template-badge derivatives">
-              ${remixCount} ${remixCount === 1 ? 'remix' : 'remixes'}
-            </span>
-          ` : ''}
+          <a href="https://websim.com/p/${parentProjectId}" 
+             target="_blank" 
+             class="template-badge template-based"
+             title="View original template">
+            <span class="template-text">fork</span>
+          </a>
+        </div>
+      ` : ''}
+      
+      ${hasDerivatives ? `
+        <div class="template-info">
+          <span class="template-badge derivatives">
+            ${remixCount} ${remixCount === 1 ? 'remix' : 'remixes'}
+          </span>
         </div>
       ` : ''}
 
@@ -145,9 +150,7 @@ class UIManager {
 
       ${project.description ? `
         <p class="project-description">${this.escapeHtml(project.description)}</p>
-      ` : `
-        <p class="project-description">No description available.</p>
-      `}
+      ` : '<p class="project-description">No description available.</p>'}
 
       <div class="project-image">
         <img src="${imageUrl}" 
