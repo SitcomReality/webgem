@@ -43,3 +43,7 @@ body {
   display: none !important;
   visibility: hidden !important;
 }
+
+.header .subtitle { 
+  opacity: .85; 
+}

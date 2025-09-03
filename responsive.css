@@ -73,3 +73,11 @@
   }
 }
 
+@media (min-width: 1025px) {
+  .header-content { 
+    grid-template-columns: 1fr; 
+  }
+  .tagline { 
+    display: none; 
+  }
+}

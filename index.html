@@ -30,62 +30,66 @@
             </div>
             
             <div class="controls-section">
-                <div class="controls">
-                    <div class="controls-grid">
-                        <div class="filter-group">
-                            <label class="filter-label">Minimum Versions</label>
-                            <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
-                            <span id="minVersionsDisplay" class="value-display">50</span>
+                <div class="controls toolbar">
+                    <!-- Visible segmented controls -->
+                    <div class="toolbar-row">
+                        <div class="segmented" role="tablist" aria-label="Discovery Mode">
+                            <button class="seg-btn" data-mode="gems" aria-selected="true">Gems</button>
+                            <button class="seg-btn" data-mode="technical">Technical</button>
+                            <button class="seg-btn" data-mode="artistic">Artistic</button>
+                            <button class="seg-btn" data-mode="underrated">Underrated</button>
+                            <button class="seg-btn" data-mode="templates">Templates</button>
                         </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Discovery Mode</label>
-                            <select id="discoveryMode" class="select">
-                                <option value="gems">Hidden Gems</option>
-                                <option value="technical">Technical Marvels</option>
-                                <option value="artistic">Artistic Spectacles</option>
-                                <option value="underrated">Underrated All</option>
-                                <option value="templates">Template Originals</option>
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Sort By</label>
-                            <select id="sortBy" class="select">
-                                <option value="views">Views</option>
-                                <option value="likes">Likes</option>
-                                <option value="created_at">Creation Date</option>
-                                <option value="current_version">Versions</option>
-                                <option value="qualityScore">Quality</option>
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Sort Order</label>
-                            <select id="sortOrder" class="select">
-                                <option value="asc">Ascending</option>
-                                <option value="desc">Descending</option>
-                            </select>
+                        <div class="inline-controls">
+                            <div class="inline-group">
+                                <span class="inline-label">Sort</span>
+                                <div class="segmented small" aria-label="Sort By">
+                                    <button class="seg-btn" data-sort="views" aria-selected="true">Views</button>
+                                    <button class="seg-btn" data-sort="likes">Likes</button>
+                                    <button class="seg-btn" data-sort="created_at">Date</button>
+                                    <button class="seg-btn" data-sort="current_version">Versions</button>
+                                    <button class="seg-btn" data-sort="qualityScore">Quality</button>
+                                </div>
+                                <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="asc">↑</button>
+                            </div>
+                            <div class="inline-group">
+                                <span class="inline-label">Min Versions</span>
+                                <div class="range-inline">
+                                    <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
+                                    <span id="minVersionsDisplay" class="value-pill">50</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="stats-controls">
-                        <div class="stat-item">
-                            <span class="stat-label">Analyzing</span>
-                            <span id="analyzingCount" class="stat-value">0</span>
+                    <div class="toolbar-row end">
+                        <div class="stats-compact">
+                            <span class="stat-chip"><span class="k">Analyzing</span><span id="analyzingCount">0</span></span>
+                            <span class="stat-chip"><span class="k">Gems</span><span id="gemsFound">0</span></span>
+                            <span class="stat-chip"><span class="k">Avg</span><span id="avgQuality">0.0</span></span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Gems Found</span>
-                            <span id="gemsFound" class="stat-value">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Avg Quality</span>
-                            <span id="avgQuality" class="stat-value">0.0</span>
-                        </div>
-                        
-                        <button id="refreshBtn" class="btn-primary">
-                            <span class="btn-text">Discover</span>
-                        </button>
+                        <button id="refreshBtn" class="btn-primary"><span class="btn-text">Discover</span></button>
+                    </div>
+
+                    <!-- Hidden form controls for app logic compatibility -->
+                    <div class="visually-hidden">
+                        <select id="discoveryMode">
+                            <option value="gems" selected>Hidden Gems</option>
+                            <option value="technical">Technical Marvels</option>
+                            <option value="artistic">Artistic Spectacles</option>
+                            <option value="underrated">Underrated All</option>
+                            <option value="templates">Template Originals</option>
+                        </select>
+                        <select id="sortBy">
+                            <option value="views" selected>Views</option>
+                            <option value="likes">Likes</option>
+                            <option value="created_at">Creation Date</option>
+                            <option value="current_version">Versions</option>
+                            <option value="qualityScore">Quality</option>
+                        </select>
+                        <select id="sortOrder">
+                            <option value="asc" selected>Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
                     </div>
                 </div>
             </div>

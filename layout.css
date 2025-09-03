@@ -1,5 +1,3 @@
-
-```
 /* Layout Components */
 .header {
   padding: var(--space-3xl) 0 var(--space-xl);
@@ -9,8 +7,8 @@
 
 .header-content {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-xl);
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
   align-items: start;
   max-width: var(--container-width);
   margin: 0 auto;

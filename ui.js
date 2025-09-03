@@ -37,6 +37,36 @@ class UIManager {
     this.elements.refreshBtn.addEventListener('click', () => {
       window.app.discoverGems();
     });
+
+    // Segmented: discovery mode
+    document.querySelectorAll('.seg-btn[data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.seg-btn[data-mode]').forEach(b => b.setAttribute('aria-selected','false'));
+        btn.setAttribute('aria-selected','true');
+        this.elements.discoveryMode.value = btn.dataset.mode;
+        window.app.discoverGems();
+      });
+    });
+    // Segmented: sort by
+    document.querySelectorAll('.seg-btn[data-sort]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.seg-btn[data-sort]').forEach(b => b.setAttribute('aria-selected','false'));
+        btn.setAttribute('aria-selected','true');
+        this.elements.sortBy.value = btn.dataset.sort;
+        window.app.discoverGems();
+      });
+    });
+    // Order toggle
+    const orderToggle = document.getElementById('orderToggle');
+    if (orderToggle) {
+      orderToggle.addEventListener('click', () => {
+        const next = orderToggle.dataset.order === 'asc' ? 'desc' : 'asc';
+        orderToggle.dataset.order = next;
+        orderToggle.textContent = next === 'asc' ? '↑' : '↓';
+        this.elements.sortOrder.value = next;
+        window.app.discoverGems();
+      });
+    }
   }
 
   showLoading() {
