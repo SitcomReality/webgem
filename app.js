@@ -235,3 +235,196 @@ const trendingRange = 'week';
 const maxProjectAge = 30;
 
 const templateSearchLimit = 100;
+
+// Add curated lists functionality
+class CuratedLists {
+    constructor() {
+        this.room = new WebsimSocket();
+        this.curatorUsername = 'SitcomReality';
+        this.lists = {
+            'underappreciated': [],
+            'overlooked': [],
+            'up-and-comers': []
+        };
+        this.currentList = 'underappreciated';
+        this.isCurator = false;
+        
+        this.initializeCuratedSystem();
+    }
+
+    async initializeCuratedSystem() {
+        // Check if current user is the curator
+        try {
+            const currentUser = await window.websim.getCurrentUser();
+            this.isCurator = currentUser.username === this.curatorUsername;
+            
+            if (this.isCurator) {
+                this.setupCuratedUI();
+                await this.loadCuratedProjects();
+            }
+        } catch (error) {
+            console.warn('Failed to initialize curated system:', error);
+        }
+    }
+
+    setupCuratedUI() {
+        // Add toggle button
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'curated-toggle';
+        toggleBtn.innerHTML = '⚡';
+        toggleBtn.title = 'Toggle Curated Projects';
+        document.body.appendChild(toggleBtn);
+
+        // Add event listeners
+        toggleBtn.addEventListener('click', () => {
+            this.toggleCuratedPanel();
+        });
+
+        document.querySelector('.curated-close').addEventListener('click', () => {
+            this.toggleCuratedPanel();
+        });
+
+        document.querySelectorAll('.curated-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                this.switchList(e.target.dataset.list);
+            });
+        });
+    }
+
+    toggleCuratedPanel() {
+        const panel = document.getElementById('curatedPanel');
+        panel.classList.toggle('hidden');
+    }
+
+    async loadCuratedProjects() {
+        try {
+            for (const listName of Object.keys(this.lists)) {
+                const projects = await this.room.collection(listName).getList();
+                this.lists[listName] = projects;
+                this.renderCuratedList(listName);
+            }
+        } catch (error) {
+            console.error('Failed to load curated projects:', error);
+        }
+    }
+
+    async addToList(project, listName) {
+        try {
+            await this.room.collection(listName).create({
+                projectId: project.id,
+                title: project.title,
+                description: project.description || '',
+                createdAt: new Date().toISOString(),
+                projectData: project
+            });
+            
+            this.lists[listName] = await this.room.collection(listName).getList();
+            this.renderCuratedList(listName);
+            
+            console.log(`Added project to ${listName}`);
+        } catch (error) {
+            console.error('Failed to add to curated list:', error);
+        }
+    }
+
+    async removeFromList(projectId, listName) {
+        try {
+            const projects = this.lists[listName];
+            const project = projects.find(p => p.projectId === projectId);
+            if (project) {
+                await this.room.collection(listName).delete(project.id);
+                this.lists[listName] = await this.room.collection(listName).getList();
+                this.renderCuratedList(listName);
+            }
+        } catch (error) {
+            console.error('Failed to remove from curated list:', error);
+        }
+    }
+
+    renderCuratedList(listName) {
+        const container = document.querySelector(`[data-list="${listName}"]`);
+        container.innerHTML = '';
+        
+        const projects = this.lists[listName];
+        projects.forEach(project => {
+            const item = document.createElement('div');
+            item.className = 'curated-item';
+            item.innerHTML = `
+                <div class="curated-item-title">${project.title}</div>
+                <div class="curated-item-meta">
+                    ${project.projectData.raw?.project?.stats?.views?.toLocaleString() || 0} views
+                </div>
+            `;
+            
+            item.addEventListener('click', () => {
+                window.open(`https://websim.com/c/${project.projectId}`, '_blank');
+            });
+            
+            container.appendChild(item);
+        });
+    }
+
+    switchList(listName) {
+        document.querySelectorAll('.curated-tab').forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.list === listName);
+        });
+        
+        document.querySelectorAll('.curated-list').forEach(list => {
+            list.classList.toggle('hidden', list.dataset.list !== listName);
+        });
+        
+        this.currentList = listName;
+    }
+
+    // Add add-to-list button to project cards
+    addCurateButton(projectCard, project) {
+        if (!this.isCurator) return;
+        
+        const template = document.getElementById('addToListTemplate');
+        const clone = template.content.cloneNode(true);
+        
+        const addBtn = clone.querySelector('.add-btn');
+        const menu = clone.querySelector('.list-menu');
+        
+        addBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+        });
+        
+        clone.querySelectorAll('[data-list]').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                await this.addToList(project, e.target.dataset.list);
+                menu.classList.add('hidden');
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.add-to-list')) {
+                menu.classList.add('hidden');
+            }
+        });
+        
+        projectCard.querySelector('.project-footer').appendChild(clone);
+    }
+}
+
+// Update UIManager to include curated functionality
+class UIManager {
+    // ...existing code...
+    
+    createProjectCard(project) {
+        // ...existing card creation...
+        
+        // Add curate button if curator
+        window.curatedLists.addCurateButton(card, project);
+        
+        return card;
+    }
+}
+
+// Initialize curated lists
+document.addEventListener('DOMContentLoaded', async () => {
+    window.curatedLists = new CuratedLists();
+});

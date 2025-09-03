@@ -710,3 +710,179 @@
   overflow: hidden; clip: rect(0 0 0 0); 
   white-space: nowrap; border: 0; 
 }
+
+/* Curated Panel Styles */
+.curated-panel {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 320px;
+    max-height: 70vh;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-elevated);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.curated-panel.hidden {
+    transform: translateX(100%) translateY(-50%);
+}
+
+.curated-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-tertiary);
+}
+
+.curated-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.curated-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.curated-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.curated-tab {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    background: none;
+    border: none;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.curated-tab.active {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.curated-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-md);
+}
+
+.curated-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.curated-item {
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-sm);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.curated-item:hover {
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+}
+
+.curated-item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.curated-item-meta {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+/* Add to List Button */
+.add-to-list {
+    position: relative;
+}
+
+.add-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-emerald);
+    color: var(--text-primary);
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+    transform: scale(1.1);
+}
+
+.list-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-elevated);
+    z-index: 10;
+}
+
+.list-menu button {
+    display: block;
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    background: none;
+    border: none;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.list-menu button:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* Toggle Curated Panel Button */
+.curated-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: var(--accent-sapphire);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: var(--shadow-elevated);
+    transition: all 0.3s ease;
+}
+
+.curated-toggle:hover {
+    transform: scale(1.1);
+}
