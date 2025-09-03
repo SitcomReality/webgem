@@ -15,6 +15,7 @@ class UIManager {
       timeRange: document.getElementById('timeRange')
     };
 
+    this.isCurator = false;
     this.initializeControls();
   }
 
@@ -99,6 +100,65 @@ class UIManager {
         if (e.target === filterPanel) {
             filterPanel.classList.remove('active');
         }
+    });
+
+    // init curator UI
+    this.initCurationsUI();
+  }
+
+  async initCurationsUI() {
+    try {
+      const user = await window.websim?.getUser?.();
+      this.isCurator = user?.username === 'SitcomReality';
+    } catch { this.isCurator = false; }
+    if (!this.isCurator) return;
+    // FAB
+    const fab = document.createElement('button');
+    fab.className = 'curations-fab';
+    fab.id = 'curationsFab';
+    fab.textContent = 'Curated';
+    document.body.appendChild(fab);
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'curations-panel';
+    panel.id = 'curationsPanel';
+    panel.innerHTML = `
+      <header>
+        <strong>Curated Projects</strong>
+        <button class="cur-remove" id="curationsClose">Close</button>
+      </header>
+      <div class="curations-list" id="curationsList"></div>
+    `;
+    document.body.appendChild(panel);
+    fab.addEventListener('click', async () => {
+      panel.classList.toggle('active');
+      await this.refreshCurationsPanel();
+    });
+    panel.querySelector('#curationsClose').addEventListener('click', () => panel.classList.remove('active'));
+  }
+
+  async refreshCurationsPanel() {
+    const listEl = document.getElementById('curationsList');
+    if (!listEl) return;
+    const data = await window.curationsDB.load();
+    const sections = [
+      { key: 'underappreciated', label: 'Underappreciated' },
+      { key: 'overlooked', label: 'Overlooked' },
+      { key: 'rising', label: 'Rising' }
+    ];
+    listEl.innerHTML = sections.map(sec => {
+      const items = (data[sec.key] || []).map(it => `
+        <div class="cur-item">
+          <a href="https://websim.com/c/${it.id}" target="_blank">${this.escapeHtml(it.title)}</a>
+          <button class="cur-remove" data-k="${sec.key}" data-id="${it.id}">Remove</button>
+        </div>`).join('') || '<div class="cur-item"><em>None yet</em></div>';
+      return `<div class="curations-section"><h4>${sec.label}</h4>${items}</div>`;
+    }).join('');
+    listEl.querySelectorAll('.cur-remove').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await window.curationsDB.remove(btn.dataset.k, btn.dataset.id);
+        await this.refreshCurationsPanel();
+      });
     });
   }
 
@@ -291,8 +351,30 @@ class UIManager {
         <div class="project-tags">
           ${this.generateQualityTags(project, qualityScore)}
         </div>
+        ${this.isCurator ? `
+          <div class="curation-controls">
+            <select class="curation-select">
+              <option value="underappreciated">Underappreciated</option>
+              <option value="overlooked">Overlooked</option>
+              <option value="rising">Rising</option>
+            </select>
+            <button class="curation-add-btn">Add</button>
+          </div>
+        ` : ''}
       </div>
     `;
+
+    if (this.isCurator) {
+      const sel = card.querySelector('.curation-select');
+      const add = card.querySelector('.curation-add-btn');
+      add.addEventListener('click', async () => {
+        const listKey = sel.value;
+        await window.curationsDB.add(listKey, { id: project.id, title: project.title });
+        await this.refreshCurationsPanel();
+        add.textContent = 'Added ✓';
+        setTimeout(() => (add.textContent = 'Add'), 1200);
+      });
+    }
 
     return card;
   }

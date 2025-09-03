@@ -117,40 +117,11 @@
         </div>
     </footer>
 
-    <!-- Add floating curated panel -->
-    <div id="curatedPanel" class="curated-panel hidden">
-        <div class="curated-header">
-            <h3>Curated Projects</h3>
-            <button class="curated-close" aria-label="Close">×</button>
-        </div>
-        <div class="curated-tabs">
-            <button class="curated-tab active" data-list="underappreciated">Underappreciated</button>
-            <button class="curated-tab" data-list="overlooked">Overlooked</button>
-            <button class="curated-tab" data-list="up-and-comers">Up & Comers</button>
-        </div>
-        <div class="curated-content">
-            <div class="curated-list" data-list="underappreciated"></div>
-            <div class="curated-list hidden" data-list="overlooked"></div>
-            <div class="curated-list hidden" data-list="up-and-comers"></div>
-        </div>
-    </div>
-
-    <!-- Add add-to-list button template -->
-    <template id="addToListTemplate">
-        <div class="add-to-list">
-            <button class="add-btn" title="Add to curated list">+</button>
-            <div class="list-menu hidden">
-                <button data-list="underappreciated">Underappreciated</button>
-                <button data-list="overlooked">Overlooked</button>
-                <button data-list="up-and-comers">Up & Comers</button>
-            </div>
-        </div>
-    </template>
-
     <!-- Load scripts in correct order -->
     <script src="api.js"></script>
     <script src="filters.js"></script>
     <script src="ui-controls.js"></script>
+    <script src="curations.js"></script>
     <script src="app.js"></script>
     
     <!-- Initialize after all scripts load -->

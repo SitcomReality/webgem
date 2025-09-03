@@ -1,4 +1,3 @@
-// Ensure HiddenGemsApp is defined before DOMContentLoaded
 class HiddenGemsApp {
   constructor() {
     this.isLoading = false;
@@ -10,10 +9,8 @@ class HiddenGemsApp {
     
     try {
       // Set default sort to views ascending
-      if (window.uiManager && window.uiManager.elements) {
-        window.uiManager.elements.sortBy.value = 'views';
-        window.uiManager.elements.sortOrder.value = 'asc';
-      }
+      window.uiManager.elements.sortBy.value = 'views';
+      window.uiManager.elements.sortOrder.value = 'asc';
       
       // Initialize the gem filter with current trending data
       await window.gemFilter.analyzeGenericKeywords();
@@ -23,9 +20,7 @@ class HiddenGemsApp {
       await this.discoverGems();
     } catch (error) {
       console.error('❌ Initialization failed:', error);
-      if (window.uiManager) {
-        window.uiManager.showError('Failed to initialize the discovery system. Please refresh and try again.');
-      }
+      window.uiManager.showError('Failed to initialize the discovery system. Please refresh and try again.');
     }
   }
 
@@ -33,16 +28,16 @@ class HiddenGemsApp {
     if (this.isLoading) return;
     
     this.isLoading = true;
-    if (window.uiManager) window.uiManager.showLoading();
+    window.uiManager.showLoading();
     
     try {
       console.log('🔍 Starting gem discovery process...');
       
       // Get discovery parameters
-      const minVersions = parseInt(window.uiManager?.elements?.minVersions?.value || 50);
-      const timeRange = window.uiManager?.elements?.timeRange?.value || 'day';
-      const sortBy = window.uiManager?.elements?.sortBy?.value || 'views';
-      const sortOrder = window.uiManager?.elements?.sortOrder?.value || 'asc';
+      const minVersions = parseInt(window.uiManager.elements.minVersions.value);
+      const timeRange = window.uiManager.elements.timeRange.value;
+      const sortBy = window.uiManager.elements.sortBy.value;
+      const sortOrder = window.uiManager.elements.sortOrder.value;
       
       // Fetch and score projects
       const projectSources = await this.fetchProjectSources(timeRange);
@@ -59,21 +54,19 @@ class HiddenGemsApp {
         ? sortedGems.reduce((sum, p) => sum + p.qualityScore, 0) / sortedGems.length 
         : 0;
       
-      if (window.uiManager) {
-        window.uiManager.updateStats(projectSources.length, sortedGems.length, avgQuality);
-        window.uiManager.renderProjects(sortedGems);
-      }
+      window.uiManager.updateStats(projectSources.length, sortedGems.length, avgQuality);
+      
+      // Render results
+      window.uiManager.renderProjects(sortedGems);
       
       this.currentProjects = sortedGems;
       
     } catch (error) {
       console.error('❌ Gem discovery failed:', error);
-      if (window.uiManager) {
-        window.uiManager.showError('Failed to discover gems. Please try again.');
-      }
+      window.uiManager.showError('Failed to discover gems. Please try again.');
     } finally {
       this.isLoading = false;
-      if (window.uiManager) window.uiManager.hideLoading();
+      window.uiManager.hideLoading();
     }
   }
 
@@ -156,7 +149,7 @@ class HiddenGemsApp {
         console.warn(`Failed to score project ${project.id}:`, error);
         scoredProjects.push({
           ...project,
-          qualityScore: 0.3 // default low score
+          qualityScore: 0.3 // Default low score
         });
       }
     }
@@ -242,227 +235,3 @@ const trendingRange = 'week';
 const maxProjectAge = 30;
 
 const templateSearchLimit = 100;
-
-// Add curated lists functionality
-class CuratedLists {
-    constructor() {
-        this.room = new WebsimSocket();
-        this.curatorUsername = 'SitcomReality';
-        this.lists = {
-            'underappreciated': [],
-            'overlooked': [],
-            'up-and-comers': []
-        };
-        this.currentList = 'underappreciated';
-        this.isCurator = false;
-    }
-
-    async initializeCuratedSystem() {
-        // Check if current user is the curator
-        try {
-            const currentUser = await window.websim.getCurrentUser();
-            this.isCurator = currentUser.username === this.curatorUsername;
-            
-            if (this.isCurator) {
-                this.setupCuratedUI();
-                await this.loadCuratedProjects();
-            }
-        } catch (error) {
-            console.warn('Failed to initialize curated system:', error);
-        }
-    }
-
-    setupCuratedUI() {
-        // Add toggle button
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'curated-toggle';
-        toggleBtn.innerHTML = '⚡';
-        toggleBtn.title = 'Toggle Curated Projects';
-        document.body.appendChild(toggleBtn);
-
-        // Add event listeners
-        toggleBtn.addEventListener('click', () => {
-            this.toggleCuratedPanel();
-        });
-
-        const closeBtn = document.querySelector('.curated-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                this.toggleCuratedPanel();
-            });
-        }
-
-        document.querySelectorAll('.curated-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                this.switchList(e.target.dataset.list);
-            });
-        });
-    }
-
-    toggleCuratedPanel() {
-        const panel = document.getElementById('curatedPanel');
-        if (panel) {
-            panel.classList.toggle('hidden');
-        }
-    }
-
-    async loadCuratedProjects() {
-        try {
-            for (const listName of Object.keys(this.lists)) {
-                const projects = await this.room.collection(listName).getList();
-                this.lists[listName] = projects;
-                this.renderCuratedList(listName);
-            }
-        } catch (error) {
-            console.error('Failed to load curated projects:', error);
-        }
-    }
-
-    async addToList(project, listName) {
-        try {
-            await this.room.collection(listName).create({
-                projectId: project.id,
-                title: project.title,
-                description: project.description || '',
-                createdAt: new Date().toISOString(),
-                projectData: project
-            });
-            
-            this.lists[listName] = await this.room.collection(listName).getList();
-            this.renderCuratedList(listName);
-            
-            console.log(`Added project to ${listName}`);
-        } catch (error) {
-            console.error('Failed to add to curated list:', error);
-        }
-    }
-
-    async removeFromList(projectId, listName) {
-        try {
-            const projects = this.lists[listName];
-            const project = projects.find(p => p.projectId === projectId);
-            if (project) {
-                await this.room.collection(listName).delete(project.id);
-                this.lists[listName] = await this.room.collection(listName).getList();
-                this.renderCuratedList(listName);
-            }
-        } catch (error) {
-            console.error('Failed to remove from curated list:', error);
-        }
-    }
-
-    renderCuratedList(listName) {
-        const container = document.querySelector(`[data-list="${listName}"]`);
-        if (!container) return;
-        
-        container.innerHTML = '';
-        
-        const projects = this.lists[listName];
-        projects.forEach(project => {
-            const item = document.createElement('div');
-            item.className = 'curated-item';
-            item.innerHTML = `
-                <div class="curated-item-title">${project.title}</div>
-                <div class="curated-item-meta">
-                    ${project.projectData.raw?.project?.stats?.views?.toLocaleString() || 0} views
-                </div>
-            `;
-            
-            item.addEventListener('click', () => {
-                window.open(`https://websim.com/c/${project.projectId}`, '_blank');
-            });
-            
-            container.appendChild(item);
-        });
-    }
-
-    switchList(listName) {
-        document.querySelectorAll('.curated-tab').forEach(tab => {
-            tab.classList.toggle('active', tab.dataset.list === listName);
-        });
-        
-        document.querySelectorAll('.curated-list').forEach(list => {
-            list.classList.toggle('hidden', list.dataset.list !== listName);
-        });
-        
-        this.currentList = listName;
-    }
-
-    addCurateButton(projectCard, project) {
-        if (!this.isCurator) return;
-        
-        const template = document.getElementById('addToListTemplate');
-        const clone = template.content.cloneNode(true);
-        
-        const addBtn = clone.querySelector('.add-btn');
-        const menu = clone.querySelector('.list-menu');
-        
-        addBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menu.classList.toggle('hidden');
-        });
-        
-        clone.querySelectorAll('[data-list]').forEach(button => {
-            button.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                await this.addToList(project, e.target.dataset.list);
-                menu.classList.add('hidden');
-            });
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.add-to-list')) {
-                menu.classList.add('hidden');
-            }
-        });
-        
-        const footer = projectCard.querySelector('.project-footer');
-        if (footer) {
-            footer.appendChild(clone);
-        }
-    }
-}
-
-// Update UIManager to include curated functionality
-class UIManager {
-    // ...existing code...
-    
-    createProjectCard(project) {
-        // ...existing card creation...
-        
-        // Add curate button if curator
-        window.curatedLists.addCurateButton(card, project);
-        
-        return card;
-    }
-}
-
-// Initialize everything after DOM is loaded
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('📦 DOM Content Loaded - Initializing...');
-    
-    // Ensure all required globals exist
-    if (typeof window.websimAPI === 'undefined') {
-        console.error('❌ websimAPI not found');
-        return;
-    }
-    if (typeof window.gemFilter === 'undefined') {
-        console.error('❌ gemFilter not found');
-        return;
-    }
-    if (typeof window.uiManager === 'undefined') {
-        console.error('❌ uiManager not found');
-        return;
-    }
-    
-    // Initialize curated system
-    window.curatedLists = new CuratedLists();
-    await window.curatedLists.initializeCuratedSystem();
-    
-    // Initialize main app
-    window.app = new HiddenGemsApp();
-    window.app.initialize();
-    
-    console.log('✅ All systems initialized');
-});
