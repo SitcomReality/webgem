@@ -17,6 +17,21 @@ class CurationUI {
 
     if (!this.isCurator) return;
 
+    // Ensure curationsDB is available
+    if (!this.curationsDB) {
+      console.warn('CurationsDB not ready, waiting...');
+      // Wait for curationsDB to be available
+      await new Promise(resolve => {
+        const checkInterval = setInterval(() => {
+          if (window.curationsDB) {
+            this.curationsDB = window.curationsDB;
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+      });
+    }
+
     this.createCuratorFAB();
     this.createCurationPanel();
 
@@ -95,12 +110,15 @@ class CurationUI {
 
   async refreshCurationsPanel() {
     const listEl = this.panel?.querySelector('#curationsList');
-    if (!listEl || !this.curationsDB) {
-      console.warn('Curation panel or curationsDB not ready');
-      return;
-    }
+    if (!listEl) return;
 
     try {
+      // Ensure database is ready
+      if (!this.curationsDB) {
+        console.error('CurationsDB not available');
+        return;
+      }
+
       const data = await this.curationsDB.load();
       const sections = [
         { key: 'underappreciated', label: 'Underappreciated' },
@@ -126,9 +144,10 @@ class CurationUI {
 
       listEl.innerHTML = html;
 
-      // Bind remove events
+      // Bind events
       listEl.querySelectorAll('.cur-remove').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
           await this.curationsDB.remove(btn.dataset.key, btn.dataset.id);
           await this.refreshCurationsPanel();
         });
