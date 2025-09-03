@@ -1,0 +1,43 @@
+/* Toolbar Components */
+.toolbar {
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.toolbar-row {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.toolbar-row.end {
+  margin-top: var(--space-xs);
+}
+
+/* Control Groups */
+.control-group-inline {
+  display: inline-flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.inline-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive toolbar */
+@media (max-width: 768px) {
+  .toolbar-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .control-group-inline {
+    justify-content: center;
+  }
+}

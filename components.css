@@ -1,3 +1,37 @@
+/* Import the refactored component modules */
+@import url('components/buttons.css');
+@import url('components/forms.css');
+@import url('components/cards.css');
+@import url('components/controls.css');
+@import url('components/filters.css');
+@import url('components/loading.css');
+@import url('components/tags.css');
+@import url('components/stats.css');
+@import url('components/curation.css');
+@import url('components/toolbar.css');
+
+/* Global component variables - keep minimal */
+:root {
+  --component-transition: all 0.2s ease;
+  --component-radius: var(--border-radius-sm);
+}
+
+/* Base component styles */
+.component-base {
+  font-family: var(--font-body);
+  transition: var(--component-transition);
+}
+
+/* Utility classes - minimal set */
+.hidden { display: none !important; visibility: hidden !important; }
+.visually-hidden { 
+  position: absolute !important; 
+  width: 1px; height: 1px; 
+  padding: 0; margin: -1px; 
+  overflow: hidden; clip: rect(0 0 0 0); 
+  white-space: nowrap; border: 0; 
+}
+
 /* Controls Section */
 .controls-section {
   min-width: 320px;
