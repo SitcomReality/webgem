@@ -163,33 +163,114 @@ class UIManager {
   }
 
   generateFilterCategories() {
+    const checkCategoryStatus = (categoryKey) => {
+      const category = window.gemFilter.filterCategories[categoryKey];
+      const activeTerms = Array.from(category.terms).filter(term => 
+        window.gemFilter.isTermActive(term)
+      );
+      if (activeTerms.length === 0) return 'none';
+      if (activeTerms.length === category.terms.size) return 'all';
+      return 'some';
+    };
+
     let html = '';
     Object.entries(window.gemFilter.filterCategories).forEach(([key, category]) => {
-        const isActive = window.gemFilter.isCategoryActive(key);
-        html += `
-            <div class="filter-category">
-                <div class="category-header">
-                    <label class="category-label">
-                        <input type="checkbox" 
-                               ${isActive ? 'checked' : ''} 
-                               onchange="window.uiManager.toggleCategory('${key}')">
-                        ${category.name}
-                    </label>
-                </div>
-                <div class="category-terms">
-                    ${Array.from(category.terms).map(term => `
-                        <label class="term-label">
-                            <input type="checkbox" 
-                                   ${window.gemFilter.isTermActive(term) ? 'checked' : ''} 
-                                   onchange="window.uiManager.toggleTerm('${term}')">
-                            ${term}
-                        </label>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+      const status = checkCategoryStatus(key);
+      const categoryChecked = status === 'all';
+      html += `
+        <div class="filter-category">
+          <div class="category-header">
+            <label class="category-label">
+              <input type="checkbox" 
+                     ${categoryChecked ? 'checked' : ''}
+                     data-category="${key}"
+                     data-status="${status}">
+              ${category.name}
+            </label>
+          </div>
+          <div class="category-terms">
+            ${Array.from(category.terms).map(term => `
+              <label class="term-label">
+                <input type="checkbox" 
+                       ${window.gemFilter.isTermActive(term) ? 'checked' : ''}
+                       data-term="${term}"
+                       data-category="${key}">
+                ${term}
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
     });
+    
+    // Add event handlers for category toggles after appending
+    requestAnimationFrame(() => {
+      this.bindFilterEvents();
+    });
+    
     return html;
+  }
+
+  bindFilterEvents() {
+    // Category toggle handlers
+    document.querySelectorAll('[data-category]').forEach(checkbox => {
+      if (checkbox.dataset.category && !checkbox.dataset.term) {
+        checkbox.addEventListener('change', (e) => {
+          const categoryKey = e.target.dataset.category;
+          const allChecked = e.target.checked;
+          
+          // Update all child terms for this category
+          document.querySelectorAll(`[data-category="${categoryKey}"][data-term]`).forEach(termCheckbox => {
+            termCheckbox.checked = allChecked;
+            handleTermToggle(termCheckbox.dataset.term, allChecked);
+          });
+          
+          e.target.dataset.status = allChecked ? 'all' : 'none';
+        });
+      }
+    });
+
+    // Individual term handlers
+    document.querySelectorAll('[data-term]').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const term = e.target.dataset.term;
+        const category = e.target.dataset.category;
+        const checked = e.target.checked;
+        
+        handleTermToggle(term, checked);
+        
+        // Update parent category checkbox
+        const categoryCheckbox = document.querySelector(`[data-category="${category}"]:not([data-term])`);
+        if (categoryCheckbox) {
+          const termsInCategory = Array.from(
+            document.querySelectorAll(`[data-category="${category}"][data-term]`)
+          );
+          const checkedTerms = termsInCategory.filter(cb => cb.checked);
+          
+          if (checkedTerms.length === termsInCategory.length) {
+            categoryCheckbox.checked = true;
+            categoryCheckbox.dataset.status = 'all';
+          } else if (checkedTerms.length === 0) {
+            categoryCheckbox.checked = false;
+            categoryCheckbox.dataset.status = 'none';
+          } else {
+            categoryCheckbox.checked = false;
+            categoryCheckbox.dataset.status = 'some';
+          }
+        }
+      });
+    });
+
+    // Helper to handle term toggling
+    function handleTermToggle(term, checked) {
+      const lowerTerm = term.toLowerCase();
+      if (checked) {
+        window.gemFilter.blockedTerms.add(lowerTerm);
+      } else {
+        window.gemFilter.blockedTerms.delete(lowerTerm);
+      }
+      window.gemFilter.saveFilterState();
+    }
   }
 
   toggleTerm(term) {
@@ -205,13 +286,14 @@ class UIManager {
   resetFilters() {
     window.gemFilter.blockedTerms.clear();
     Object.values(window.gemFilter.filterCategories).forEach(category => {
-        category.terms.forEach(term => {
-            window.gemFilter.blockedTerms.delete(term);
-        });
+      category.terms.forEach(term => {
+        window.gemFilter.blockedTerms.delete(term);
+      });
     });
     window.gemFilter.saveFilterState();
+    
+    // Update UI without refreshing search
     this.generateFilterCategories();
-    window.app.discoverGems();
   }
 
   applyFilters() {

@@ -15,6 +15,21 @@
   overflow: hidden;
   display: none;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-sapphire) var(--bg-tertiary);
+}
+
+.filter-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-panel::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.filter-panel::-webkit-scrollbar-thumb {
+  background: var(--accent-sapphire);
+  border-radius: 3px;
 }
 
 .filter-panel.active {
@@ -27,7 +42,30 @@
   align-items: center;
   padding: var(--space-lg) var(--space-xl);
   border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-tertiary);
+  background: var(--bg-card);
+  position: sticky;
+  top: 0;
+}
+
+.filter-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.filter-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
 }
 
 .filter-content {
@@ -53,6 +91,7 @@
   font-weight: 600;
   color: var(--text-primary);
   cursor: pointer;
+  user-select: none;
 }
 
 .category-terms {
@@ -72,9 +111,58 @@
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--border-radius-sm);
   transition: background 0.2s ease;
+  user-select: none;
+}
+
+.filter-actions {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-xl);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-tertiary);
+  margin-top: auto;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn.primary {
+  background: var(--accent-sapphire);
+  color: var(--text-primary);
+  border-color: var(--accent-sapphire);
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-elevated);
+  border-color: var(--border-accent);
+}
+
+.filter-btn.primary:hover {
+  background: var(--accent-emerald);
+  border-color: var(--accent-emerald);
+}
+
+/* Checkbox styling */
+.filter-category input[type="checkbox"],
+.term-label input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--accent-sapphire);
 }
 
 .term-label:hover {
   background: var(--bg-hover);
 }
-
