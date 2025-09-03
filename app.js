@@ -1,3 +1,4 @@
+// Ensure HiddenGemsApp is defined before DOMContentLoaded
 class HiddenGemsApp {
   constructor() {
     this.isLoading = false;
@@ -9,8 +10,10 @@ class HiddenGemsApp {
     
     try {
       // Set default sort to views ascending
-      window.uiManager.elements.sortBy.value = 'views';
-      window.uiManager.elements.sortOrder.value = 'asc';
+      if (window.uiManager && window.uiManager.elements) {
+        window.uiManager.elements.sortBy.value = 'views';
+        window.uiManager.elements.sortOrder.value = 'asc';
+      }
       
       // Initialize the gem filter with current trending data
       await window.gemFilter.analyzeGenericKeywords();
@@ -20,7 +23,9 @@ class HiddenGemsApp {
       await this.discoverGems();
     } catch (error) {
       console.error('❌ Initialization failed:', error);
-      window.uiManager.showError('Failed to initialize the discovery system. Please refresh and try again.');
+      if (window.uiManager) {
+        window.uiManager.showError('Failed to initialize the discovery system. Please refresh and try again.');
+      }
     }
   }
 
@@ -28,16 +33,16 @@ class HiddenGemsApp {
     if (this.isLoading) return;
     
     this.isLoading = true;
-    window.uiManager.showLoading();
+    if (window.uiManager) window.uiManager.showLoading();
     
     try {
       console.log('🔍 Starting gem discovery process...');
       
       // Get discovery parameters
-      const minVersions = parseInt(window.uiManager.elements.minVersions.value);
-      const timeRange = window.uiManager.elements.timeRange.value;
-      const sortBy = window.uiManager.elements.sortBy.value;
-      const sortOrder = window.uiManager.elements.sortOrder.value;
+      const minVersions = parseInt(window.uiManager?.elements?.minVersions?.value || 50);
+      const timeRange = window.uiManager?.elements?.timeRange?.value || 'day';
+      const sortBy = window.uiManager?.elements?.sortBy?.value || 'views';
+      const sortOrder = window.uiManager?.elements?.sortOrder?.value || 'asc';
       
       // Fetch and score projects
       const projectSources = await this.fetchProjectSources(timeRange);
@@ -54,19 +59,21 @@ class HiddenGemsApp {
         ? sortedGems.reduce((sum, p) => sum + p.qualityScore, 0) / sortedGems.length 
         : 0;
       
-      window.uiManager.updateStats(projectSources.length, sortedGems.length, avgQuality);
-      
-      // Render results
-      window.uiManager.renderProjects(sortedGems);
+      if (window.uiManager) {
+        window.uiManager.updateStats(projectSources.length, sortedGems.length, avgQuality);
+        window.uiManager.renderProjects(sortedGems);
+      }
       
       this.currentProjects = sortedGems;
       
     } catch (error) {
       console.error('❌ Gem discovery failed:', error);
-      window.uiManager.showError('Failed to discover gems. Please try again.');
+      if (window.uiManager) {
+        window.uiManager.showError('Failed to discover gems. Please try again.');
+      }
     } finally {
       this.isLoading = false;
-      window.uiManager.hideLoading();
+      if (window.uiManager) window.uiManager.hideLoading();
     }
   }
 
@@ -248,8 +255,6 @@ class CuratedLists {
         };
         this.currentList = 'underappreciated';
         this.isCurator = false;
-        
-        this.initializeCuratedSystem();
     }
 
     async initializeCuratedSystem() {
@@ -280,9 +285,12 @@ class CuratedLists {
             this.toggleCuratedPanel();
         });
 
-        document.querySelector('.curated-close').addEventListener('click', () => {
-            this.toggleCuratedPanel();
-        });
+        const closeBtn = document.querySelector('.curated-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                this.toggleCuratedPanel();
+            });
+        }
 
         document.querySelectorAll('.curated-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
@@ -293,7 +301,9 @@ class CuratedLists {
 
     toggleCuratedPanel() {
         const panel = document.getElementById('curatedPanel');
-        panel.classList.toggle('hidden');
+        if (panel) {
+            panel.classList.toggle('hidden');
+        }
     }
 
     async loadCuratedProjects() {
@@ -343,6 +353,8 @@ class CuratedLists {
 
     renderCuratedList(listName) {
         const container = document.querySelector(`[data-list="${listName}"]`);
+        if (!container) return;
+        
         container.innerHTML = '';
         
         const projects = this.lists[listName];
@@ -376,7 +388,6 @@ class CuratedLists {
         this.currentList = listName;
     }
 
-    // Add add-to-list button to project cards
     addCurateButton(projectCard, project) {
         if (!this.isCurator) return;
         
@@ -406,7 +417,10 @@ class CuratedLists {
             }
         });
         
-        projectCard.querySelector('.project-footer').appendChild(clone);
+        const footer = projectCard.querySelector('.project-footer');
+        if (footer) {
+            footer.appendChild(clone);
+        }
     }
 }
 
@@ -424,23 +438,31 @@ class UIManager {
     }
 }
 
-// Initialize curated lists
-document.addEventListener('DOMContentLoaded', () => {
-  // Ensure all global objects exist
-  if (!window.websimAPI) {
-    console.error('❌ websimAPI not initialized');
-    return;
-  }
-  if (!window.gemFilter) {
-    console.error('❌ gemFilter not initialized');
-    return;
-  }
-  if (!window.uiManager) {
-    console.error('❌ uiManager not initialized');
-    return;
-  }
-  
-  // Initialize the app
-  window.app = new HiddenGemsApp();
-  window.app.initialize();
+// Initialize everything after DOM is loaded
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('📦 DOM Content Loaded - Initializing...');
+    
+    // Ensure all required globals exist
+    if (typeof window.websimAPI === 'undefined') {
+        console.error('❌ websimAPI not found');
+        return;
+    }
+    if (typeof window.gemFilter === 'undefined') {
+        console.error('❌ gemFilter not found');
+        return;
+    }
+    if (typeof window.uiManager === 'undefined') {
+        console.error('❌ uiManager not found');
+        return;
+    }
+    
+    // Initialize curated system
+    window.curatedLists = new CuratedLists();
+    await window.curatedLists.initializeCuratedSystem();
+    
+    // Initialize main app
+    window.app = new HiddenGemsApp();
+    window.app.initialize();
+    
+    console.log('✅ All systems initialized');
 });
