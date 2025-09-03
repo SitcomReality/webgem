@@ -139,23 +139,19 @@
     <!-- Initialize after all scripts load -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Ensure all global objects exist
-            if (!window.websimAPI) {
-                console.error('❌ websimAPI not initialized');
-                return;
-            }
-            if (!window.gemFilter) {
-                console.error('❌ gemFilter not initialized');
-                return;
-            }
-            if (!window.uiManager) {
-                console.error('❌ uiManager not initialized');
-                return;
-            }
-            
-            // Initialize the app
-            window.app = new HiddenGemsApp();
-            window.app.initialize();
+            // Ensure all global objects exist before initializing
+            const initInterval = setInterval(() => {
+                if (window.websimAPI && window.gemFilter && window.uiManager && window.curationsDB) {
+                    clearInterval(initInterval);
+                    window.app = new HiddenGemsApp();
+                    window.app.initialize();
+                    
+                    // Re-initialize curation UI now that DB is available
+                    if (window.curationUI) {
+                        window.curationUI.setup();
+                    }
+                }
+            }, 100);
         });
     </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
