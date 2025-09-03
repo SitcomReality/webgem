@@ -75,15 +75,19 @@ class HiddenGemsApp {
     console.log(`🎯 Time range: ${range}`);
     
     try {
+      // Get projects from the selected time range
+      console.log('🔍 Fetching projects from time range...');
       const results = await window.websimAPI.getTrendingFeed({ 
         limit: 100,
         range: range 
       });
+      console.log(`📈 Projects from ${range} range: ${results.data?.length || 0}`);
       
       if (results.data) {
         sources.push(...results.data);
       }
       
+      // Also get some search results to ensure diversity
       const searchResults = await window.websimAPI.getSearchFeed('newest', '*', { 
         limit: 50,
         range: range 
@@ -93,16 +97,17 @@ class HiddenGemsApp {
         sources.push(...searchResults.data);
       }
       
-      const uniqueProjects = sources.filter((project, index, array) => 
-        array.findIndex(p => p.id === project.id) === index
-      );
-      
-      console.log(`🎯 Unique projects: ${uniqueProjects.length}`);
-      return uniqueProjects;
     } catch (error) {
       console.error('❌ Error fetching project sources:', error);
-      return [];
     }
+    
+    // Remove duplicates
+    const uniqueProjects = sources.filter((project, index, array) => 
+      array.findIndex(p => p.id === project.id) === index
+    );
+    
+    console.log(`🎯 Unique projects: ${uniqueProjects.length}`);
+    return uniqueProjects;
   }
 
   async fetchTechnicalProjects() {
@@ -144,7 +149,7 @@ class HiddenGemsApp {
         console.warn(`Failed to score project ${project.id}:`, error);
         scoredProjects.push({
           ...project,
-          qualityScore: 0.3
+          qualityScore: 0.3 // default low score
         });
       }
     }
@@ -154,11 +159,14 @@ class HiddenGemsApp {
 
   filterGems(projects, minVersions) {
     return projects.filter(project => {
+      // Quality score threshold
       if (project.qualityScore < 0.4) return false;
       
+      // Use actual version count from API data
       const actualVersions = project.raw?.project?.current_version || 1;
       if (actualVersions < Math.max(10, minVersions)) return false;
       
+      // Remove projects that are too popular (anti-trending bias)
       const text = `${project.title} ${project.description || ''}`.toLowerCase();
       const hasGenericKeywords = Array.from(window.gemFilter.genericKeywords)
         .some(keyword => text.includes(keyword));
@@ -166,7 +174,7 @@ class HiddenGemsApp {
       if (hasGenericKeywords && project.qualityScore < 0.6) return false;
       
       return true;
-    }).slice(0, 50);
+    }).slice(0, 50); // Limit results
   }
 
   sortProjects(projects, sortBy, sortOrder) {
@@ -417,12 +425,21 @@ class UIManager {
 }
 
 // Initialize curated lists
-document.addEventListener('DOMContentLoaded', async () => {
-    window.curatedLists = new CuratedLists();
-});
-
-// Ensure the app is initialized when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+  // Ensure all global objects exist
+  if (!window.websimAPI) {
+    console.error('❌ websimAPI not initialized');
+    return;
+  }
+  if (!window.gemFilter) {
+    console.error('❌ gemFilter not initialized');
+    return;
+  }
+  if (!window.uiManager) {
+    console.error('❌ uiManager not initialized');
+    return;
+  }
+  
   // Initialize the app
   window.app = new HiddenGemsApp();
   window.app.initialize();
