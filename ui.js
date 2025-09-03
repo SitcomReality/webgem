@@ -10,6 +10,8 @@ class UIManager {
       minVersions: document.getElementById('minVersions'),
       minVersionsDisplay: document.getElementById('minVersionsDisplay'),
       discoveryMode: document.getElementById('discoveryMode'),
+      sortBy: document.getElementById('sortBy'),
+      sortOrder: document.getElementById('sortOrder'),
       refreshBtn: document.getElementById('refreshBtn')
     };
 
@@ -20,6 +22,15 @@ class UIManager {
     // Version slider
     this.elements.minVersions.addEventListener('input', (e) => {
       this.elements.minVersionsDisplay.textContent = e.target.value;
+    });
+
+    // Sort controls
+    this.elements.sortBy.addEventListener('change', () => {
+      window.app.discoverGems();
+    });
+    
+    this.elements.sortOrder.addEventListener('change', () => {
+      window.app.discoverGems();
     });
 
     // Refresh button

@@ -8,6 +8,10 @@ class HiddenGemsApp {
     console.log('🚀 Hidden Gems Discovery Platform Initializing...');
     
     try {
+      // Set default sort to views ascending
+      window.uiManager.elements.sortBy.value = 'views';
+      window.uiManager.elements.sortOrder.value = 'asc';
+      
       // Initialize the gem filter with current trending data
       await window.gemFilter.analyzeGenericKeywords();
       console.log('✅ Generic keywords analyzed');
@@ -29,38 +33,33 @@ class HiddenGemsApp {
     try {
       console.log('🔍 Starting gem discovery process...');
       
-      // Update generic keywords first
-      await window.gemFilter.analyzeGenericKeywords();
-      
       // Get discovery parameters
       const minVersions = parseInt(window.uiManager.elements.minVersions.value);
       const discoveryMode = window.uiManager.elements.discoveryMode.value;
+      const sortBy = window.uiManager.elements.sortBy.value;
+      const sortOrder = window.uiManager.elements.sortOrder.value;
       
-      // Fetch projects from multiple sources
+      // Fetch and score projects
       const projectSources = await this.fetchProjectSources(discoveryMode);
-      
-      console.log(`📊 Analyzing ${projectSources.length} projects...`);
-      window.uiManager.updateStats(projectSources.length, 0, 0);
-      
-      // Apply gem filtering and scoring
       const scoredProjects = await this.scoreProjects(projectSources);
-      
-      // Filter based on criteria
       const gems = this.filterGems(scoredProjects, minVersions);
       
-      console.log(`💎 Found ${gems.length} hidden gems`);
+      // Sort the gems
+      const sortedGems = this.sortProjects(gems, sortBy, sortOrder);
+      
+      console.log(`💎 Found ${sortedGems.length} hidden gems`);
       
       // Calculate average quality
-      const avgQuality = gems.length > 0 
-        ? gems.reduce((sum, p) => sum + p.qualityScore, 0) / gems.length 
+      const avgQuality = sortedGems.length > 0 
+        ? sortedGems.reduce((sum, p) => sum + p.qualityScore, 0) / sortedGems.length 
         : 0;
       
-      window.uiManager.updateStats(projectSources.length, gems.length, avgQuality);
+      window.uiManager.updateStats(projectSources.length, sortedGems.length, avgQuality);
       
       // Render results
-      window.uiManager.renderProjects(gems);
+      window.uiManager.renderProjects(sortedGems);
       
-      this.currentProjects = gems;
+      this.currentProjects = sortedGems;
       
     } catch (error) {
       console.error('❌ Gem discovery failed:', error);
@@ -260,6 +259,39 @@ class HiddenGemsApp {
       
       return true;
     }).slice(0, 50); // Limit results
+  }
+
+  sortProjects(projects, sortBy, sortOrder) {
+    const sorted = [...projects].sort((a, b) => {
+      let valueA, valueB;
+      
+      switch (sortBy) {
+        case 'views':
+          valueA = a.raw?.project?.stats?.views || 0;
+          valueB = b.raw?.project?.stats?.views || 0;
+          break;
+        case 'likes':
+          valueA = a.raw?.project?.stats?.likes || 0;
+          valueB = b.raw?.project?.stats?.likes || 0;
+          break;
+        case 'created_at':
+          valueA = new Date(a.created_at).getTime();
+          valueB = new Date(b.created_at).getTime();
+          break;
+        case 'current_version':
+          valueA = a.raw?.project?.current_version || 1;
+          valueB = b.raw?.project?.current_version || 1;
+          break;
+        case 'qualityScore':
+          valueA = a.qualityScore || 0;
+          valueB = b.qualityScore || 0;
+          break;
+      }
+      
+      return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+    });
+    
+    return sorted;
   }
 }
 
