@@ -166,8 +166,17 @@ class HiddenGemsApp {
       const actualVersions = project.raw?.project?.current_version || 1;
       if (actualVersions < Math.max(10, minVersions)) return false;
       
-      // Remove projects that are too popular (anti-trending bias)
+      // Apply term filtering - REMOVE projects with blocked terms
       const text = `${project.title} ${project.description || ''}`.toLowerCase();
+      
+      // Check if any blocked terms are in the title/description
+      for (const blockedTerm of window.gemFilter.blockedTerms) {
+        if (text.includes(blockedTerm.toLowerCase())) {
+          return false; // Block this project
+        }
+      }
+      
+      // Remove projects that are too popular (anti-trending bias)
       const hasGenericKeywords = Array.from(window.gemFilter.genericKeywords)
         .some(keyword => text.includes(keyword));
       
