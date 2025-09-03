@@ -295,12 +295,6 @@ class HiddenGemsApp {
   }
 }
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  window.app = new HiddenGemsApp();
-  window.app.initialize();
-});
-
 // Add some helpful console messages for debugging
 console.log('🎭 Hidden Gems Discovery Platform');
 console.log('📡 API endpoints ready');

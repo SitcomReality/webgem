@@ -1,5 +1,3 @@
-
-```javascript
 class UIManager {
   constructor() {
     this.elements = {
