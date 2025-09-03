@@ -1,4 +1,4 @@
-class CurationUIManager {
+class CurationUI {
   constructor(curationsDB) {
     this.curationsDB = curationsDB;
     this.isCurator = false;
@@ -153,4 +153,4 @@ class CurationUIManager {
   }
 }
 
-window.CurationUIManager = CurationUIManager;
+window.CurationUI = CurationUI;
