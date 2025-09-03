@@ -31,42 +31,44 @@
             
             <div class="controls-section">
                 <div class="controls toolbar">
-                    <div class="toolbar-row">
-                        <div class="segmented" role="tablist" aria-label="Discovery Mode">
-                            <button class="seg-btn" data-mode="gems" aria-selected="true">Gems</button>
-                            <button class="seg-btn" data-mode="technical">Technical</button>
-                            <button class="seg-btn" data-mode="artistic">Artistic</button>
-                            <button class="seg-btn" data-mode="underrated">Underrated</button>
-                            <button class="seg-btn" data-mode="templates">Templates</button>
-                        </div>
-                        <div class="inline-controls">
-                            <div class="inline-group">
-                                <span class="inline-label">Sort</span>
-                                <div class="segmented small" aria-label="Sort By">
-                                    <button class="seg-btn" data-sort="views" aria-selected="true">Views</button>
-                                    <button class="seg-btn" data-sort="likes">Likes</button>
-                                    <button class="seg-btn" data-sort="created_at">Date</button>
-                                    <button class="seg-btn" data-sort="current_version">Versions</button>
-                                    <button class="seg-btn" data-sort="qualityScore">Quality</button>
-                                </div>
-                                <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="asc">↑</button>
-                            </div>
-                            <div class="inline-group">
-                                <span class="inline-label">Min Versions</span>
-                                <div class="range-inline">
-                                    <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
-                                    <span id="minVersionsDisplay" class="value-pill">50</span>
-                                </div>
+                    <div class="main-controls">
+                        <div class="control-group">
+                            <label class="control-label">Discovery Mode</label>
+                            <div class="segmented" role="tablist" aria-label="Discovery Mode">
+                                <button class="seg-btn" data-mode="gems" aria-selected="true">Gems</button>
+                                <button class="seg-btn" data-mode="technical">Technical</button>
+                                <button class="seg-btn" data-mode="artistic">Artistic</button>
+                                <button class="seg-btn" data-mode="underrated">Underrated</button>
+                                <button class="seg-btn" data-mode="templates">Templates</button>
                             </div>
                         </div>
+                        <div class="control-group versions-group">
+                             <label for="minVersions" class="control-label">Min Versions</label>
+                            <div class="range-inline">
+                                <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
+                                <span id="minVersionsDisplay" class="value-pill">50</span>
+                            </div>
+                        </div>
+                        <button id="refreshBtn" class="btn-primary"><span class="btn-text">Discover</span></button>
                     </div>
-                    <div class="toolbar-row end">
-                        <div class="stats-compact">
+
+                    <div class="secondary-controls">
+                        <div class="inline-group sort-controls">
+                            <span class="inline-label">Sort</span>
+                            <div class="segmented small" aria-label="Sort By">
+                                <button class="seg-btn" data-sort="views" aria-selected="true">Views</button>
+                                <button class="seg-btn" data-sort="likes">Likes</button>
+                                <button class="seg-btn" data-sort="created_at">Date</button>
+                                <button class="seg-btn" data-sort="current_version">Versions</button>
+                                <button class="seg-btn" data-sort="qualityScore">Quality</button>
+                            </div>
+                            <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="asc">↑</button>
+                        </div>
+                         <div class="stats-compact">
                             <span class="stat-chip"><span class="k">Analyzing</span><span id="analyzingCount">0</span></span>
                             <span class="stat-chip"><span class="k">Gems</span><span id="gemsFound">0</span></span>
                             <span class="stat-chip"><span class="k">Avg</span><span id="avgQuality">0.0</span></span>
                         </div>
-                        <button id="refreshBtn" class="btn-primary"><span class="btn-text">Discover</span></button>
                     </div>
 
                     <!-- Hidden form controls for app logic compatibility -->

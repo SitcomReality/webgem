@@ -10,6 +10,16 @@
     min-width: auto;
   }
   
+  .main-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .main-controls .btn-primary {
+    width: 100%;
+    margin-top: var(--space-sm);
+  }
+
   .controls-grid {
     grid-template-columns: 1fr;
   }
