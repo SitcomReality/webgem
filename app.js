@@ -136,17 +136,23 @@ class HiddenGemsApp {
   }
 
   async scoreProjects(projects) {
+    console.log(`🎯 Starting to score ${projects.length} projects...`);
     const scoredProjects = [];
     
-    for (const project of projects) {
+    for (let i = 0; i < projects.length; i++) {
+      const project = projects[i];
+      const projectTitle = project.title || 'Untitled';
+      
       try {
+        console.log(`\n--- Scoring Project ${i + 1}/${projects.length}: "${projectTitle}" ---`);
         const qualityScore = await window.gemFilter.calculateQualityScore(project);
+        console.log(`📊 Final quality score: ${qualityScore}`);
         scoredProjects.push({
           ...project,
           qualityScore
         });
       } catch (error) {
-        console.warn(`Failed to score project ${project.id}:`, error);
+        console.warn(`⚠️ Failed to score project ${project.id}:`, error);
         scoredProjects.push({
           ...project,
           qualityScore: 0.3 // Default low score
@@ -154,36 +160,76 @@ class HiddenGemsApp {
       }
     }
     
-    return scoredProjects.sort((a, b) => b.qualityScore - a.qualityScore);
+    const sorted = scoredProjects.sort((a, b) => b.qualityScore - a.qualityScore);
+    console.log(`\n🏆 Top 5 projects by quality score:`);
+    sorted.slice(0, 5).forEach((p, i) => {
+      console.log(`  ${i + 1}. "${p.title}" - Score: ${p.qualityScore}`);
+    });
+    
+    return sorted;
   }
 
   filterGems(projects, minVersions) {
-    return projects.filter(project => {
+    console.log(`🔍 Starting filterGems with ${projects.length} projects, minVersions: ${minVersions}`);
+    
+    const filtered = projects.filter((project, index) => {
+      const projectTitle = project.title || 'Untitled';
+      console.log(`\n📊 Project ${index + 1}: "${projectTitle}"`);
+      
       // Quality score threshold
-      if (project.qualityScore < 0.4) return false;
+      if (project.qualityScore < 0.4) {
+        console.log(`  ❌ Quality score too low: ${project.qualityScore} (threshold: 0.4)`);
+        return false;
+      }
+      console.log(`  ✅ Quality score: ${project.qualityScore}`);
       
       // Use actual version count from API data
       const actualVersions = project.raw?.project?.current_version || 1;
-      if (actualVersions < Math.max(10, minVersions)) return false;
+      const versionThreshold = Math.max(10, minVersions);
+      if (actualVersions < versionThreshold) {
+        console.log(`  ❌ Version count too low: ${actualVersions} (threshold: ${versionThreshold})`);
+        return false;
+      }
+      console.log(`  ✅ Version count: ${actualVersions}`);
       
       // Apply term filtering - REMOVE projects with blocked terms
       const text = `${project.title} ${project.description || ''}`.toLowerCase();
+      console.log(`  🔍 Checking blocked terms in: "${text.slice(0, 100)}${text.length > 100 ? '...' : ''}"`);
       
-      // Check if any blocked terms are in the title/description
+      const blockedTermsFound = [];
       for (const blockedTerm of window.gemFilter.blockedTerms) {
         if (text.includes(blockedTerm.toLowerCase())) {
-          return false; // Block this project
+          blockedTermsFound.push(blockedTerm);
         }
       }
+      
+      if (blockedTermsFound.length > 0) {
+        console.log(`  ❌ Blocked terms found: [${blockedTermsFound.join(', ')}]`);
+        return false;
+      }
+      console.log(`  ✅ No blocked terms found`);
       
       // Remove projects that are too popular (anti-trending bias)
       const hasGenericKeywords = Array.from(window.gemFilter.genericKeywords)
         .some(keyword => text.includes(keyword));
       
-      if (hasGenericKeywords && project.qualityScore < 0.6) return false;
+      if (hasGenericKeywords && project.qualityScore < 0.6) {
+        console.log(`  ❌ Generic keywords found with low quality score: ${project.qualityScore} (threshold: 0.6)`);
+        return false;
+      }
       
+      if (hasGenericKeywords) {
+        console.log(`  ⚠️ Generic keywords present but quality score sufficient: ${project.qualityScore}`);
+      } else {
+        console.log(`  ✅ No generic keywords detected`);
+      }
+      
+      console.log(`  🎯 PASSED all filters`);
       return true;
     }).slice(0, 50); // Limit results
+    
+    console.log(`\n📈 Filtering complete: ${filtered.length}/${projects.length} projects passed filters`);
+    return filtered;
   }
 
   sortProjects(projects, sortBy, sortOrder) {

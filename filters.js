@@ -129,26 +129,34 @@ class GemFilter {
   }
 
   async calculateQualityScore(project) {
+    console.log(`\n🔍 Calculating quality score for: "${project.title || 'Untitled'}"`);
+    
     let score = 0;
     
     // Version-based scoring (major factor)
     const versionScore = this.calculateVersionScore(project);
+    console.log(`📊 Version score: ${versionScore} (weighted: ${versionScore * 0.4})`);
     score += versionScore * 0.4;
 
     // Content quality scoring
     const contentScore = this.calculateContentScore(project);
+    console.log(`📊 Content score: ${contentScore} (weighted: ${contentScore * 0.3})`);
     score += contentScore * 0.3;
 
     // Uniqueness scoring (penalize generic keywords)
     const uniquenessScore = this.calculateUniquenessScore(project);
+    console.log(`📊 Uniqueness score: ${uniquenessScore} (weighted: ${uniquenessScore * 0.3})`);
     score += uniquenessScore * 0.3;
 
-    return Math.max(0, Math.min(1, score));
+    const finalScore = Math.max(0, Math.min(1, score));
+    console.log(`📈 Final quality score: ${finalScore}`);
+    
+    return finalScore;
   }
 
   calculateVersionScore(project) {
-    // Use actual version count from API data
     const actualVersions = project.raw?.project?.current_version || 1;
+    console.log(`  📊 Version count: ${actualVersions}`);
     
     if (actualVersions < 10) return 0.1;
     if (actualVersions < 25) return 0.3;
@@ -167,44 +175,75 @@ class GemFilter {
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let score = 0.5; // Base score
     
+    console.log(`  🔍 Content analysis for: "${text.slice(0, 100)}${text.length > 100 ? '...' : ''}"`);
+    
     // Positive indicators
+    let qualityTermCount = 0;
     this.qualityTerms.forEach(term => {
-      if (text.includes(term)) score += 0.1;
+      if (text.includes(term)) {
+        score += 0.1;
+        qualityTermCount++;
+      }
     });
+    console.log(`  ✅ Quality terms found: ${qualityTermCount}`);
     
     // Length and detail bonus
-    if (text.length > 100) score += 0.1;
-    if (text.length > 300) score += 0.1;
+    if (text.length > 100) {
+      score += 0.1;
+      console.log(`  ✅ Long description bonus (+0.1)`);
+    }
+    if (text.length > 300) {
+      score += 0.1;
+      console.log(`  ✅ Very long description bonus (+0.1)`);
+    }
     
     // Technical terms bonus
     const techTerms = ['api', 'algorithm', 'database', 'framework', 'library', 'function', 'method'];
+    let techTermCount = 0;
     techTerms.forEach(term => {
-      if (text.includes(term)) score += 0.05;
+      if (text.includes(term)) {
+        score += 0.05;
+        techTermCount++;
+      }
     });
+    console.log(`  ✅ Technical terms found: ${techTermCount}`);
     
-    return Math.min(1, score);
+    const finalScore = Math.min(1, score);
+    console.log(`  📊 Content score: ${finalScore}`);
+    return finalScore;
   }
 
   calculateUniquenessScore(project) {
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let score = 1.0;
     
+    console.log(`  🔍 Uniqueness analysis...`);
+    
     // Penalize generic keywords
+    let genericKeywordCount = 0;
     this.genericKeywords.forEach(keyword => {
       if (text.includes(keyword)) {
         score -= 0.15;
+        genericKeywordCount++;
       }
     });
-
+    console.log(`  ⚠️ Generic keywords found: ${genericKeywordCount}`);
+    
     // Penalize blocked terms
+    let blockedTermCount = 0;
     this.blockedTerms.forEach(term => {
       if (text.includes(term.toLowerCase())) {
         score -= 0.3;
+        blockedTermCount++;
       }
     });
+    console.log(`  ❌ Blocked terms found: ${blockedTermCount}`);
     
     // Penalize very short titles (likely generic)
-    if (project.title.length < 20) score -= 0.2;
+    if (project.title.length < 20) {
+      score -= 0.2;
+      console.log(`  ⚠️ Short title penalty (-0.2)`);
+    }
     
     // Penalize common patterns
     const genericPatterns = [
@@ -215,11 +254,18 @@ class GemFilter {
       /_{4,}/ // 4+ underscores
     ];
     
+    let patternCount = 0;
     genericPatterns.forEach(pattern => {
-      if (pattern.test(text)) score -= 0.2;
+      if (pattern.test(text)) {
+        score -= 0.2;
+        patternCount++;
+      }
     });
+    console.log(`  ⚠️ Generic patterns found: ${patternCount}`);
     
-    return Math.max(0, score);
+    const finalScore = Math.max(0, score);
+    console.log(`  📊 Uniqueness score: ${finalScore}`);
+    return finalScore;
   }
 
   filterHiddenGems(projects, minQualityScore = 0.4) {
