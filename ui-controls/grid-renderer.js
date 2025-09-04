@@ -50,17 +50,18 @@ class GridRenderer {
         </div>
         
         <div class="project-meta">
-          <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link">
+          <span class="meta-item" title="Versions">V. ${project.raw?.project?.current_version || 1}</span>
+          <span class="meta-divider">•</span>
+          <span class="meta-item" title="Created Date">⏰️ ${GridRenderer.formatDate(project.created_at)}</span>
+          <span class="meta-divider">•</span>
+          <span class="meta-item" title="Likes">👍 ${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
+          <span class="meta-divider">•</span>
+          <span class="meta-item" title="Views">👀 ${(project.raw?.project?.stats?.views || 0).toLocaleString()}</span>
+          <span class="meta-divider">•</span>
+          <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link" title="${creatorUsername}">
             <img src="${creatorAvatar}" alt="${creatorUsername}" class="creator-avatar">
             <span class="creator-username">${creatorUsername}</span>
           </a>
-          <span class="meta-divider">•</span>
-          <div class="project-stats-inline">
-            <span class="meta-item" title="Likes">👍 ${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
-            <span class="meta-item" title="Views">👀 ${(project.raw?.project?.stats?.views || 0).toLocaleString()}</span>
-            <span class="meta-item" title="Versions">V. ${project.raw?.project?.current_version || 1}</span>
-            <span class="meta-item" title="Created Date">⏰️ ${GridRenderer.formatDate(project.created_at)}</span>
-          </div>
         </div>
 
         ${project.description ? `
