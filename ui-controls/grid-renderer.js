@@ -90,7 +90,6 @@ class GridRenderer {
     const tags = [];
 
     if (qualityScore >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
-    else if (qualityScore >= 0.6) tags.push('<span class="tag tag-high">High Quality</span>');
     else if (qualityScore >= 0.4) tags.push('<span class="tag tag-good">Solid Work</span>');
 
     // Check for unique projects (uniqueness score of 1)
