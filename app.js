@@ -35,6 +35,7 @@ class HiddenGemsApp {
       
       // Get discovery parameters
       const minVersions = parseInt(window.uiManager.elements.minVersions.value);
+      const maxViews = parseInt(window.uiManager.elements.maxViews.value);
       const timeRange = window.uiManager.elements.timeRange.value;
       const sortBy = window.uiManager.elements.sortBy.value;
       const sortOrder = window.uiManager.elements.sortOrder.value;
@@ -42,7 +43,7 @@ class HiddenGemsApp {
       // Fetch and score projects
       const projectSources = await this.fetchProjectSources(timeRange);
       const scoredProjects = await this.scoreProjects(projectSources);
-      const gems = this.filterGems(scoredProjects, minVersions);
+      const gems = this.filterGems(scoredProjects, minVersions, maxViews);
       
       // Sort the gems
       const sortedGems = this.sortProjects(gems, sortBy, sortOrder);
@@ -161,8 +162,8 @@ class HiddenGemsApp {
     return sorted;
   }
 
-  filterGems(projects, minVersions) {
-    console.log(`🔍 Starting filterGems with ${projects.length} projects, minVersions: ${minVersions}`);
+  filterGems(projects, minVersions, maxViews) {
+    console.log(`🔍 Starting filterGems with ${projects.length} projects, minVersions: ${minVersions}, maxViews: ${maxViews}`);
     
     const filtered = projects.filter((project, index) => {
       // Quality score threshold
@@ -170,10 +171,16 @@ class HiddenGemsApp {
         return false;
       }
       
-      // Use actual version count from API data
+      // Version filter
       const actualVersions = project.raw?.project?.current_version || 1;
       const versionThreshold = Math.max(10, minVersions);
       if (actualVersions < versionThreshold) {
+        return false;
+      }
+
+      // Max views filter
+      const views = project.raw?.project?.stats?.views || 0;
+      if (views > maxViews) {
         return false;
       }
       

@@ -57,6 +57,13 @@
                                 <span id="minVersionsDisplay" class="value-pill">50</span>
                             </div>
                         </div>
+                        <div class="control-group versions-group">
+                            <label for="maxViews" class="control-label">Max Views</label>
+                            <div class="range-inline">
+                                <input type="range" id="maxViews" min="100" max="10000" value="1000" class="slider">
+                                <span id="maxViewsDisplay" class="value-pill">1K</span>
+                            </div>
+                        </div>
                         <button id="refreshBtn" class="btn-primary"><span class="btn-text">Discover</span></button>
                     </div>
 
@@ -109,6 +116,9 @@
                         <select id="sortOrder">
                             <option value="asc" selected>Ascending</option>
                             <option value="desc">Descending</option>
+                        </select>
+                        <select id="maxViews" class="visually-hidden">
+                            <option value="1000" selected>1000</option>
                         </select>
                     </div>
                 </div>
