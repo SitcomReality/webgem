@@ -28,6 +28,10 @@
   flex-grow: 1;
 }
 
+.versions-group {
+  min-width: 180px;
+}
+
 .secondary-controls {
   display: flex;
   flex-wrap: wrap;
@@ -64,6 +68,7 @@
   flex-grow: 1;
   text-align: center;
   transition: var(--component-transition);
+  line-height: 1; /* For icon alignment */
 }
 
 .seg-btn[aria-selected="true"] {
@@ -80,7 +85,8 @@
 
 .inline-label {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

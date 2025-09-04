@@ -72,6 +72,17 @@
                             </div>
                             <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="asc">↑</button>
                         </div>
+                        <div class="inline-group view-controls">
+                            <span class="inline-label">View</span>
+                            <div class="segmented small" id="viewToggle">
+                                <button class="seg-btn view-btn" data-view="grid" title="Grid View" aria-selected="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"></path></svg>
+                                </button>
+                                <button class="seg-btn view-btn" data-view="list" title="List View">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 4h18v2H3zM3 11h18v2H3zM3 18h18v2H3z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
                          <div class="stats-compact">
                             <span class="stat-chip"><span class="k">Analyzing</span><span id="analyzingCount">0</span></span>
                             <span class="stat-chip"><span class="k">Gems</span><span id="gemsFound">0</span></span>

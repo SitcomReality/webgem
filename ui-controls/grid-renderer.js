@@ -14,75 +14,63 @@ class GridRenderer {
     
     const creator = project.raw?.project?.created_by || project.raw?.site?.owner;
     const creatorUsername = creator?.username || 'unknown';
-    const creatorAvatar = creator?.avatar_url || null;
+    const creatorAvatar = creator?.avatar_url || `https://images.websim.com/avatar/${creatorUsername}`;
 
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
 
     card.innerHTML = `
-      <div class="project-header">
-        <h3 class="project-title">
-          <a href="https://websim.com/c/${project.id}" target="_blank">${GridRenderer.escapeHtml(project.title)}</a>
-        </h3>
-        <div class="score-section">
-          <div class="project-score" style="color: ${scoreColor}">
-            ${(qualityScore * 100).toFixed(0)}%
-          </div>
-          ${isTemplateBased ? `
-            <div class="template-info">
+      <div class="project-image-container">
+        <a href="https://websim.com/c/${project.id}" target="_blank" class="project-image-link">
+          <img src="${imageUrl}" 
+               alt="${GridRenderer.escapeHtml(project.title)}"
+               loading="lazy"
+               class="project-image"
+               onerror="this.style.display='none'">
+        </a>
+      </div>
+
+      <div class="project-content">
+        <div class="project-header">
+          <div class="project-title-wrapper">
+            <h3 class="project-title">
+              <a href="https://websim.com/c/${project.id}" target="_blank">${GridRenderer.escapeHtml(project.title)}</a>
+            </h3>
+            ${isTemplateBased ? `
               <a href="https://websim.com/p/${parentProjectId}" 
                  target="_blank" 
                  class="template-badge template-based"
                  title="View original template">
                 <span class="template-text">fork</span>
               </a>
-            </div>
-          ` : ''}
+            ` : ''}
+          </div>
+          <div class="project-score" style="--score-color: ${scoreColor}">
+            ${(qualityScore * 100).toFixed(0)}
+          </div>
         </div>
-      </div>
-      
-      <div class="project-stats">
-        <div class="meta-item">
-          <span class="meta-label">👍</span>
-          <span class="meta-value">${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">👀</span>
-          <span class="meta-value">${(project.raw?.project?.stats?.views || 0).toLocaleString()}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">V.</span>
-          <span class="meta-value">${project.raw?.project?.current_version || 1}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">⏰️</span>
-          <span class="meta-value">${GridRenderer.formatDate(project.created_at)}</span>
-        </div>
-      </div>
-
-      <div class="project-creator">
-        <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link">
-          ${creatorAvatar ? `
+        
+        <div class="project-meta">
+          <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link">
             <img src="${creatorAvatar}" alt="${creatorUsername}" class="creator-avatar">
-          ` : ''}
-          <span class="creator-username">@${creatorUsername}</span>
-        </a>
-      </div>
+            <span class="creator-username">${creatorUsername}</span>
+          </a>
+          <span class="meta-divider">•</span>
+          <div class="project-stats-inline">
+            <span class="meta-item" title="Likes">👍 ${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
+            <span class="meta-item" title="Views">👀 ${(project.raw?.project?.stats?.views || 0).toLocaleString()}</span>
+            <span class="meta-item" title="Versions">V. ${project.raw?.project?.current_version || 1}</span>
+            <span class="meta-item" title="Created Date">⏰️ ${GridRenderer.formatDate(project.created_at)}</span>
+          </div>
+        </div>
 
-      ${project.description ? `
-        <p class="project-description">${GridRenderer.escapeHtml(project.description)}</p>
-      ` : '<p class="project-description">No description available.</p>'}
+        ${project.description ? `
+          <p class="project-description">${GridRenderer.escapeHtml(project.description)}</p>
+        ` : ''}
 
-      <div class="project-image">
-        <img src="${imageUrl}" 
-             alt="${GridRenderer.escapeHtml(project.title)}"
-             loading="lazy"
-             onload="this.style.display='block'"
-             onerror="this.style.display='none'">
-      </div>
-
-      <div class="project-footer">
-        <div class="project-tags">
-          ${GridRenderer.generateQualityTags(project, qualityScore)}
+        <div class="project-footer">
+          <div class="project-tags">
+            ${GridRenderer.generateQualityTags(project, qualityScore)}
+          </div>
         </div>
       </div>
     `;

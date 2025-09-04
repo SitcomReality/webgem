@@ -11,6 +11,8 @@
   flex-direction: row;
   align-items: center;
   gap: var(--space-sm);
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
 }
 
 .meta-label {
@@ -50,4 +52,3 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-

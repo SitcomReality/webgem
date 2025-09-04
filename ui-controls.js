@@ -33,11 +33,13 @@ class UIManager {
     this.elements.refreshBtn.addEventListener('click', () => this.refresh());
 
     // Time range buttons
-    this.bindSegmentButtons('.seg-btn[data-range]', 'timeRange');
-    this.bindSegmentButtons('.seg-btn[data-sort]', 'sortBy');
+    this.bindSegmentButtons('.seg-btn[data-range]', 'timeRange', false);
+    this.bindSegmentButtons('.seg-btn[data-sort]', 'sortBy', false);
 
     // Order toggle
     this.setupOrderToggle();
+    // View toggle
+    this.setupViewToggle();
 
     // Filter panel
     this.filterPanel = new window.FilterPanelManager(window.gemFilter, window.app);
@@ -52,14 +54,50 @@ class UIManager {
     this.curationUI = new window.CurationUI(window.curationsDB);
   }
 
-  bindSegmentButtons(selector, formId) {
+  bindSegmentButtons(selector, formId, shouldRefresh) {
     document.querySelectorAll(selector).forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll(selector).forEach(b => 
           b.setAttribute('aria-selected', 'false'));
         btn.setAttribute('aria-selected', 'true');
-        this.elements[formId].value = btn.dataset[formId === 'timeRange' ? 'range' : 'sort'];
-        this.refresh();
+        
+        if (formId && this.elements[formId]) {
+            this.elements[formId].value = btn.dataset[formId === 'timeRange' ? 'range' : 'sort'];
+        }
+
+        if (shouldRefresh) {
+            this.refresh();
+        }
+      });
+    });
+  }
+
+  setupViewToggle() {
+    const viewToggleButtons = document.querySelectorAll('.view-btn');
+    const resultsContainer = this.elements.results;
+
+    // Load saved view
+    const savedView = localStorage.getItem('websim_view_mode') || 'grid';
+    resultsContainer.classList.remove('grid-view', 'list-view');
+    resultsContainer.classList.add(`${savedView}-view`);
+    
+    viewToggleButtons.forEach(btn => {
+        btn.setAttribute('aria-selected', btn.dataset.view === savedView);
+    });
+
+    viewToggleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        // Update button states
+        viewToggleButtons.forEach(b => b.setAttribute('aria-selected', 'false'));
+        btn.setAttribute('aria-selected', 'true');
+        
+        // Update container class
+        resultsContainer.classList.remove('grid-view', 'list-view');
+        resultsContainer.classList.add(`${view}-view`);
+        
+        // Save preference
+        localStorage.setItem('websim_view_mode', view);
       });
     });
   }

@@ -1,25 +1,30 @@
 /* Button Components */
 .btn-primary {
   padding: var(--space-md) var(--space-xl);
-  background: linear-gradient(135deg, var(--accent-sapphire), var(--accent-emerald));
-  border: none;
+  background: var(--accent-sapphire);
+  border: 1px solid var(--border-accent);
   border-radius: var(--border-radius-sm);
-  color: var(--text-primary);
+  color: white;
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in-out;
+  box-shadow: var(--shadow-subtle);
 }
 
 .btn-primary:hover {
-  box-shadow: var(--shadow-elevated);
+  background: color-mix(in srgb, var(--accent-sapphire) 90%, #fff);
+  border-color: #fff;
+  box-shadow: 0 0 15px rgba(47, 129, 247, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn-primary:active {
   transform: translateY(0);
+  background: var(--accent-emerald);
 }
 
 /* Filter toggle button */
