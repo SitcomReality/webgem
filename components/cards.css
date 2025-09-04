@@ -23,6 +23,7 @@
   align-items: flex-start;
   margin-bottom: var(--space-lg);
   flex-wrap: wrap;
+  order: 2;
 }
 
 .project-title {
