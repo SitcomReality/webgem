@@ -17,6 +17,7 @@ class GridRenderer {
     const creatorAvatar = creator?.avatar_url || `https://images.websim.com/avatar/${creatorUsername}`;
 
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
+    const versionCount = project.raw?.project?.current_version || 1;
 
     card.innerHTML = `
       <div class="project-image-container">
@@ -50,7 +51,7 @@ class GridRenderer {
         </div>
         
         <div class="project-meta">
-          <span class="meta-item" title="Versions">V. ${project.raw?.project?.current_version || 1}</span>
+          <span class="meta-item" title="Versions">V. ${versionCount}</span>
           <span class="meta-divider">•</span>
           <span class="meta-item" title="Created Date">⏰️ ${GridRenderer.formatDate(project.created_at)}</span>
           <span class="meta-divider">•</span>
@@ -76,7 +77,49 @@ class GridRenderer {
       </div>
     `;
 
+    // Add effort tag styling based on version count
+    const effortTag = card.querySelector('.tag-effort');
+    if (effortTag) {
+      GridRenderer.applyEffortStyling(effortTag, versionCount);
+    }
+
     return card;
+  }
+
+  static applyEffortStyling(element, versionCount) {
+    if (versionCount >= 500) {
+      element.className = 'tag tag-passion';
+      element.textContent = 'Passion Project!';
+    } else if (versionCount >= 250) {
+      element.className = 'tag tag-effort';
+      element.textContent = 'High Effort';
+      
+      const intensity = Math.min((versionCount - 250) / 250, 1);
+      const red = Math.floor(231 + (255 - 231) * intensity);
+      const green = Math.floor(76 - 76 * intensity);
+      const blue = Math.floor(60 - 60 * intensity);
+      
+      element.style.setProperty('--base-red', red);
+      element.style.setProperty('--base-green', green);
+      element.style.setProperty('--base-blue', blue);
+      element.style.setProperty('--effort-alpha', 0.1 + 0.2 * intensity);
+      element.style.setProperty('--effort-border-alpha', 0.3 + 0.3 * intensity);
+      element.style.setProperty('--effort-animation', 'effortGlow 2s ease-in-out infinite alternate');
+    } else if (versionCount >= 100) {
+      element.className = 'tag tag-effort';
+      element.textContent = 'High Effort';
+      
+      const intensity = Math.min((versionCount - 100) / 150, 1);
+      const alpha = 0.05 + 0.15 * intensity;
+      const borderAlpha = 0.15 + 0.25 * intensity;
+      
+      element.style.setProperty('--base-red', 231);
+      element.style.setProperty('--base-green', 76);
+      element.style.setProperty('--base-blue', 60);
+      element.style.setProperty('--effort-alpha', alpha);
+      element.style.setProperty('--effort-border-alpha', borderAlpha);
+      element.style.setProperty('--effort-animation', 'none');
+    }
   }
 
   static getScoreColor(score) {
@@ -88,25 +131,23 @@ class GridRenderer {
 
   static generateQualityTags(project, qualityScore) {
     const tags = [];
+    const versionCount = project.raw?.project?.current_version || 1;
 
-    if (qualityScore >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
+    if (qualityScore >= 0.8) {
+      tags.push('<span class="tag tag-excellent">Exceptional</span>');
+    }
 
-    // Check for unique projects (uniqueness score of 1)
+    // Check for unique projects
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let uniquenessScore = 1.0;
     
-    // Recalculate uniqueness score to check if it's perfect
     if (window.gemFilter) {
       const genericKeywords = Array.from(window.gemFilter.genericKeywords || []);
       const blockedTerms = Array.from(window.gemFilter.blockedTerms || []);
       
-      // Penalize generic keywords
       genericKeywords.forEach(keyword => { if (text.includes(keyword)) { uniquenessScore -= 0.15; } });
-      
-      // Penalize blocked terms
       blockedTerms.forEach(term => { if (text.includes(term.toLowerCase())) { uniquenessScore -= 0.3; } });
       
-      // Penalize common patterns
       const genericPatterns = [
         /^(simple|basic|easy|quick)\s+/,
         /\b(test|demo|example)\b/,
@@ -117,7 +158,6 @@ class GridRenderer {
       genericPatterns.forEach(pattern => { if (pattern.test(text)) { uniquenessScore -= 0.2; } });
     }
 
-    // If uniqueness score is exactly 1.0 (perfect), add unique tag
     if (uniquenessScore >= 0.99) {
       tags.push('<span class="tag tag-unique">Unique</span>');
     }
@@ -126,15 +166,22 @@ class GridRenderer {
       tags.push('<span class="tag tag-technical">Technical</span>');
     }
 
-    if ((project.raw?.project?.current_version || 1) > 100) {
-      tags.push('<span class="tag tag-effort">High Effort</span>');
+    if (versionCount >= 100) {
+      let effortClass = 'tag-effort';
+      let effortText = 'High Effort';
+      
+      if (versionCount >= 500) {
+        effortClass = 'tag-passion';
+        effortText = 'Passion Project!';
+      }
+      
+      tags.push(`<span class="tag ${effortClass}">${effortText}</span>`);
     }
 
     return tags.join('');
   }
 
   static formatDate(dateString) {
-    // Format date as ISO 8601 YYYY-MM-DD
     try {
       const d = new Date(dateString);
       if (isNaN(d)) return '';

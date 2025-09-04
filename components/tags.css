@@ -34,20 +34,54 @@
 }
 
 .tag-effort {
-  background: rgba(231, 76, 60, 0.1);
-  color: var(--accent-ruby);
-  border-color: rgba(231, 76, 60, 0.3);
+  /* Dynamic styles applied via CSS custom properties */
+  --base-red: 231;
+  --base-green: 76;
+  --base-blue: 60;
+  background: rgba(var(--base-red), var(--base-green), var(--base-blue), var(--effort-alpha, 0.1));
+  color: rgb(var(--base-red), var(--base-green), var(--base-blue));
+  border-color: rgba(var(--base-red), var(--base-green), var(--base-blue), var(--effort-border-alpha, 0.3));
+  animation: var(--effort-animation, none);
+}
+
+.tag-passion {
+  background: linear-gradient(
+    45deg,
+    #ff0080,
+    #ff8c00,
+    #ffd700,
+    #00ff80,
+    #0080ff,
+    #8000ff
+  );
+  background-size: 400% 400%;
+  color: white;
+  border-color: transparent;
+  font-weight: 700;
+  animation: passionRainbow 3s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes uniqueGlow {
+  0% { box-shadow: 0 0 5px rgba(155, 89, 182, 0.2); }
+  100% { box-shadow: 0 0 10px rgba(155, 89, 182, 0.4); }
+}
+
+@keyframes passionRainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes effortGlow {
+  0% { box-shadow: 0 0 5px rgba(var(--base-red), var(--base-green), var(--base-blue), 0.3); }
+  100% { box-shadow: 0 0 15px rgba(var(--base-red), var(--base-green), var(--base-blue), 0.6); }
 }
 
 .tag-technical {
   background: rgba(243, 156, 18, 0.1);
   color: var(--accent-gold);
   border-color: rgba(243, 156, 18, 0.3);
-}
-
-@keyframes uniqueGlow {
-  0% { box-shadow: 0 0 5px rgba(155, 89, 182, 0.2); }
-  100% { box-shadow: 0 0 10px rgba(155, 89, 182, 0.4); }
 }
 
 .template-badge {
