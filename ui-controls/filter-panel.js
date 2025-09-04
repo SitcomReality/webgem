@@ -143,7 +143,16 @@ class FilterPanelManager {
 
   applyFilters() {
     this.hide();
-    this.appRef.discoverGems();
+    // Ensure appRef is available before calling discoverGems; fallback to UIManager refresh
+    if (this.appRef && typeof this.appRef.discoverGems === 'function') {
+      this.appRef.discoverGems();
+    } else if (window.app && typeof window.app.discoverGems === 'function') {
+      window.app.discoverGems();
+    } else if (window.uiManager && typeof window.uiManager.refresh === 'function') {
+      window.uiManager.refresh();
+    } else {
+      console.warn('applyFilters: no app reference available to trigger discovery');
+    }
   }
 
   show() {
