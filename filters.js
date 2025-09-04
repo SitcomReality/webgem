@@ -129,34 +129,26 @@ class GemFilter {
   }
 
   async calculateQualityScore(project) {
-    console.log(`\n🔍 Calculating quality score for: "${project.title || 'Untitled'}"`);
-    
     let score = 0;
     
     // Version-based scoring (major factor)
     const versionScore = this.calculateVersionScore(project);
-    console.log(`📊 Version score: ${versionScore} (weighted: ${versionScore * 0.4})`);
     score += versionScore * 0.4;
 
     // Content quality scoring
     const contentScore = this.calculateContentScore(project);
-    console.log(`📊 Content score: ${contentScore} (weighted: ${contentScore * 0.3})`);
     score += contentScore * 0.3;
 
     // Uniqueness scoring (penalize generic keywords)
     const uniquenessScore = this.calculateUniquenessScore(project);
-    console.log(`📊 Uniqueness score: ${uniquenessScore} (weighted: ${uniquenessScore * 0.3})`);
     score += uniquenessScore * 0.3;
 
     const finalScore = Math.max(0, Math.min(1, score));
-    console.log(`📈 Final quality score: ${finalScore}`);
-    
     return finalScore;
   }
 
   calculateVersionScore(project) {
     const actualVersions = project.raw?.project?.current_version || 1;
-    console.log(`  📊 Version count: ${actualVersions}`);
     
     if (actualVersions < 10) return 0.1;
     if (actualVersions < 25) return 0.3;
