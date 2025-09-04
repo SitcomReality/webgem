@@ -149,7 +149,6 @@ class GemFilter {
 
   calculateVersionScore(project) {
     const actualVersions = project.raw?.project?.current_version || 1;
-    
     if (actualVersions < 10) return 0.1;
     if (actualVersions < 25) return 0.3;
     if (actualVersions < 50) return 0.5;
@@ -166,8 +165,6 @@ class GemFilter {
   calculateContentScore(project) {
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let score = 0.5; // Base score
-    // Remove positive boosts for "quality terms" and "technical terms"
-    // Length and detail bonus (description-based, not title length)
     if (text.length > 100) { score += 0.1; }
     if (text.length > 300) { score += 0.1; }
     const finalScore = Math.min(1, score);
@@ -177,7 +174,6 @@ class GemFilter {
   calculateUniquenessScore(project) {
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let score = 1.0;
-    const matchedGeneric = [];
     this.genericKeywords.forEach(keyword => { if (text.includes(keyword)) { score -= 0.15; } });
     let blockedTermCount = 0;
     this.blockedTerms.forEach(term => { if (text.includes(term.toLowerCase())) { score -= 0.3; blockedTermCount++; } });
