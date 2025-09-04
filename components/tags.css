@@ -24,18 +24,6 @@
   border-color: rgba(0, 212, 170, 0.3);
 }
 
-.tag-high {
-  background: rgba(91, 124, 250, 0.1);
-  color: var(--accent-sapphire);
-  border-color: rgba(91, 124, 250, 0.3);
-}
-
-.tag-good {
-  background: rgba(243, 156, 18, 0.1);
-  color: var(--accent-gold);
-  border-color: rgba(243, 156, 18, 0.3);
-}
-
 .tag-unique {
   background: rgba(155, 89, 182, 0.1);
   color: var(--accent-amethyst);
@@ -52,9 +40,9 @@
 }
 
 .tag-technical {
-  background: rgba(52, 152, 219, 0.1);
-  color: #3498db;
-  border-color: rgba(52, 152, 219, 0.3);
+  background: rgba(243, 156, 18, 0.1);
+  color: var(--accent-gold);
+  border-color: rgba(243, 156, 18, 0.3);
 }
 
 @keyframes uniqueGlow {
@@ -77,15 +65,15 @@
 }
 
 .template-badge.template-based {
-  background: rgba(91, 124, 250, 0.15);
-  color: var(--accent-sapphire);
-  border-color: rgba(91, 124, 250, 0.3);
+  background: rgba(243, 156, 18, 0.15);
+  color: var(--accent-gold);
+  border-color: rgba(243, 156, 18, 0.3);
   cursor: pointer;
   text-decoration: none;
 }
 
 .template-badge.template-based:hover {
-  background: rgba(91, 124, 250, 0.25);
+  background: rgba(243, 156, 18, 0.25);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(91, 124, 250, 0.3);
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
 }
