@@ -97,14 +97,44 @@ class GridRenderer {
            'var(--accent-ruby)';
   }
 
-  static generateQualityTags(project, score) {
+  static generateQualityTags(project, qualityScore) {
     const tags = [];
 
-    if (score >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
-    else if (score >= 0.6) tags.push('<span class="tag tag-high">High Quality</span>');
-    else if (score >= 0.4) tags.push('<span class="tag tag-good">Solid Work</span>');
+    if (qualityScore >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
+    else if (qualityScore >= 0.6) tags.push('<span class="tag tag-high">High Quality</span>');
+    else if (qualityScore >= 0.4) tags.push('<span class="tag tag-good">Solid Work</span>');
 
+    // Check for unique projects (uniqueness score of 1)
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
+    let uniquenessScore = 1.0;
+    
+    // Recalculate uniqueness score to check if it's perfect
+    if (window.gemFilter) {
+      const genericKeywords = Array.from(window.gemFilter.genericKeywords || []);
+      const blockedTerms = Array.from(window.gemFilter.blockedTerms || []);
+      
+      // Penalize generic keywords
+      genericKeywords.forEach(keyword => { if (text.includes(keyword)) { uniquenessScore -= 0.15; } });
+      
+      // Penalize blocked terms
+      blockedTerms.forEach(term => { if (text.includes(term.toLowerCase())) { uniquenessScore -= 0.3; } });
+      
+      // Penalize common patterns
+      const genericPatterns = [
+        /^(simple|basic|easy|quick)\s+/,
+        /\b(test|demo|example)\b/,
+        /\b(copy|clone)\b/,
+        /\bmeme\b/,
+        /_{4,}/
+      ];
+      genericPatterns.forEach(pattern => { if (pattern.test(text)) { uniquenessScore -= 0.2; } });
+    }
+
+    // If uniqueness score is exactly 1.0 (perfect), add unique tag
+    if (uniquenessScore >= 0.99) {
+      tags.push('<span class="tag tag-unique">Unique</span>');
+    }
+
     if (window.gemFilter?.qualityTerms?.some(term => text.includes(term))) {
       tags.push('<span class="tag tag-technical">Technical</span>');
     }
