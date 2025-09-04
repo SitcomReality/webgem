@@ -173,28 +173,20 @@ class HiddenGemsApp {
     console.log(`🔍 Starting filterGems with ${projects.length} projects, minVersions: ${minVersions}`);
     
     const filtered = projects.filter((project, index) => {
-      const projectTitle = project.title || 'Untitled';
-      console.log(`\n📊 Project ${index + 1}: "${projectTitle}"`);
-      
       // Quality score threshold
       if (project.qualityScore < 0.4) {
-        console.log(`  ❌ Quality score too low: ${project.qualityScore} (threshold: 0.4)`);
         return false;
       }
-      console.log(`  ✅ Quality score: ${project.qualityScore}`);
       
       // Use actual version count from API data
       const actualVersions = project.raw?.project?.current_version || 1;
       const versionThreshold = Math.max(10, minVersions);
       if (actualVersions < versionThreshold) {
-        console.log(`  ❌ Version count too low: ${actualVersions} (threshold: ${versionThreshold})`);
         return false;
       }
-      console.log(`  ✅ Version count: ${actualVersions}`);
       
       // Apply term filtering - REMOVE projects with blocked terms
       const text = `${project.title} ${project.description || ''}`.toLowerCase();
-      console.log(`  🔍 Checking blocked terms in: "${text.slice(0, 100)}${text.length > 100 ? '...' : ''}"`);
       
       const blockedTermsFound = [];
       for (const blockedTerm of window.gemFilter.blockedTerms) {
@@ -204,31 +196,21 @@ class HiddenGemsApp {
       }
       
       if (blockedTermsFound.length > 0) {
-        console.log(`  ❌ Blocked terms found: [${blockedTermsFound.join(', ')}]`);
         return false;
       }
-      console.log(`  ✅ No blocked terms found`);
       
       // Remove projects that are too popular (anti-trending bias)
       const hasGenericKeywords = Array.from(window.gemFilter.genericKeywords)
         .some(keyword => text.includes(keyword));
       
       if (hasGenericKeywords && project.qualityScore < 0.6) {
-        console.log(`  ❌ Generic keywords found with low quality score: ${project.qualityScore} (threshold: 0.6)`);
         return false;
       }
       
-      if (hasGenericKeywords) {
-        console.log(`  ⚠️ Generic keywords present but quality score sufficient: ${project.qualityScore}`);
-      } else {
-        console.log(`  ✅ No generic keywords detected`);
-      }
-      
-      console.log(`  🎯 PASSED all filters`);
       return true;
     }).slice(0, 50); // Limit results
     
-    console.log(`\n📈 Filtering complete: ${filtered.length}/${projects.length} projects passed filters`);
+    console.log(`📈 Filtering complete: ${filtered.length}/${projects.length} projects passed filters`);
     return filtered;
   }
 

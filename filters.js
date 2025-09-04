@@ -174,30 +174,22 @@ class GemFilter {
   calculateContentScore(project) {
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let score = 0.5; // Base score
-    console.log(`  🔍 Content analysis for: "${text.slice(0, 100)}${text.length > 100 ? '...' : ''}"`);
     // Remove positive boosts for "quality terms" and "technical terms"
     // Length and detail bonus (description-based, not title length)
-    if (text.length > 100) { score += 0.1; console.log(`  ✅ Long description bonus (+0.1)`); }
-    if (text.length > 300) { score += 0.1; console.log(`  ✅ Very long description bonus (+0.1)`); }
+    if (text.length > 100) { score += 0.1; }
+    if (text.length > 300) { score += 0.1; }
     const finalScore = Math.min(1, score);
-    console.log(`  📊 Content score: ${finalScore}`);
     return finalScore;
   }
 
   calculateUniquenessScore(project) {
     const text = `${project.title} ${project.description || ''}`.toLowerCase();
     let score = 1.0;
-    console.log(`  🔍 Uniqueness analysis...`);
-    // Penalize generic keywords (log which ones)
     const matchedGeneric = [];
-    this.genericKeywords.forEach(keyword => { if (text.includes(keyword)) { score -= 0.15; matchedGeneric.push(keyword); } });
-    console.log(`  ⚠️ Generic keywords found: ${matchedGeneric.length}${matchedGeneric.length ? ` -> [${matchedGeneric.join(', ')}]` : ''}`);
-    // Penalize blocked terms (unchanged)
+    this.genericKeywords.forEach(keyword => { if (text.includes(keyword)) { score -= 0.15; } });
     let blockedTermCount = 0;
     this.blockedTerms.forEach(term => { if (text.includes(term.toLowerCase())) { score -= 0.3; blockedTermCount++; } });
-    console.log(`  ❌ Blocked terms found: ${blockedTermCount}`);
     
-    // Penalize common patterns
     const genericPatterns = [
       /^(simple|basic|easy|quick)\s+/,
       /\b(test|demo|example)\b/,
@@ -205,11 +197,8 @@ class GemFilter {
       /\bmeme\b/,
       /_{4,}/
     ];
-    const matchedPatterns = [];
-    genericPatterns.forEach(pattern => { if (pattern.test(text)) { score -= 0.2; matchedPatterns.push(pattern.toString()); } });
-    console.log(`  ⚠️ Generic patterns found: ${matchedPatterns.length}${matchedPatterns.length ? ` -> [${matchedPatterns.join(', ')}]` : ''}`);
+    genericPatterns.forEach(pattern => { if (pattern.test(text)) { score -= 0.2; } });
     const finalScore = Math.max(0, score);
-    console.log(`  📊 Uniqueness score: ${finalScore}`);
     return finalScore;
   }
 
