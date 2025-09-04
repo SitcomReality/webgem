@@ -79,9 +79,9 @@
 }
 
 .tag-technical {
-  background: rgba(243, 156, 18, 0.1);
-  color: var(--accent-gold);
-  border-color: rgba(243, 156, 18, 0.3);
+  background: rgba(47, 129, 247, 0.1);
+  color: var(--accent-sapphire);
+  border-color: rgba(47, 129, 247, 0.3);
 }
 
 .template-badge {
