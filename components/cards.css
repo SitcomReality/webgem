@@ -17,21 +17,12 @@
   transform: translateY(-2px);
 }
 
-.project-stats {
-  display: flex;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  font-size: 12px;
-  order: 0;
-}
-
 .project-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--space-lg);
   flex-wrap: wrap;
-  order: 1;
 }
 
 .project-title {
