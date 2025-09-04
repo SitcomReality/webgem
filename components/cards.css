@@ -17,19 +17,21 @@
   transform: translateY(-2px);
 }
 
-.project-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-}
-
 .project-stats {
   display: flex;
   gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
   font-size: 12px;
-  order: -1; /* Ensure stats appear first */
-  margin-bottom: var(--space-md);
+  order: 0;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  order: 1;
 }
 
 .project-title {
@@ -55,13 +57,6 @@
 
 .project-title a:hover {
   color: var(--accent-sapphire);
-}
-
-.score-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  align-items: flex-end;
 }
 
 .project-image {

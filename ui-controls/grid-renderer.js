@@ -19,25 +19,26 @@ class GridRenderer {
     const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
 
     card.innerHTML = `
-      <div class="project-header">
-        <div class="project-stats">
-          <div class="meta-item">
-            <span class="meta-label">👍</span>
-            <span class="meta-value">${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">👀</span>
-            <span class="meta-value">${(project.raw?.project?.stats?.views || 0).toLocaleString()}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">V.</span>
-            <span class="meta-value">${project.raw?.project?.current_version || 1}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">⏰️</span>
-            <span class="meta-value">${GridRenderer.formatDate(project.created_at)}</span>
-          </div>
+      <div class="project-stats">
+        <div class="meta-item">
+          <span class="meta-label">👍</span>
+          <span class="meta-value">${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
         </div>
+        <div class="meta-item">
+          <span class="meta-label">👀</span>
+          <span class="meta-value">${(project.raw?.project?.stats?.views || 0).toLocaleString()}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">V.</span>
+          <span class="meta-value">${project.raw?.project?.current_version || 1}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">⏰️</span>
+          <span class="meta-value">${GridRenderer.formatDate(project.created_at)}</span>
+        </div>
+      </div>
+
+      <div class="project-header">
         <h3 class="project-title">
           <a href="https://websim.com/c/${project.id}" target="_blank">${GridRenderer.escapeHtml(project.title)}</a>
         </h3>
@@ -57,7 +58,7 @@ class GridRenderer {
           ` : ''}
         </div>
       </div>
-
+      
       <div class="project-creator">
         <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link">
           ${creatorAvatar ? `
