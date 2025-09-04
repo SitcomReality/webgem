@@ -1,3 +1,46 @@
+class GridRenderer {
+  static createProjectCard(project) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'all 0.5s ease';
+
+    const qualityScore = project.qualityScore || 0;
+    const scoreColor = GridRenderer.getScoreColor(qualityScore);
+
+    const isTemplateBased = project.raw?.project?.parent_id || project.project?.parent_id;
+    const parentProjectId = project.raw?.project?.parent_id || project.project?.parent_id;
+    
+    const creator = project.raw?.project?.created_by || project.raw?.site?.owner;
+    const creatorUsername = creator?.username || 'unknown';
+    const creatorAvatar = creator?.avatar_url || null;
+
+    const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
+
+    card.innerHTML = `
+      <div class="project-header">
+        <h3 class="project-title">
+          <a href="https://websim.com/c/${project.id}" target="_blank">${GridRenderer.escapeHtml(project.title)}</a>
+        </h3>
+        <div class="score-section">
+          <div class="project-score" style="color: ${scoreColor}">
+            ${(qualityScore * 100).toFixed(0)}%
+          </div>
+          ${isTemplateBased ? `
+            <div class="template-info">
+              <a href="https://websim.com/p/${parentProjectId}" 
+                 target="_blank" 
+                 class="template-badge template-based"
+                 title="View original template">
+                <span class="template-text">fork</span>
+              </a>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+      
+      <div class="project-stats">
         <div class="meta-item">
           <span class="meta-label">👍</span>
           <span class="meta-value">${(project.raw?.project?.stats?.likes || 0).toLocaleString()}</span>
@@ -14,4 +57,125 @@
           <span class="meta-label">⏰️</span>
           <span class="meta-value">${GridRenderer.formatDate(project.created_at)}</span>
         </div>
+      </div>
 
+      <div class="project-creator">
+        <a href="https://websim.com/@${creatorUsername}" target="_blank" class="creator-link">
+          ${creatorAvatar ? `
+            <img src="${creatorAvatar}" alt="${creatorUsername}" class="creator-avatar">
+          ` : ''}
+          <span class="creator-username">@${creatorUsername}</span>
+        </a>
+      </div>
+
+      ${project.description ? `
+        <p class="project-description">${GridRenderer.escapeHtml(project.description)}</p>
+      ` : '<p class="project-description">No description available.</p>'}
+
+      <div class="project-image">
+        <img src="${imageUrl}" 
+             alt="${GridRenderer.escapeHtml(project.title)}"
+             loading="lazy"
+             onload="this.style.display='block'"
+             onerror="this.style.display='none'">
+      </div>
+
+      <div class="project-footer">
+        <div class="project-tags">
+          ${GridRenderer.generateQualityTags(project, qualityScore)}
+        </div>
+      </div>
+    `;
+
+    return card;
+  }
+
+  static getScoreColor(score) {
+    return score >= 0.8 ? 'var(--accent-emerald)' :
+           score >= 0.6 ? 'var(--accent-sapphire)' :
+           score >= 0.4 ? 'var(--accent-gold)' :
+           'var(--accent-ruby)';
+  }
+
+  static generateQualityTags(project, qualityScore) {
+    const tags = [];
+
+    if (qualityScore >= 0.8) tags.push('<span class="tag tag-excellent">Exceptional</span>');
+    else if (qualityScore >= 0.6) tags.push('<span class="tag tag-high">High Quality</span>');
+    else if (qualityScore >= 0.4) tags.push('<span class="tag tag-good">Solid Work</span>');
+
+    // Check for unique projects (uniqueness score of 1)
+    const text = `${project.title} ${project.description || ''}`.toLowerCase();
+    let uniquenessScore = 1.0;
+    
+    // Recalculate uniqueness score to check if it's perfect
+    if (window.gemFilter) {
+      const genericKeywords = Array.from(window.gemFilter.genericKeywords || []);
+      const blockedTerms = Array.from(window.gemFilter.blockedTerms || []);
+      
+      // Penalize generic keywords
+      genericKeywords.forEach(keyword => { if (text.includes(keyword)) { uniquenessScore -= 0.15; } });
+      
+      // Penalize blocked terms
+      blockedTerms.forEach(term => { if (text.includes(term.toLowerCase())) { uniquenessScore -= 0.3; } });
+      
+      // Penalize common patterns
+      const genericPatterns = [
+        /^(simple|basic|easy|quick)\s+/,
+        /\b(test|demo|example)\b/,
+        /\b(copy|clone)\b/,
+        /\bmeme\b/,
+        /_{4,}/
+      ];
+      genericPatterns.forEach(pattern => { if (pattern.test(text)) { uniquenessScore -= 0.2; } });
+    }
+
+    // If uniqueness score is exactly 1.0 (perfect), add unique tag
+    if (uniquenessScore >= 0.99) {
+      tags.push('<span class="tag tag-unique">Unique</span>');
+    }
+
+    if (window.gemFilter?.qualityTerms?.some(term => text.includes(term))) {
+      tags.push('<span class="tag tag-technical">Technical</span>');
+    }
+
+    if ((project.raw?.project?.current_version || 1) > 100) {
+      tags.push('<span class="tag tag-effort">High Effort</span>');
+    }
+
+    return tags.join('');
+  }
+
+  static formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.ceil(Math.abs(now - date) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+    return date.toLocaleDateString();
+  }
+
+  static escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  static renderProjects(projects, container) {
+    container.innerHTML = '';
+    
+    projects.forEach((project, index) => {
+      const card = this.createProjectCard(project);
+      container.appendChild(card);
+      
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+  }
+}
+
+window.GridRenderer = GridRenderer;
