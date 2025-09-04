@@ -19,10 +19,17 @@
 
 .project-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--space-lg);
   margin-bottom: var(--space-lg);
-  flex-wrap: wrap;
+}
+
+.project-stats {
+  display: flex;
+  gap: var(--space-lg);
+  font-size: 12px;
+  order: -1; /* Ensure stats appear first */
+  margin-bottom: var(--space-md);
 }
 
 .project-title {
@@ -48,6 +55,13 @@
 
 .project-title a:hover {
   color: var(--accent-sapphire);
+}
+
+.score-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: flex-end;
 }
 
 .project-image {
