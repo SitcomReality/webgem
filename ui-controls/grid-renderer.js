@@ -97,10 +97,8 @@ class GridRenderer {
   static applyEffortStyling(element, versionCount) {
     if (versionCount >= 500) {
       element.className = 'tag tag-passion';
-      element.textContent = 'Passion Project!';
     } else if (versionCount >= 250) {
       element.className = 'tag tag-effort';
-      element.textContent = 'High Effort';
       
       const intensity = Math.min((versionCount - 250) / 250, 1);
       const red = Math.floor(231 + (255 - 231) * intensity);
@@ -115,7 +113,6 @@ class GridRenderer {
       element.style.setProperty('--effort-animation', 'effortGlow 2s ease-in-out infinite alternate');
     } else if (versionCount >= 100) {
       element.className = 'tag tag-effort';
-      element.textContent = 'High Effort';
       
       const intensity = Math.min((versionCount - 100) / 150, 1);
       const alpha = 0.05 + 0.15 * intensity;
