@@ -6,15 +6,10 @@ class UIManager {
       analyzingCount: document.getElementById('analyzingCount'),
       gemsFound: document.getElementById('gemsFound'),
       avgQuality: document.getElementById('avgQuality'),
-      minVersions: document.getElementById('minVersions'),
-      minVersionsDisplay: document.getElementById('minVersionsDisplay'),
-      discoveryMode: document.getElementById('discoveryMode'),
-      sortBy: document.getElementById('sortBy'),
-      sortOrder: document.getElementById('sortOrder'),
       refreshBtn: document.getElementById('refreshBtn'),
       timeRange: document.getElementById('timeRange'),
-      feedSource: document.getElementById('feedSource'),
-      maxViews: document.getElementById('maxViews'),
+      sortBy: document.getElementById('sortBy'),
+      sortOrder: document.getElementById('sortOrder'),
       loadMoreContainer: document.getElementById('loadMoreContainer'),
       loadMoreBtn: document.getElementById('loadMoreBtn')
     };
@@ -26,18 +21,6 @@ class UIManager {
   }
 
   initializeControls() {
-    // Range slider
-    this.elements.minVersions.addEventListener('input', (e) => {
-      this.elements.minVersionsDisplay.textContent = e.target.value;
-    });
-
-    // Max views slider
-    this.elements.maxViews.addEventListener('input', (e) => {
-      const value = parseInt(e.target.value);
-      const display = value >= 1000 ? `${value/1000}K` : value;
-      document.getElementById('maxViewsDisplay').textContent = display;
-    });
-
     // Form controls
     this.elements.sortBy.addEventListener('change', () => this.refresh());
     this.elements.sortOrder.addEventListener('change', () => this.refresh());

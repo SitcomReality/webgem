@@ -47,8 +47,8 @@ class HiddenGemsApp {
       console.log('🔍 Starting gem discovery process...');
       
       // Get discovery parameters
-      const minVersions = parseInt(window.uiManager.elements.minVersions.value);
-      const maxViews = parseInt(window.uiManager.elements.maxViews.value);
+      const minVersions = 50; // Hardcoded value
+      const maxViews = 5000; // Hardcoded value
       const timeRange = window.uiManager.elements.timeRange.value;
       const feedSource = window.uiManager.elements.feedSource.value;
       const sortBy = window.uiManager.elements.sortBy.value;
