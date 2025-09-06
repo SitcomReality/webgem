@@ -176,11 +176,11 @@ class GridRenderer {
 
     if (versionCount >= 100) {
       let effortClass = 'tag-effort';
-      let effortText = 'High Effort'; // Keep text for grid view
+      let effortText = 'High Effort'; 
       
       if (versionCount >= 500) {
         effortClass = 'tag-passion';
-        effortText = 'Passion Project!'; // Keep text for grid view
+        effortText = 'Passion Project!';
       }
       
       tags.push(`<span class="tag ${effortClass}">${effortText}</span>`);
@@ -228,7 +228,7 @@ class GridRenderer {
 
     if (versionCount >= 100) {
       let effortClass = 'tag-effort';
-      let effortText = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M13 2L3 14h7l-1 8L21 10h-7l-1-8z" fill="currentColor"/></svg>'; // Keep icon for compact view
+      let effortText = '⚡️'; // Changed to icon for compact view
       
       if (versionCount >= 500) {
         effortClass = 'tag-passion';
