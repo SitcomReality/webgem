@@ -60,7 +60,8 @@ class WebsimAPI {
           project: postProject,
           site: {
             id: siteId,
-            owner: postProject.created_by
+            owner: postProject.created_by,
+            thumbnail: postProject.thumbnail?.url || null
           },
         };
         
