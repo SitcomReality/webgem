@@ -78,13 +78,14 @@
                         <div class="inline-group sort-controls">
                             <span class="inline-label">Sort</span>
                             <div class="segmented small" aria-label="Sort By">
-                                <button class="seg-btn" data-sort="views" aria-selected="true">Views</button>
+                                <button class="seg-btn" data-sort="prestige" aria-selected="true">Prestige</button>
+                                <button class="seg-btn" data-sort="views">Views</button>
                                 <button class="seg-btn" data-sort="likes">Likes</button>
                                 <button class="seg-btn" data-sort="created_at">Date</button>
                                 <button class="seg-btn" data-sort="current_version">Versions</button>
                                 <button class="seg-btn" data-sort="qualityScore">Quality</button>
                             </div>
-                            <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="asc">↑</button>
+                            <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="desc">↓</button>
                         </div>
                         <div class="inline-group view-controls">
                             <span class="inline-label">View</span>
@@ -113,15 +114,16 @@
                             <option value="month">Month</option>
                         </select>
                         <select id="sortBy">
-                            <option value="views" selected>Views</option>
+                            <option value="prestige" selected>Prestige</option>
+                            <option value="views">Views</option>
                             <option value="likes">Likes</option>
                             <option value="created_at">Creation Date</option>
                             <option value="current_version">Versions</option>
                             <option value="qualityScore">Quality</option>
                         </select>
                         <select id="sortOrder">
-                            <option value="asc" selected>Ascending</option>
-                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                            <option value="desc" selected>Descending</option>
                         </select>
                         <select id="feedSource" class="visually-hidden">
                             <option value="search" selected>Search</option>

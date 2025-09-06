@@ -119,6 +119,11 @@ class UIManager {
   setupOrderToggle() {
     const orderToggle = document.getElementById('orderToggle');
     if (orderToggle) {
+      // Set initial state from default sort order
+      const initialOrder = this.elements.sortOrder.value;
+      orderToggle.dataset.order = initialOrder;
+      orderToggle.textContent = initialOrder === 'asc' ? '↑' : '↓';
+
       orderToggle.addEventListener('click', () => {
         const next = orderToggle.dataset.order === 'asc' ? 'desc' : 'asc';
         orderToggle.dataset.order = next;
