@@ -166,3 +166,60 @@
 .term-label:hover {
   background: var(--bg-hover);
 }
+
+/* Info panel specific styles */
+.info-section {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.info-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.info-section h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.info-section p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.info-section ul {
+  margin: var(--space-sm) 0;
+  padding-left: var(--space-lg);
+}
+
+.info-section li {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.tag-explanations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.tag-item span:last-child {
+  font-size: 11px;
+  color: var(--text-muted);
+}

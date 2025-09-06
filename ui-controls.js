@@ -13,6 +13,7 @@ class UIManager {
     this.isCurator = false;
     this.filterPanel = null;
     this.curationUI = null;
+    this.infoPanel = null;
     this.initializeControls();
   }
 
@@ -45,6 +46,17 @@ class UIManager {
           this.filterPanel.show();
         });
       }
+    }
+
+    // Info panel - only if elements exist
+    this.infoPanel = new window.InfoPanelManager();
+    this.infoPanel.createInfoPanel();
+
+    const infoToggle = document.getElementById('infoToggle');
+    if (infoToggle) {
+      infoToggle.addEventListener('click', () => {
+        this.infoPanel.show();
+      });
     }
 
     // Curation UI - only if elements exist
