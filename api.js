@@ -78,6 +78,21 @@ class WebsimAPI {
     return { data: feedItems };
   }
 
+  async getPostsFeed(params = {}) {
+    const query = new URLSearchParams({
+      limit: params.limit || 50,
+      offset: params.offset || 0,
+      sort: params.sort || 'latest',
+      ...params
+    }).toString();
+
+    const raw = await this.fetch(`/feed/posts?${query}`);
+    const items = raw.feed?.data || raw.data || [];
+    const feedItems = this.normalizeFeedItems(items);
+    console.log(`📝 Posts feed (${params.sort || 'latest'}): ${feedItems.length} items`);
+    return { data: feedItems };
+  }
+
   async getSearchFeed(sort, search, params = {}) {
     const requested = (sort || '').toLowerCase();
     const safeSort = ['best', 'newest', 'best_template'].includes(requested) ? requested : 'newest';

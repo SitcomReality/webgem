@@ -49,6 +49,14 @@
                                 <button class="seg-btn" data-range="month">Month</button>
                             </div>
                         </div>
+                        <div class="control-group">
+                            <label class="control-label">Feed Source</label>
+                            <div class="segmented" role="tablist" aria-label="Feed Source">
+                                <button class="seg-btn" data-feed="search" aria-selected="true">Search</button>
+                                <button class="seg-btn" data-feed="trending">Trending</button>
+                                <button class="seg-btn" data-feed="posts">Posts</button>
+                            </div>
+                        </div>
                         <div class="control-group versions-group">
                              <label for="minVersions" class="control-label">Min Versions</label>
                             <div class="range-inline">
@@ -103,7 +111,6 @@
                             <option value="day" selected>Day</option>
                             <option value="week">Week</option>
                             <option value="month">Month</option>
-                            <option value="year">Year</option>
                         </select>
                         <select id="sortBy">
                             <option value="views" selected>Views</option>
@@ -115,6 +122,11 @@
                         <select id="sortOrder">
                             <option value="asc" selected>Ascending</option>
                             <option value="desc">Descending</option>
+                        </select>
+                        <select id="feedSource" class="visually-hidden">
+                            <option value="search" selected>Search</option>
+                            <option value="trending">Trending</option>
+                            <option value="posts">Posts</option>
                         </select>
                         <select id="maxViews" class="visually-hidden">
                             <option value="1000" selected>1000</option>

@@ -13,6 +13,7 @@ class UIManager {
       sortOrder: document.getElementById('sortOrder'),
       refreshBtn: document.getElementById('refreshBtn'),
       timeRange: document.getElementById('timeRange'),
+      feedSource: document.getElementById('feedSource'),
       maxViews: document.getElementById('maxViews')
     };
 
@@ -43,6 +44,7 @@ class UIManager {
     // Time range buttons
     this.bindSegmentButtons('.seg-btn[data-range]', 'timeRange', false);
     this.bindSegmentButtons('.seg-btn[data-sort]', 'sortBy', false);
+    this.bindSegmentButtons('.seg-btn[data-feed]', 'feedSource', false);
 
     // Order toggle
     this.setupOrderToggle();
@@ -70,7 +72,8 @@ class UIManager {
         btn.setAttribute('aria-selected', 'true');
         
         if (formId && this.elements[formId]) {
-            this.elements[formId].value = btn.dataset[formId === 'timeRange' ? 'range' : 'sort'];
+            const datasetKey = Object.keys(btn.dataset).find(k => k !== 'view');
+            this.elements[formId].value = btn.dataset[datasetKey];
         }
 
         if (shouldRefresh) {

@@ -37,11 +37,12 @@ class HiddenGemsApp {
       const minVersions = parseInt(window.uiManager.elements.minVersions.value);
       const maxViews = parseInt(window.uiManager.elements.maxViews.value);
       const timeRange = window.uiManager.elements.timeRange.value;
+      const feedSource = window.uiManager.elements.feedSource.value;
       const sortBy = window.uiManager.elements.sortBy.value;
       const sortOrder = window.uiManager.elements.sortOrder.value;
       
       // Fetch and score projects
-      const projectSources = await this.fetchProjectSources(timeRange);
+      const projectSources = await this.fetchProjectSources(feedSource, timeRange);
       const scoredProjects = await this.scoreProjects(projectSources);
       const gems = this.filterGems(scoredProjects, minVersions, maxViews);
       
@@ -71,31 +72,42 @@ class HiddenGemsApp {
     }
   }
 
-  async fetchProjectSources(range) {
+  async fetchProjectSources(feedSource, range) {
     const sources = [];
-    console.log(`🎯 Time range: ${range}`);
+    console.log(`🎯 Feed source: ${feedSource}, Time range: ${range}`);
     
     try {
-      // Get projects from the selected time range
-      console.log('🔍 Fetching projects from time range...');
-      const results = await window.websimAPI.getTrendingFeed({ 
-        limit: 100,
-        range: range 
-      });
-      console.log(`📈 Projects from ${range} range: ${results.data?.length || 0}`);
-      
-      if (results.data) {
-        sources.push(...results.data);
+      let results;
+      switch(feedSource) {
+        case 'trending':
+          console.log('🔍 Fetching projects from trending feed...');
+          results = await window.websimAPI.getTrendingFeed({ 
+            limit: 100,
+            range: range 
+          });
+          console.log(`📈 Projects from trending feed: ${results.data?.length || 0}`);
+          break;
+        case 'posts':
+          console.log('🔍 Fetching projects from posts feed...');
+          results = await window.websimAPI.getPostsFeed({ 
+            limit: 100,
+            sort: 'latest'
+          });
+          console.log(`📝 Projects from posts feed: ${results.data?.length || 0}`);
+          break;
+        case 'search':
+        default:
+          console.log('🔍 Fetching projects from search feed...');
+          results = await window.websimAPI.getSearchFeed('newest', '*', { 
+            limit: 100,
+            range: range 
+          });
+          console.log(`🔍 Projects from search feed: ${results.data?.length || 0}`);
+          break;
       }
       
-      // Also get some search results to ensure diversity
-      const searchResults = await window.websimAPI.getSearchFeed('newest', '*', { 
-        limit: 50,
-        range: range 
-      });
-      
-      if (searchResults.data) {
-        sources.push(...searchResults.data);
+      if (results && results.data) {
+        sources.push(...results.data);
       }
       
     } catch (error) {
