@@ -26,61 +26,83 @@ class UIManager {
   }
 
   initializeControls() {
-    // Range slider
-    this.elements.minVersions.addEventListener('input', (e) => {
-      this.elements.minVersionsDisplay.textContent = e.target.value;
-    });
+    // Range slider - only if element exists
+    if (this.elements.minVersions && this.elements.minVersionsDisplay) {
+      this.elements.minVersions.addEventListener('input', (e) => {
+        this.elements.minVersionsDisplay.textContent = e.target.value;
+      });
+    }
 
-    // Max views slider
-    this.elements.maxViews.addEventListener('input', (e) => {
-      const value = parseInt(e.target.value);
-      const display = value >= 1000 ? `${value/1000}K` : value;
-      document.getElementById('maxViewsDisplay').textContent = display;
-    });
+    // Max views slider - only if element exists
+    if (this.elements.maxViews) {
+      this.elements.maxViews.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        const display = value >= 1000 ? `${value/1000}K` : value;
+        const displayElement = document.getElementById('maxViewsDisplay');
+        if (displayElement) displayElement.textContent = display;
+      });
+    }
 
-    // Form controls
-    this.elements.sortBy.addEventListener('change', () => this.refresh());
-    this.elements.sortOrder.addEventListener('change', () => this.refresh());
-    this.elements.refreshBtn.addEventListener('click', () => this.refresh());
-    this.elements.loadMoreBtn.addEventListener('click', () => this.loadMore());
+    // Form controls - only if elements exist
+    if (this.elements.sortBy) {
+      this.elements.sortBy.addEventListener('change', () => this.refresh());
+    }
+    if (this.elements.sortOrder) {
+      this.elements.sortOrder.addEventListener('change', () => this.refresh());
+    }
+    if (this.elements.refreshBtn) {
+      this.elements.refreshBtn.addEventListener('click', () => this.refresh());
+    }
+    if (this.elements.loadMoreBtn) {
+      this.elements.loadMoreBtn.addEventListener('click', () => this.loadMore());
+    }
 
-    // Time range buttons
+    // Time range buttons - only bind if elements exist
     this.bindSegmentButtons('.seg-btn[data-range]', 'timeRange', false);
     this.bindSegmentButtons('.seg-btn[data-sort]', 'sortBy', false);
     this.bindSegmentButtons('.seg-btn[data-feed]', 'feedSource', false);
 
-    // Order toggle
+    // Order toggle - only if element exists
     this.setupOrderToggle();
-    // View toggle
+    
+    // View toggle - only if element exists
     this.setupViewToggle();
 
-    // Filter panel
-    this.filterPanel = new window.FilterPanelManager(window.gemFilter, window.app);
-    this.filterPanel.createFilterPanel();
+    // Filter panel - only if elements exist
+    if (window.gemFilter) {
+      this.filterPanel = new window.FilterPanelManager(window.gemFilter, window.app);
+      this.filterPanel.createFilterPanel();
 
-    const filterToggle = document.getElementById('filterToggle');
-    filterToggle.addEventListener('click', () => {
-        this.filterPanel.show();
-    });
+      const filterToggle = document.getElementById('filterToggle');
+      if (filterToggle) {
+        filterToggle.addEventListener('click', () => {
+          this.filterPanel.show();
+        });
+      }
+    }
 
-    // Curation UI
-    this.curationUI = new window.CurationUI(window.curationsDB);
+    // Curation UI - only if elements exist
+    if (window.curationsDB) {
+      this.curationUI = new window.CurationUI(window.curationsDB);
+    }
   }
 
   bindSegmentButtons(selector, formId, shouldRefresh) {
-    document.querySelectorAll(selector).forEach(btn => {
+    const buttons = document.querySelectorAll(selector);
+    if (buttons.length === 0) return;
+
+    buttons.forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll(selector).forEach(b => 
-          b.setAttribute('aria-selected', 'false'));
+        buttons.forEach(b => b.setAttribute('aria-selected', 'false'));
         btn.setAttribute('aria-selected', 'true');
         
         if (formId && this.elements[formId]) {
-            const datasetKey = Object.keys(btn.dataset).find(k => k !== 'view');
-            this.elements[formId].value = btn.dataset[datasetKey];
+          const datasetKey = Object.keys(btn.dataset).find(k => k !== 'view');
+          this.elements[formId].value = btn.dataset[datasetKey];
         }
 
         if (shouldRefresh) {
-            this.refresh();
+          this.refresh();
         }
       });
     });
@@ -88,7 +110,10 @@ class UIManager {
 
   setupViewToggle() {
     const viewToggleButtons = document.querySelectorAll('.view-btn');
+    if (viewToggleButtons.length === 0) return;
+
     const resultsContainer = this.elements.results;
+    if (!resultsContainer) return;
 
     // Load saved view
     const savedView = localStorage.getItem('websim_view_mode') || 'grid';
@@ -118,20 +143,20 @@ class UIManager {
 
   setupOrderToggle() {
     const orderToggle = document.getElementById('orderToggle');
-    if (orderToggle) {
-      // Set initial state from default sort order
-      const initialOrder = this.elements.sortOrder.value;
-      orderToggle.dataset.order = initialOrder;
-      orderToggle.textContent = initialOrder === 'asc' ? '↑' : '↓';
+    if (!orderToggle || !this.elements.sortOrder) return;
 
-      orderToggle.addEventListener('click', () => {
-        const next = orderToggle.dataset.order === 'asc' ? 'desc' : 'asc';
-        orderToggle.dataset.order = next;
-        orderToggle.textContent = next === 'asc' ? '↑' : '↓';
-        this.elements.sortOrder.value = next;
-        this.refresh();
-      });
-    }
+    // Set initial state from default sort order
+    const initialOrder = this.elements.sortOrder.value;
+    orderToggle.dataset.order = initialOrder;
+    orderToggle.textContent = initialOrder === 'asc' ? '↑' : '↓';
+
+    orderToggle.addEventListener('click', () => {
+      const next = orderToggle.dataset.order === 'asc' ? 'desc' : 'asc';
+      orderToggle.dataset.order = next;
+      orderToggle.textContent = next === 'asc' ? '↑' : '↓';
+      this.elements.sortOrder.value = next;
+      this.refresh();
+    });
   }
 
   loadMore() {
@@ -146,34 +171,54 @@ class UIManager {
 
   // UI state management
   showLoading() {
-    this.elements.loading.classList.remove('hidden');
-    this.elements.results.innerHTML = '';
-    this.elements.loadMoreContainer.classList.add('hidden');
+    if (this.elements.loading) {
+      this.elements.loading.classList.remove('hidden');
+    }
+    if (this.elements.results) {
+      this.elements.results.innerHTML = '';
+    }
+    if (this.elements.loadMoreContainer) {
+      this.elements.loadMoreContainer.classList.add('hidden');
+    }
   }
 
   hideLoading() {
-    this.elements.loading.classList.add('hidden');
-    this.elements.loadMoreBtn.disabled = false;
-    this.elements.loadMoreBtn.textContent = 'Load More Gems';
+    if (this.elements.loading) {
+      this.elements.loading.classList.add('hidden');
+    }
+    if (this.elements.loadMoreBtn) {
+      this.elements.loadMoreBtn.disabled = false;
+      this.elements.loadMoreBtn.textContent = 'Load More Gems';
+    }
   }
 
   showLoadMoreLoading() {
-    this.elements.loadMoreBtn.disabled = true;
-    this.elements.loadMoreBtn.textContent = 'Loading...';
+    if (this.elements.loadMoreBtn) {
+      this.elements.loadMoreBtn.disabled = true;
+      this.elements.loadMoreBtn.textContent = 'Loading...';
+    }
   }
 
   toggleLoadMore(show) {
-    if (show) {
+    if (this.elements.loadMoreContainer) {
+      if (show) {
         this.elements.loadMoreContainer.classList.remove('hidden');
-    } else {
+      } else {
         this.elements.loadMoreContainer.classList.add('hidden');
+      }
     }
   }
 
   updateStats(analyzing, found, avgQuality) {
-    this.elements.analyzingCount.textContent = analyzing;
-    this.elements.gemsFound.textContent = found;
-    this.elements.avgQuality.textContent = avgQuality.toFixed(2);
+    if (this.elements.analyzingCount) {
+      this.elements.analyzingCount.textContent = analyzing;
+    }
+    if (this.elements.gemsFound) {
+      this.elements.gemsFound.textContent = found;
+    }
+    if (this.elements.avgQuality) {
+      this.elements.avgQuality.textContent = avgQuality.toFixed(2);
+    }
   }
 
   renderProjects(projects, append = false) {
@@ -181,12 +226,14 @@ class UIManager {
   }
 
   showError(message) {
-    this.elements.results.innerHTML = `
-      <div class="error-message">
-        <h3>⚠️ Error</h3>
-        <p>${this.escapeHtml(message)}</p>
-      </div>
-    `;
+    if (this.elements.results) {
+      this.elements.results.innerHTML = `
+        <div class="error-message">
+          <h3>⚠️ Error</h3>
+          <p>${this.escapeHtml(message)}</p>
+        </div>
+      `;
+    }
   }
 
   escapeHtml(text) {
