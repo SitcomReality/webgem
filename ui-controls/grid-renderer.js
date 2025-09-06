@@ -23,7 +23,7 @@ class GridRenderer {
 
     const versionCount = project.raw?.project?.current_version || 1;
 
-    // Add passion project class if version count >= 500
+    // Mark high-version "passion" projects for enhanced styling
     if (versionCount >= 500) {
       card.classList.add('passion-project');
     }
