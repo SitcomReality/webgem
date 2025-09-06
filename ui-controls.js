@@ -65,25 +65,6 @@ class UIManager {
 
     // Curation UI
     this.curationUI = new window.CurationUI(window.curationsDB);
-
-    // Scroll listener for header
-    this.setupScrollListener();
-  }
-
-  setupScrollListener() {
-    const header = document.querySelector('.header');
-    if (!header) return;
-
-    let isScrolled = false;
-    const threshold = 10; // Pixels from top
-
-    window.addEventListener('scroll', () => {
-      const shouldBeScrolled = window.scrollY > threshold;
-      if (shouldBeScrolled !== isScrolled) {
-        isScrolled = shouldBeScrolled;
-        header.classList.toggle('scrolled', isScrolled);
-      }
-    }, { passive: true });
   }
 
   bindSegmentButtons(selector, formId, shouldRefresh) {

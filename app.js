@@ -4,6 +4,7 @@ class HiddenGemsApp {
     this.currentProjects = [];
     this.currentOffset = 0;
     this.projectsPerBatch = 100;
+    this.lastScrollTop = 0;
   }
 
   async initialize() {
@@ -18,12 +19,40 @@ class HiddenGemsApp {
       await window.gemFilter.analyzeGenericKeywords();
       console.log('✅ Generic keywords analyzed');
       
+      // Setup scroll listener for header collapse
+      this.setupScrollListener();
+      
       // Start discovering gems
       await this.discoverGems();
     } catch (error) {
       console.error('❌ Initialization failed:', error);
       window.uiManager.showError('Failed to initialize the discovery system. Please refresh and try again.');
     }
+  }
+
+  setupScrollListener() {
+    const header = document.querySelector('.header');
+    let ticking = false;
+
+    const updateHeader = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollTop > 100) {
+        header.classList.add('collapsed');
+      } else {
+        header.classList.remove('collapsed');
+      }
+      
+      this.lastScrollTop = scrollTop;
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    });
   }
 
   async discoverGems(loadMore = false) {

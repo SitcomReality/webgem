@@ -84,13 +84,6 @@
 }
 
 @media (min-width: 1025px) {
-  .header.scrolled .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-xl);
-  }
-  
   .header-content { 
     grid-template-columns: 1fr; 
   }
