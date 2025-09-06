@@ -126,7 +126,7 @@ class HiddenGemsApp {
         case 'search':
         default:
           console.log('🔍 Fetching projects from search feed...');
-          results = await window.websimAPI.getSearchFeed('newest', '*', params);
+          results = await window.websimAPI.getSearchFeed('newest', 'e', params);
           console.log(`🔍 Projects from search feed: ${results.data?.length || 0}`);
           break;
       }

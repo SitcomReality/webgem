@@ -20,14 +20,6 @@
     <link rel="stylesheet" href="components/curation.css">
     <link rel="stylesheet" href="components/toolbar.css">
     <link rel="stylesheet" href="responsive.css">
-    <link rel="stylesheet" href="assistant/styles.css">
-
-    <style>
-      /* Smooth scrolling for anchor links */
-      html {
-        scroll-behavior: smooth;
-      }
-    </style>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,22 +33,61 @@
             <div class="title-section">
                 <h1 class="title">
                     <span class="rainbow-text">WebGem</span>
-                </h1>
-                <div class="subtitle-section">
                     <span class="subtitle">Prestige Project Discovery</span>
-                    <p class="tagline">Discover technically sophisticated projects beyond the trending noise</p>
-                </div>
-            </div>
-            
-            <div class="stats-compact header-stats">
-                <span class="stat-chip"><span class="k">Analyzing</span><span id="analyzingCount">0</span></span>
-                <span class="stat-chip"><span class="k">Gems</span><span id="gemsFound">0</span></span>
+                </h1>
+                <p class="tagline">Discover technically sophisticated projects beyond the trending noise</p>
             </div>
             
             <div class="controls-section">
-                <div class="controls toolbar compact">
-                    <div class="toolbar-group-left">
+                <div class="controls toolbar">
+                    <div class="main-controls">
+                        <div class="control-group">
+                            <label class="control-label">Time Range</label>
+                            <div class="segmented" role="tablist" aria-label="Time Range">
+                                <button class="seg-btn" data-range="day" aria-selected="true">Day</button>
+                                <button class="seg-btn" data-range="week">Week</button>
+                                <button class="seg-btn" data-range="month">Month</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Feed Source</label>
+                            <div class="segmented" role="tablist" aria-label="Feed Source">
+                                <button class="seg-btn" data-feed="search" aria-selected="true">Search</button>
+                                <button class="seg-btn" data-feed="trending">Trending</button>
+                                <button class="seg-btn" data-feed="posts">Posts</button>
+                            </div>
+                        </div>
+                        <div class="control-group versions-group">
+                             <label for="minVersions" class="control-label">Min Versions</label>
+                            <div class="range-inline">
+                                <input type="range" id="minVersions" min="10" max="200" value="50" class="slider">
+                                <span id="minVersionsDisplay" class="value-pill">50</span>
+                            </div>
+                        </div>
+                        <div class="control-group versions-group">
+                            <label for="maxViews" class="control-label">Max Views</label>
+                            <div class="range-inline">
+                                <input type="range" id="maxViews" min="100" max="10000" value="1000" class="slider">
+                                <span id="maxViewsDisplay" class="value-pill">1K</span>
+                            </div>
+                        </div>
+                        <button id="refreshBtn" class="btn-primary"><span class="btn-text">Discover</span></button>
+                    </div>
+
+                    <div class="secondary-controls">
+                        <div class="inline-group sort-controls">
+                            <span class="inline-label">Sort</span>
+                            <div class="segmented small" aria-label="Sort By">
+                                <button class="seg-btn" data-sort="views" aria-selected="true">Views</button>
+                                <button class="seg-btn" data-sort="likes">Likes</button>
+                                <button class="seg-btn" data-sort="created_at">Date</button>
+                                <button class="seg-btn" data-sort="current_version">Versions</button>
+                                <button class="seg-btn" data-sort="qualityScore">Quality</button>
+                            </div>
+                            <button class="icon-btn" id="orderToggle" title="Toggle sort order" data-order="asc">↑</button>
+                        </div>
                         <div class="inline-group view-controls">
+                            <span class="inline-label">View</span>
                             <div class="segmented small" id="viewToggle">
                                 <button class="seg-btn view-btn" data-view="grid" title="Grid View" aria-selected="true">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"></path></svg>
@@ -66,11 +97,41 @@
                                 </button>
                             </div>
                         </div>
-                        <button id="filterToggle" class="filter-toggle-btn compact">⚙️ Filters</button>
-                        <button id="infoToggle" class="info-toggle-btn compact" title="About This Platform">ℹ️ Info</button>
+                         <div class="stats-compact">
+                            <span class="stat-chip"><span class="k">Analyzing</span><span id="analyzingCount">0</span></span>
+                            <span class="stat-chip"><span class="k">Gems</span><span id="gemsFound">0</span></span>
+                            <span class="stat-chip"><span class="k">Avg</span><span id="avgQuality">0.0</span></span>
+                        </div>
+                        <button id="filterToggle" class="filter-toggle-btn">⚙️ Filters</button>
                     </div>
 
-                    <button id="refreshBtn" class="btn-primary compact"><span class="btn-text">Refresh</span></button>
+                    <!-- Hidden form controls -->
+                    <div class="visually-hidden">
+                        <select id="timeRange">
+                            <option value="day" selected>Day</option>
+                            <option value="week">Week</option>
+                            <option value="month">Month</option>
+                        </select>
+                        <select id="sortBy">
+                            <option value="views" selected>Views</option>
+                            <option value="likes">Likes</option>
+                            <option value="created_at">Creation Date</option>
+                            <option value="current_version">Versions</option>
+                            <option value="qualityScore">Quality</option>
+                        </select>
+                        <select id="sortOrder">
+                            <option value="asc" selected>Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                        <select id="feedSource" class="visually-hidden">
+                            <option value="search" selected>Search</option>
+                            <option value="trending">Trending</option>
+                            <option value="posts">Posts</option>
+                        </select>
+                        <select id="maxViews" class="visually-hidden">
+                            <option value="1000" selected>1000</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,17 +164,12 @@
     <!-- Load scripts in correct order -->
     <script src="api.js"></script>
     <script src="filters.js"></script>
-    <script src="ui-controls/info-panel.js"></script>
     <script src="ui-controls/filter-panel.js"></script>
     <script src="ui-controls/grid-renderer.js"></script>
     <script src="ui-controls/curation-ui.js"></script>
     <script src="ui-controls.js"></script>
     <script src="curations.js"></script>
     <script src="app.js"></script>
-    <script src="assistant/prompt.js"></script>
-    <script src="assistant/llm.js"></script>
-    <script src="assistant/ui.js"></script>
-    <script src="assistant/index.js"></script>
     
     <!-- Initialize after all scripts load -->
     <script>
