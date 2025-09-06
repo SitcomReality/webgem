@@ -18,7 +18,7 @@ class GridRenderer {
 
     // Use thumbnail URL from posts feed if available, otherwise use the standard image URL
     const imageUrl = project.raw?.thumbnailUrl 
-      ? `${project.raw.thumbnailUrl}/600`
+      ? project.raw.thumbnailUrl // Don't append /600 for post feed projects
       : `https://images.websim.com/v1/site/${project.id}/600`;
 
     const versionCount = project.raw?.project?.current_version || 1;
