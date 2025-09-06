@@ -20,7 +20,7 @@
 /* Passion Project Card Enhancement */
 .project-card.passion-project {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .project-card.passion-project::before {
