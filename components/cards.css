@@ -17,28 +17,61 @@
   transform: translateY(-4px);
 }
 
-/* Passion project accent */
+/* Passion Project Card Enhancement */
 .project-card.passion-project {
-  border: 2px solid transparent;
-  background-origin: border-box;
   position: relative;
-  z-index: 1;
+  overflow: hidden;
 }
+
 .project-card.passion-project::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -2px;
+  background: linear-gradient(
+    45deg,
+    #ff0080,
+    #ff8c00,
+    #ffd700,
+    #00ff80,
+    #0080ff,
+    #8000ff,
+    #ff0080
+  );
+  background-size: 400% 400%;
+  border-radius: 10px;
+  animation: rainbowGlow 3s ease-in-out infinite;
   z-index: -1;
-  border-radius: calc(var(--border-radius) + 2px);
-  background: linear-gradient(90deg, var(--accent-emerald), var(--accent-sapphire), var(--accent-amethyst), var(--accent-ruby), var(--accent-gold));
-  filter: blur(8px);
-  opacity: 0.9;
-  transform: translateZ(0);
-  pointer-events: none;
-  transition: opacity 0.3s ease;
 }
-.project-card.passion-project:hover::before {
-  opacity: 1;
+
+.project-card.passion-project::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-card);
+  border-radius: 8px;
+  z-index: -1;
+}
+
+@keyframes rainbowGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.project-card.passion-project:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.15);
+}
+
+.project-card.passion-project .project-image-container {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.project-card.passion-project .project-content {
+  background: var(--bg-card);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .project-image-container {
