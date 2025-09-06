@@ -271,17 +271,60 @@
   margin-top: auto;
 }
 
-.project-score {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--score-color);
-  background-color: color-mix(in srgb, var(--score-color) 15%, transparent);
-  padding: 2px 8px;
-  border-radius: 99px;
-  border: 1px solid color-mix(in srgb, var(--score-color) 30%, transparent);
-  line-height: 1.2;
+/* Compact tags for header area */
+.compact-tags {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
   flex-shrink: 0;
+}
+
+.compact-tags .tag {
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: var(--border-radius-sm);
+}
+
+.compact-tags .tag-excellent {
+  background: rgba(0, 212, 170, 0.2);
+  color: var(--accent-emerald);
+  border-color: rgba(0, 212, 170, 0.4);
+}
+
+.compact-tags .tag-unique {
+  background: rgba(155, 89, 182, 0.2);
+  color: var(--accent-amethyst);
+  border-color: rgba(155, 89, 182, 0.4);
+  animation: uniqueGlow 2s ease-in-out infinite alternate;
+}
+
+.compact-tags .tag-technical {
+  background: rgba(47, 129, 247, 0.2);
+  color: var(--accent-sapphire);
+  border-color: rgba(47, 129, 247, 0.4);
+}
+
+.compact-tags .tag-effort {
+  background: rgba(231, 76, 60, 0.2);
+  color: rgb(231, 76, 60);
+  border-color: rgba(231, 76, 60, 0.4);
+}
+
+.compact-tags .tag-passion {
+  background: linear-gradient(
+    45deg,
+    #ff0080,
+    #ff8c00,
+    #ffd700,
+    #00ff80,
+    #0080ff,
+    #8000ff
+  );
+  background-size: 400% 400%;
+  color: white;
+  border-color: transparent;
+  animation: passionRainbow 3s ease-in-out infinite;
+  text-shadow: 0px 1px 3px black;
 }
 
 .template-info {

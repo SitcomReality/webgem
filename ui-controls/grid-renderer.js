@@ -7,7 +7,6 @@ class GridRenderer {
     card.style.transition = 'all 0.5s ease';
 
     const qualityScore = project.qualityScore || 0;
-    const scoreColor = GridRenderer.getScoreColor(qualityScore);
 
     const isTemplateBased = project.raw?.project?.parent_id || project.project?.parent_id;
     const parentProjectId = project.raw?.project?.parent_id || project.project?.parent_id;
@@ -54,8 +53,8 @@ class GridRenderer {
               </a>
             ` : ''}
           </div>
-          <div class="project-score" style="--score-color: ${scoreColor}">
-            ${(qualityScore * 100).toFixed(0)}
+          <div class="compact-tags">
+            ${GridRenderer.generateCompactTags(project, qualityScore)}
           </div>
         </div>
         
@@ -182,6 +181,58 @@ class GridRenderer {
       if (versionCount >= 500) {
         effortClass = 'tag-passion';
         effortText = 'Passion Project!';
+      }
+      
+      tags.push(`<span class="tag ${effortClass}">${effortText}</span>`);
+    }
+
+    return tags.join('');
+  }
+
+  static generateCompactTags(project, qualityScore) {
+    const tags = [];
+    const versionCount = project.raw?.project?.current_version || 1;
+
+    if (qualityScore >= 0.8) {
+      tags.push('<span class="tag tag-excellent">★</span>');
+    }
+
+    // Check for unique projects
+    const text = `${project.title} ${project.description || ''}`.toLowerCase();
+    let uniquenessScore = 1.0;
+    
+    if (window.gemFilter) {
+      const genericKeywords = Array.from(window.gemFilter.genericKeywords || []);
+      const blockedTerms = Array.from(window.gemFilter.blockedTerms || []);
+      
+      genericKeywords.forEach(keyword => { if (text.includes(keyword)) { uniquenessScore -= 0.15; } });
+      blockedTerms.forEach(term => { if (text.includes(term.toLowerCase())) { uniquenessScore -= 0.3; } });
+      
+      const genericPatterns = [
+        /^(simple|basic|easy|quick)\s+/,
+        /\b(test|demo|example)\b/,
+        /\b(copy|clone)\b/,
+        /\bmeme\b/,
+        /_{4,}/
+      ];
+      genericPatterns.forEach(pattern => { if (pattern.test(text)) { uniquenessScore -= 0.2; } });
+    }
+
+    if (uniquenessScore >= 0.99) {
+      tags.push('<span class="tag tag-unique">✦</span>');
+    }
+
+    if (window.gemFilter?.qualityTerms?.some(term => text.includes(term))) {
+      tags.push('<span class="tag tag-technical">⚙</span>');
+    }
+
+    if (versionCount >= 100) {
+      let effortClass = 'tag-effort';
+      let effortText = '⚡';
+      
+      if (versionCount >= 500) {
+        effortClass = 'tag-passion';
+        effortText = '❤';
       }
       
       tags.push(`<span class="tag ${effortClass}">${effortText}</span>`);
