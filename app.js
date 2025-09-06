@@ -299,7 +299,7 @@ class HiddenGemsApp {
         const normAge = (stats.maxTimestamp - timestamp) / rangeTimestamp;
 
         // Weights
-        const weights = { views: 0.4, versions: 0.3, quality: 0.15, age: 0.1, likes: 0.05 };
+        const weights = { views: 0.35, versions: 0.4, quality: 0.15, age: 0.05, likes: 0.05 };
 
         // Score calculation
         const score = 
