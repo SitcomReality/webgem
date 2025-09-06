@@ -21,6 +21,12 @@
   padding: 0 var(--space-xl);
 }
 
+.header-stats {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
 .title-section {
   display: flex;
   flex-direction: row;

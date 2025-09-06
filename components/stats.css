@@ -30,7 +30,7 @@
 
 .stats-compact {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
@@ -51,4 +51,25 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.header-stats {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+  .header-stats {
+    order: 3;
+    justify-content: center;
+    margin-top: var(--space-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .header-stats {
+    order: 3;
+    justify-content: center;
+  }
 }
