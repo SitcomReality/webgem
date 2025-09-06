@@ -17,6 +17,91 @@
   transform: translateY(-4px);
 }
 
+/* Passion Project Special Styling */
+.project-card.passion-project {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  overflow: visible;
+}
+
+.project-card.passion-project::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  background: linear-gradient(
+    135deg,
+    var(--accent-emerald) 0%,
+    var(--accent-sapphire) 25%,
+    var(--accent-amethyst) 50%,
+    var(--accent-ruby) 75%,
+    var(--accent-gold) 100%
+  );
+  background-size: 200% 200%;
+  border-radius: var(--border-radius);
+  animation: rainbowGlow 3s ease-in-out infinite;
+  filter: blur(8px);
+  opacity: 0.8;
+}
+
+.project-card.passion-project::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -2;
+  background: linear-gradient(
+    135deg,
+    var(--accent-emerald) 0%,
+    var(--accent-sapphire) 25%,
+    var(--accent-amethyst) 50%,
+    var(--accent-ruby) 75%,
+    var(--accent-gold) 100%
+  );
+  background-size: 200% 200%;
+  border-radius: var(--border-radius);
+  animation: rainbowGlow 3s ease-in-out infinite reverse;
+  filter: blur(16px);
+  opacity: 0.4;
+}
+
+@keyframes rainbowGlow {
+  0%, 100% { 
+    background-position: 0% 50%;
+    opacity: 0.8;
+  }
+  50% { 
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+.project-card.passion-project:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.project-card.passion-project .project-image-container {
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  margin: 8px;
+  border-radius: calc(var(--border-radius) - 4px);
+  overflow: hidden;
+}
+
+.project-card.passion-project .project-title a {
+  background: linear-gradient(
+    135deg,
+    var(--accent-emerald) 0%,
+    var(--accent-sapphire) 50%,
+    var(--accent-amethyst) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  animation: subtleShift 4s ease-in-out infinite;
+}
+
 .project-image-container {
   position: relative;
   overflow: hidden;

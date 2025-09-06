@@ -23,6 +23,11 @@ class GridRenderer {
 
     const versionCount = project.raw?.project?.current_version || 1;
 
+    // Add passion project class if version count >= 500
+    if (versionCount >= 500) {
+      card.classList.add('passion-project');
+    }
+
     card.innerHTML = `
       <div class="project-image-container">
         <a href="https://websim.com/c/${project.id}" target="_blank" class="project-image-link">
