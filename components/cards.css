@@ -273,10 +273,14 @@
 
 /* Compact tags for header area */
 .compact-tags {
-  display: flex;
+  display: none;
   gap: var(--space-xs);
   align-items: center;
   flex-shrink: 0;
+}
+
+.results.list-view .compact-tags {
+  display: flex;
 }
 
 .compact-tags .tag {
