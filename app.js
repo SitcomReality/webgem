@@ -3,8 +3,7 @@ class HiddenGemsApp {
     this.isLoading = false;
     this.currentProjects = [];
     this.currentOffset = 0;
-    this.projectsPerBatch = 100;
-    this.lastScrollTop = 0;
+    this.projectsPerBatch = 250;
   }
 
   async initialize() {
@@ -19,43 +18,12 @@ class HiddenGemsApp {
       await window.gemFilter.analyzeGenericKeywords();
       console.log('✅ Generic keywords analyzed');
       
-      // Setup scroll listener for header collapse
-      this.setupScrollListener();
-      
       // Start discovering gems
       await this.discoverGems();
     } catch (error) {
       console.error('❌ Initialization failed:', error);
       window.uiManager.showError('Failed to initialize the discovery system. Please refresh and try again.');
     }
-  }
-
-  setupScrollListener() {
-    const header = document.querySelector('.header');
-    let ticking = false;
-    // Hysteresis thresholds to prevent jitter: collapse only after passing COLLAPSE_THRESHOLD,
-    // expand only when scrolling above EXPAND_THRESHOLD.
-    // A larger gap between these values makes the state change more decisive.
-    const COLLAPSE_THRESHOLD = 100;
-    const EXPAND_THRESHOLD = 50;
-
-    const updateHeader = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > COLLAPSE_THRESHOLD) {
-        header.classList.add('collapsed');
-      } else if (scrollTop < EXPAND_THRESHOLD) {
-        header.classList.remove('collapsed');
-      }
-      this.lastScrollTop = scrollTop;
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(updateHeader);
-        ticking = true;
-      }
-    });
   }
 
   async discoverGems(loadMore = false) {

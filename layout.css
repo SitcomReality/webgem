@@ -8,31 +8,6 @@
   z-index: 100;
   backdrop-filter: blur(8px);
   background-color: rgba(22, 27, 34, 0.85);
-  transition: all 0.3s ease;
-}
-
-.header.collapsed {
-  padding: var(--space-md) 0;
-}
-
-.header.collapsed .title {
-  font-size: 24px;
-}
-
-.header.collapsed .subtitle {
-  display: none;
-}
-
-.header.collapsed .tagline {
-  display: none;
-}
-
-.header.collapsed .controls-section {
-  margin-top: 0;
-}
-
-.header.collapsed .secondary-controls {
-  display: none;
 }
 
 .header-content {
