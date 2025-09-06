@@ -34,9 +34,10 @@ class HiddenGemsApp {
     const header = document.querySelector('.header');
     let ticking = false;
     // Hysteresis thresholds to prevent jitter: collapse only after passing COLLAPSE_THRESHOLD,
-    // expand only when scrolling above EXPAND_THRESHOLD (a bit above top).
-    const COLLAPSE_THRESHOLD = 110;
-    const EXPAND_THRESHOLD = 90;
+    // expand only when scrolling above EXPAND_THRESHOLD.
+    // A larger gap between these values makes the state change more decisive.
+    const COLLAPSE_THRESHOLD = 100;
+    const EXPAND_THRESHOLD = 50;
 
     const updateHeader = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
