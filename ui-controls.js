@@ -5,16 +5,7 @@ class UIManager {
       results: document.getElementById('results'),
       analyzingCount: document.getElementById('analyzingCount'),
       gemsFound: document.getElementById('gemsFound'),
-      avgQuality: document.getElementById('avgQuality'),
-      minVersions: document.getElementById('minVersions'),
-      minVersionsDisplay: document.getElementById('minVersionsDisplay'),
-      discoveryMode: document.getElementById('discoveryMode'),
-      sortBy: document.getElementById('sortBy'),
-      sortOrder: document.getElementById('sortOrder'),
       refreshBtn: document.getElementById('refreshBtn'),
-      timeRange: document.getElementById('timeRange'),
-      feedSource: document.getElementById('feedSource'),
-      maxViews: document.getElementById('maxViews'),
       loadMoreContainer: document.getElementById('loadMoreContainer'),
       loadMoreBtn: document.getElementById('loadMoreBtn')
     };

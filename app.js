@@ -12,10 +12,6 @@ class HiddenGemsApp {
     console.log('🚀 Hidden Gems Discovery Platform Initializing...');
     
     try {
-      // Set default sort to prestige descending
-      window.uiManager.elements.sortBy.value = 'prestige';
-      window.uiManager.elements.sortOrder.value = 'desc';
-      
       // Initialize the gem filter with current trending data
       await window.gemFilter.analyzeGenericKeywords();
       console.log('✅ Generic keywords analyzed');
