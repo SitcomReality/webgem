@@ -59,3 +59,10 @@ body {
 .header .subtitle { 
   opacity: .85; 
 }
+
+/* Ensure proper spacing for the new layout */
+.subtitle-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
