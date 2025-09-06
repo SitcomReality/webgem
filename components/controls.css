@@ -33,7 +33,7 @@
   min-width: 180px;
 }
 
-.secondary-controls {
+.consolidated-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

@@ -213,112 +213,71 @@ class HiddenGemsApp {
   }
 
   sortProjects(projects, sortBy, sortOrder) {
-    if (sortBy === 'prestige') {
-      if (projects.length === 0) return [];
+    // Always use prestige sorting regardless of parameters
+    if (projects.length === 0) return [];
 
-      // 1. Find min/max for normalization
-      const stats = {
-        minViews: Infinity, maxViews: -Infinity,
-        minLikes: Infinity, maxLikes: -Infinity,
-        minVersions: Infinity, maxVersions: -Infinity,
-        minTimestamp: Infinity, maxTimestamp: -Infinity,
-      };
+    // 1. Find min/max for normalization
+    const stats = {
+      minViews: Infinity, maxViews: -Infinity,
+      minLikes: Infinity, maxLikes: -Infinity,
+      minVersions: Infinity, maxVersions: -Infinity,
+      minTimestamp: Infinity, maxTimestamp: -Infinity,
+    };
 
-      projects.forEach(p => {
-        const views = p.raw?.project?.stats?.views || 0;
-        const likes = p.raw?.project?.stats?.likes || 0;
-        const versions = p.raw?.project?.current_version || 1;
-        const timestamp = new Date(p.created_at).getTime();
+    projects.forEach(p => {
+      const views = p.raw?.project?.stats?.views || 0;
+      const likes = p.raw?.project?.stats?.likes || 0;
+      const versions = p.raw?.project?.current_version || 1;
+      const timestamp = new Date(p.created_at).getTime();
 
-        stats.minViews = Math.min(stats.minViews, views);
-        stats.maxViews = Math.max(stats.maxViews, views);
-        stats.minLikes = Math.min(stats.minLikes, likes);
-        stats.maxLikes = Math.max(stats.maxLikes, likes);
-        stats.minVersions = Math.min(stats.minVersions, versions);
-        stats.maxVersions = Math.max(stats.maxVersions, versions);
-        stats.minTimestamp = Math.min(stats.minTimestamp, timestamp);
-        stats.maxTimestamp = Math.max(stats.maxTimestamp, timestamp);
-      });
+      stats.minViews = Math.min(stats.minViews, views);
+      stats.maxViews = Math.max(stats.maxViews, views);
+      stats.minLikes = Math.min(stats.minLikes, likes);
+      stats.maxLikes = Math.max(stats.maxLikes, likes);
+      stats.minVersions = Math.min(stats.minVersions, versions);
+      stats.maxVersions = Math.max(stats.maxVersions, versions);
+      stats.minTimestamp = Math.min(stats.minTimestamp, timestamp);
+      stats.maxTimestamp = Math.max(stats.maxTimestamp, timestamp);
+    });
 
-      // Handle cases where all values are the same
-      const rangeViews = stats.maxViews - stats.minViews || 1;
-      const rangeLikes = stats.maxLikes - stats.minLikes || 1;
-      const rangeVersions = stats.maxVersions - stats.minVersions || 1;
-      const rangeTimestamp = stats.maxTimestamp - stats.minTimestamp || 1;
+    // Handle cases where all values are the same
+    const rangeViews = stats.maxViews - stats.minViews || 1;
+    const rangeLikes = stats.maxLikes - stats.minLikes || 1;
+    const rangeVersions = stats.maxVersions - stats.minVersions || 1;
+    const rangeTimestamp = stats.maxTimestamp - stats.minTimestamp || 1;
 
-      // 2. Calculate prestige score for each project
-      const scoredProjects = projects.map(p => {
-        const views = p.raw?.project?.stats?.views || 0;
-        const likes = p.raw?.project?.stats?.likes || 0;
-        const versions = p.raw?.project?.current_version || 1;
-        const timestamp = new Date(p.created_at).getTime();
-        const quality = p.qualityScore || 0;
+    // 2. Calculate prestige score for each project
+    const scoredProjects = projects.map(p => {
+      const views = p.raw?.project?.stats?.views || 0;
+      const likes = p.raw?.project?.stats?.likes || 0;
+      const versions = p.raw?.project?.current_version || 1;
+      const timestamp = new Date(p.created_at).getTime();
+      const quality = p.qualityScore || 0;
 
-        // Normalize values
-        const normViews = (views - stats.minViews) / rangeViews;
-        const normLikes = (likes - stats.minLikes) / rangeLikes;
-        const normVersions = (versions - stats.minVersions) / rangeVersions;
-        const normAge = (stats.maxTimestamp - timestamp) / rangeTimestamp;
+      // Normalize values
+      const normViews = (views - stats.minViews) / rangeViews;
+      const normLikes = (likes - stats.minLikes) / rangeLikes;
+      const normVersions = (versions - stats.minVersions) / rangeVersions;
+      const normAge = (stats.maxTimestamp - timestamp) / rangeTimestamp;
 
-        // Weights
-        const weights = { views: 0.35, versions: 0.4, quality: 0.15, age: 0.05, likes: 0.05 };
+      // Weights
+      const weights = { views: 0.35, versions: 0.4, quality: 0.15, age: 0.05, likes: 0.05 };
 
-        // Score calculation
-        const score = 
-          (weights.views * (1 - normViews)) +
-          (weights.likes * (1 - normLikes)) +
-          (weights.versions * Math.pow(normVersions, 2)) + // Exponential bonus for versions
-          (weights.quality * quality) +
-          (weights.age * normAge);
-        
-        return { ...p, prestigeScore: score };
-      });
+      // Score calculation
+      const score = 
+        (weights.views * (1 - normViews)) +
+        (weights.likes * (1 - normLikes)) +
+        (weights.versions * Math.pow(normVersions, 2)) + // Exponential bonus for versions
+        (weights.quality * quality) +
+        (weights.age * normAge);
       
-      // 3. Sort by prestige score
-      const sorted = scoredProjects.sort((a, b) => {
-        const scoreA = a.prestigeScore;
-        const scoreB = b.prestigeScore;
-        return sortOrder === 'asc' ? scoreA - scoreB : scoreB - scoreA;
-      });
-
-      return sorted.slice(0, 50); // Limit results after sorting
-    }
-
-    // Fallback to original sorting logic
-    const sorted = [...projects].sort((a, b) => {
-      let valueA, valueB;
-      
-      switch (sortBy) {
-        case 'views':
-          valueA = a.raw?.project?.stats?.views || 0;
-          valueB = b.raw?.project?.stats?.views || 0;
-          break;
-        case 'likes':
-          valueA = a.raw?.project?.stats?.likes || 0;
-          valueB = b.raw?.project?.stats?.likes || 0;
-          break;
-        case 'created_at':
-          valueA = new Date(a.created_at).getTime();
-          valueB = new Date(b.created_at).getTime();
-          break;
-        case 'current_version':
-          valueA = a.raw?.project?.current_version || 1;
-          valueB = b.raw?.project?.current_version || 1;
-          break;
-        case 'qualityScore':
-          valueA = a.qualityScore || 0;
-          valueB = b.qualityScore || 0;
-          break;
-        default: // Default to prestige if sortBy is unknown
-          valueA = a.prestigeScore || 0;
-          valueB = b.prestigeScore || 0;
-          break;
-      }
-      
-      return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+      return { ...p, prestigeScore: score };
     });
     
-    return sorted.slice(0, 50); // Limit results for other sort types too
+    // 3. Sort by prestige score (always descending for prestige)
+    const sorted = scoredProjects.sort((a, b) => b.prestigeScore - a.prestigeScore);
+
+    return sorted.slice(0, 50); // Limit results after sorting
   }
 }
 
