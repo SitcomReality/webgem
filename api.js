@@ -48,9 +48,40 @@ class WebsimAPI {
   // Normalize feed items (trending/search) to a flat shape our UI expects
   normalizeFeedItems(items = []) {
     return items.map((it) => {
+      // Handle posts feed format
+      if (it.comment?.card_data?.type === 'project_post' && it.comment.card_data.project) {
+        const postProject = it.comment.card_data.project;
+        
+        // Use project_id from comment for site-level linking
+        const siteId = it.comment.project_id;
+
+        // Re-structure the raw data to be consistent with other feeds
+        const rawData = {
+          project: postProject,
+          site: {
+            id: siteId,
+            owner: postProject.created_by
+          },
+        };
+        
+        return {
+          id: siteId,
+          siteId: siteId,
+          projectId: postProject.id,
+          title: postProject.title || 'Untitled',
+          description: postProject.description || '',
+          created_at: it.comment.created_at || new Date().toISOString(),
+          raw: rawData,
+        };
+      }
+
+      // Existing logic for other feeds (trending, search)
       const site = it.site || it; // some endpoints may return site directly
       const project = it.project || it.project_revision?.project || it.project_data || it.project;
       const id = site?.id || project?.site_id || project?.id; // prefer site.id for images/links
+
+      if (!id) return null; // If we can't identify a project, skip it.
+      
       return {
         id, // treat as site id for UI/link/image
         siteId: site?.id || null,
@@ -60,7 +91,7 @@ class WebsimAPI {
         created_at: site?.created_at || project?.created_at || it.created_at || new Date().toISOString(),
         raw: it
       };
-    });
+    }).filter(Boolean); // Filter out items that couldn't be normalized (e.g., text-only posts)
   }
 
   async getTrendingFeed(params = {}) {
