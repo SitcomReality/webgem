@@ -2,8 +2,10 @@ class HiddenGemsApp {
   constructor() {
     this.isLoading = false;
     this.currentProjects = [];
-    this.currentOffset = 0;
-    this.projectsPerBatch = 250;
+    this.projectsPerBatch = 100;
+    this.sourceOffsets = { search: 0, posts: 0, trending: 0 };
+    this.sourceHasMore = { search: true, posts: true, trending: true };
+    this.totalAnalyzed = 0;
   }
 
   async initialize() {
@@ -32,10 +34,11 @@ class HiddenGemsApp {
     this.isLoading = true;
 
     if (loadMore) {
-        this.currentOffset += this.projectsPerBatch;
         window.uiManager.showLoadMoreLoading();
     } else {
-        this.currentOffset = 0;
+        this.sourceOffsets = { search: 0, posts: 0, trending: 0 };
+        this.sourceHasMore = { search: true, posts: true, trending: true };
+        this.totalAnalyzed = 0;
         this.currentProjects = [];
         window.uiManager.showLoading();
     }
@@ -52,7 +55,7 @@ class HiddenGemsApp {
       const sortOrder = window.uiManager.elements.sortOrder.value;
       
       // Fetch and score projects
-      const projectSources = await this.fetchProjectSources(feedSource, timeRange);
+      const { projects: projectSources, anyHasMore, totalFetched } = await this.fetchProjectSources(loadMore);
       const scoredProjects = await this.scoreProjects(projectSources);
       const gems = this.filterGems(scoredProjects, minVersions, maxViews);
       
@@ -78,14 +81,14 @@ class HiddenGemsApp {
         ? this.currentProjects.reduce((sum, p) => sum + p.qualityScore, 0) / this.currentProjects.length 
         : 0;
       
-      const totalAnalyzed = this.currentOffset + projectSources.length;
-      window.uiManager.updateStats(totalAnalyzed, this.currentProjects.length, avgQuality);
+      this.totalAnalyzed += totalFetched;
+      window.uiManager.updateStats(this.totalAnalyzed, this.currentProjects.length, avgQuality);
       
       // Render results
       window.uiManager.renderProjects(this.currentProjects, loadMore);
       
       // Show or hide load more button
-      window.uiManager.toggleLoadMore(projectSources.length === this.projectsPerBatch);
+      window.uiManager.toggleLoadMore(anyHasMore);
       
     } catch (error) {
       console.error('❌ Gem discovery failed:', error);
@@ -96,56 +99,15 @@ class HiddenGemsApp {
     }
   }
 
-  async fetchProjectSources(feedSource, range) {
-    const sources = [];
-    console.log(`🎯 Feed source: ${feedSource}, Time range: ${range}`);
-    
-    try {
-      let results;
-      const params = {
-          limit: this.projectsPerBatch,
-          offset: this.currentOffset,
-          range: range
-      };
-
-      switch(feedSource) {
-        case 'trending':
-          console.log('🔍 Fetching projects from trending feed...');
-          results = await window.websimAPI.getTrendingFeed(params);
-          console.log(`📈 Projects from trending feed: ${results.data?.length || 0}`);
-          break;
-        case 'posts':
-          console.log('🔍 Fetching projects from posts feed...');
-          results = await window.websimAPI.getPostsFeed({ 
-            limit: this.projectsPerBatch,
-            offset: this.currentOffset,
-            sort: 'latest'
-          });
-          console.log(`📝 Projects from posts feed: ${results.data?.length || 0}`);
-          break;
-        case 'search':
-        default:
-          console.log('🔍 Fetching projects from search feed...');
-          results = await window.websimAPI.getSearchFeed('newest', 'e', params);
-          console.log(`🔍 Projects from search feed: ${results.data?.length || 0}`);
-          break;
-      }
-      
-      if (results && results.data) {
-        sources.push(...results.data);
-      }
-      
-    } catch (error) {
-      console.error('❌ Error fetching project sources:', error);
-    }
-    
-    // Remove duplicates
-    const uniqueProjects = sources.filter((project, index, array) => 
-      array.findIndex(p => p.id === project.id) === index
-    );
-    
-    console.log(`🎯 Unique projects: ${uniqueProjects.length}`);
-    return uniqueProjects;
+  async fetchProjectSources(loadMore) {
+    const b=this.projectsPerBatch,c=[];const add=(k,f)=>this.sourceHasMore[k]&&c.push(f().then(r=>({k,items:r.data||[]})).catch(_=>({k,items:[]})));
+    add('search',()=>window.websimAPI.getSearchFeed('newest','e',{limit:b,offset:this.sourceOffsets.search,range:'day'}));
+    add('posts',()=>window.websimAPI.getPostsFeed({limit:b,offset:this.sourceOffsets.posts,sort:'latest',range:'day'}));
+    add('trending',()=>window.websimAPI.getTrendingFeed({limit:b,offset:this.sourceOffsets.trending,range:'week'}));
+    const s=await Promise.all(c);
+    let combined=[];s.forEach(({k,items})=>{this.sourceHasMore[k]=items.length===b;if(this.sourceHasMore[k])this.sourceOffsets[k]+=b;combined.push(...items);});
+    const seen=new Set(),projects=[];for(const p of combined){if(!seen.has(p.id)){seen.add(p.id);projects.push(p);}}
+    return {projects,anyHasMore:Object.values(this.sourceHasMore).some(Boolean),totalFetched:combined.length};
   }
 
   async fetchTechnicalProjects() {
