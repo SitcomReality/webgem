@@ -19,6 +19,7 @@
   flex-wrap: wrap;
   gap: var(--space-lg);
   align-items: flex-end;
+  justify-content: center;
 }
 
 .control-group {

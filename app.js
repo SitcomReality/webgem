@@ -48,7 +48,7 @@ class HiddenGemsApp {
       
       // Get discovery parameters
       const minVersions = 50; // Hardcoded value
-      const maxViews = 5000; // Hardcoded value
+      const maxViews = 5000; // Hardcoded value - increased from 1000
       const timeRange = window.uiManager.elements.timeRange.value;
       const feedSource = window.uiManager.elements.feedSource.value;
       const sortBy = window.uiManager.elements.sortBy.value;
