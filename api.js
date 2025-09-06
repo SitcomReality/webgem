@@ -55,14 +55,17 @@ class WebsimAPI {
         // Use project_id from comment for site-level linking
         const siteId = it.comment.project_id;
 
+        // Extract thumbnail URL from the project
+        const thumbnailUrl = postProject.thumbnail?.url || null;
+
         // Re-structure the raw data to be consistent with other feeds
         const rawData = {
           project: postProject,
           site: {
             id: siteId,
-            owner: postProject.created_by,
-            thumbnail: postProject.thumbnail?.url || null
+            owner: postProject.created_by
           },
+          thumbnailUrl: thumbnailUrl // Store thumbnail URL for later use
         };
         
         return {

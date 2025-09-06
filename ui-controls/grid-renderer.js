@@ -16,7 +16,11 @@ class GridRenderer {
     const creatorUsername = creator?.username || 'unknown';
     const creatorAvatar = creator?.avatar_url || `https://images.websim.com/avatar/${creatorUsername}`;
 
-    const imageUrl = `https://images.websim.com/v1/site/${project.id}/600`;
+    // Use thumbnail URL from posts feed if available, otherwise use the standard image URL
+    const imageUrl = project.raw?.thumbnailUrl 
+      ? `${project.raw.thumbnailUrl}/600`
+      : `https://images.websim.com/v1/site/${project.id}/600`;
+
     const versionCount = project.raw?.project?.current_version || 1;
 
     card.innerHTML = `
