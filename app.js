@@ -33,22 +33,18 @@ class HiddenGemsApp {
   setupScrollListener() {
     const header = document.querySelector('.header');
     let ticking = false;
-    const SCROLL_THRESHOLD = 100; // Height threshold for collapse
-    const SCROLL_BUFFER = 20; // Buffer to prevent rapid switching
+    // Hysteresis thresholds to prevent jitter: collapse only after passing COLLAPSE_THRESHOLD,
+    // expand only when scrolling above EXPAND_THRESHOLD (a bit above top).
+    const COLLAPSE_THRESHOLD = 110;
+    const EXPAND_THRESHOLD = 90;
 
     const updateHeader = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Add buffer to prevent rapid switching
-      const shouldCollapse = scrollTop > SCROLL_THRESHOLD + SCROLL_BUFFER;
-      const shouldExpand = scrollTop < SCROLL_THRESHOLD - SCROLL_BUFFER;
-      
-      if (shouldCollapse && !header.classList.contains('collapsed')) {
+      if (scrollTop > COLLAPSE_THRESHOLD) {
         header.classList.add('collapsed');
-      } else if (shouldExpand && header.classList.contains('collapsed')) {
+      } else if (scrollTop < EXPAND_THRESHOLD) {
         header.classList.remove('collapsed');
       }
-      
       this.lastScrollTop = scrollTop;
       ticking = false;
     };
@@ -58,7 +54,7 @@ class HiddenGemsApp {
         requestAnimationFrame(updateHeader);
         ticking = true;
       }
-    }, { passive: true });
+    });
   }
 
   async discoverGems(loadMore = false) {
