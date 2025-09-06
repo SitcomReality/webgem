@@ -20,6 +20,20 @@ class UIManager {
     // View toggle - only if element exists
     this.setupViewToggle();
 
+    // Add refresh button listener
+    if (this.elements.refreshBtn) {
+      this.elements.refreshBtn.addEventListener('click', () => {
+        this.refresh();
+      });
+    }
+
+    // Add load more button listener
+    if (this.elements.loadMoreBtn) {
+      this.elements.loadMoreBtn.addEventListener('click', () => {
+        this.loadMore();
+      });
+    }
+
     // Filter panel - only if elements exist
     if (window.gemFilter) {
       this.filterPanel = new window.FilterPanelManager(window.gemFilter, window.app);
