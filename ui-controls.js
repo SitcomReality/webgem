@@ -17,45 +17,6 @@ class UIManager {
   }
 
   initializeControls() {
-    // Range slider - only if element exists
-    if (this.elements.minVersions && this.elements.minVersionsDisplay) {
-      this.elements.minVersions.addEventListener('input', (e) => {
-        this.elements.minVersionsDisplay.textContent = e.target.value;
-      });
-    }
-
-    // Max views slider - only if element exists
-    if (this.elements.maxViews) {
-      this.elements.maxViews.addEventListener('input', (e) => {
-        const value = parseInt(e.target.value);
-        const display = value >= 1000 ? `${value/1000}K` : value;
-        const displayElement = document.getElementById('maxViewsDisplay');
-        if (displayElement) displayElement.textContent = display;
-      });
-    }
-
-    // Form controls - only if elements exist
-    if (this.elements.sortBy) {
-      this.elements.sortBy.addEventListener('change', () => this.refresh());
-    }
-    if (this.elements.sortOrder) {
-      this.elements.sortOrder.addEventListener('change', () => this.refresh());
-    }
-    if (this.elements.refreshBtn) {
-      this.elements.refreshBtn.addEventListener('click', () => this.refresh());
-    }
-    if (this.elements.loadMoreBtn) {
-      this.elements.loadMoreBtn.addEventListener('click', () => this.loadMore());
-    }
-
-    // Time range buttons - only bind if elements exist
-    this.bindSegmentButtons('.seg-btn[data-range]', 'timeRange', false);
-    this.bindSegmentButtons('.seg-btn[data-sort]', 'sortBy', false);
-    this.bindSegmentButtons('.seg-btn[data-feed]', 'feedSource', false);
-
-    // Order toggle - only if element exists
-    this.setupOrderToggle();
-    
     // View toggle - only if element exists
     this.setupViewToggle();
 
@@ -76,27 +37,6 @@ class UIManager {
     if (window.curationsDB) {
       this.curationUI = new window.CurationUI(window.curationsDB);
     }
-  }
-
-  bindSegmentButtons(selector, formId, shouldRefresh) {
-    const buttons = document.querySelectorAll(selector);
-    if (buttons.length === 0) return;
-
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.setAttribute('aria-selected', 'false'));
-        btn.setAttribute('aria-selected', 'true');
-        
-        if (formId && this.elements[formId]) {
-          const datasetKey = Object.keys(btn.dataset).find(k => k !== 'view');
-          this.elements[formId].value = btn.dataset[datasetKey];
-        }
-
-        if (shouldRefresh) {
-          this.refresh();
-        }
-      });
-    });
   }
 
   setupViewToggle() {
@@ -132,32 +72,10 @@ class UIManager {
     });
   }
 
-  setupOrderToggle() {
-    const orderToggle = document.getElementById('orderToggle');
-    if (!orderToggle || !this.elements.sortOrder) return;
-
-    // Set initial state from default sort order
-    const initialOrder = this.elements.sortOrder.value;
-    orderToggle.dataset.order = initialOrder;
-    orderToggle.textContent = initialOrder === 'asc' ? '↑' : '↓';
-
-    orderToggle.addEventListener('click', () => {
-      const next = orderToggle.dataset.order === 'asc' ? 'desc' : 'asc';
-      orderToggle.dataset.order = next;
-      orderToggle.textContent = next === 'asc' ? '↑' : '↓';
-      this.elements.sortOrder.value = next;
-      this.refresh();
-    });
-  }
-
   loadMore() {
     if (window.app) {
         window.app.discoverGems(true);
     }
-  }
-
-  refresh() {
-    if (window.app) window.app.discoverGems();
   }
 
   // UI state management
@@ -206,9 +124,6 @@ class UIManager {
     }
     if (this.elements.gemsFound) {
       this.elements.gemsFound.textContent = found;
-    }
-    if (this.elements.avgQuality) {
-      this.elements.avgQuality.textContent = avgQuality.toFixed(2);
     }
   }
 
