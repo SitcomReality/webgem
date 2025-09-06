@@ -33,13 +33,19 @@ class HiddenGemsApp {
   setupScrollListener() {
     const header = document.querySelector('.header');
     let ticking = false;
+    const SCROLL_THRESHOLD = 100; // Height threshold for collapse
+    const SCROLL_BUFFER = 20; // Buffer to prevent rapid switching
 
     const updateHeader = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       
-      if (scrollTop > 100) {
+      // Add buffer to prevent rapid switching
+      const shouldCollapse = scrollTop > SCROLL_THRESHOLD + SCROLL_BUFFER;
+      const shouldExpand = scrollTop < SCROLL_THRESHOLD - SCROLL_BUFFER;
+      
+      if (shouldCollapse && !header.classList.contains('collapsed')) {
         header.classList.add('collapsed');
-      } else {
+      } else if (shouldExpand && header.classList.contains('collapsed')) {
         header.classList.remove('collapsed');
       }
       
@@ -52,7 +58,7 @@ class HiddenGemsApp {
         requestAnimationFrame(updateHeader);
         ticking = true;
       }
-    });
+    }, { passive: true });
   }
 
   async discoverGems(loadMore = false) {

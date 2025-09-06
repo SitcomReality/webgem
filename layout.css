@@ -8,7 +8,8 @@
   z-index: 100;
   backdrop-filter: blur(8px);
   background-color: rgba(22, 27, 34, 0.85);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, padding;
 }
 
 .header.collapsed {
@@ -17,22 +18,30 @@
 
 .header.collapsed .title {
   font-size: 24px;
+  transition: font-size 0.3s ease;
 }
 
 .header.collapsed .subtitle {
   display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .header.collapsed .tagline {
   display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .header.collapsed .controls-section {
   margin-top: 0;
+  transition: margin-top 0.3s ease;
 }
 
 .header.collapsed .secondary-controls {
   display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .header-content {
@@ -43,6 +52,7 @@
   max-width: var(--container-width);
   margin: 0 auto;
   padding: 0 var(--space-xl);
+  min-height: 0; 
 }
 
 .title-section {
