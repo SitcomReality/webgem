@@ -96,14 +96,52 @@ class HiddenGemsApp {
   }
 
   async fetchProjectSources(loadMore) {
-    const b=this.projectsPerBatch,c=[];const add=(k,f)=>this.sourceHasMore[k]&&c.push(f().then(r=>({k,items:r.data||[]})).catch(_=>({k,items:[]})));
-    add('search',()=>window.websimAPI.getSearchFeed('newest','e',{limit:b,offset:this.sourceOffsets.search,range:'day'}));
-    add('posts',()=>window.websimAPI.getPostsFeed({limit:b,offset:this.sourceOffsets.posts,sort:'latest',range:'day'}));
-    add('trending',()=>window.websimAPI.getTrendingFeed({limit:b,offset:this.sourceOffsets.trending,range:'week'}));
-    const s=await Promise.all(c);
-    let combined=[];s.forEach(({k,items})=>{this.sourceHasMore[k]=items.length===b;if(this.sourceHasMore[k])this.sourceOffsets[k]+=b;combined.push(...items);});
-    const seen=new Set(),projects=[];for(const p of combined){if(!seen.has(p.id)){seen.add(p.id);projects.push(p);}}
-    return {projects,anyHasMore:Object.values(this.sourceHasMore).some(Boolean),totalFetched:combined.length};
+    const b = this.projectsPerBatch;
+    const c = [];
+    
+    const add = (k, f) => this.sourceHasMore[k] && c.push(f().then(r => ({k, items: r.data || []})).catch(_ => ({k, items: []})));
+    
+    add('search', () => window.websimAPI.getSearchFeed('newest', 'e', {limit: b, offset: this.sourceOffsets.search, range: 'day'}));
+    add('posts', () => window.websimAPI.getPostsFeed({limit: b, offset: this.sourceOffsets.posts, sort: 'latest', range: 'day'}));
+    add('trending', () => window.websimAPI.getTrendingFeed({limit: b, offset: this.sourceOffsets.trending, range: 'week'}));
+    
+    const s = await Promise.all(c);
+    let combined = [];
+    
+    s.forEach(({k, items}) => {
+      this.sourceHasMore[k] = items.length === b;
+      if (this.sourceHasMore[k]) this.sourceOffsets[k] += b;
+      combined.push(...items);
+    });
+    
+    // Enhanced deduplication logic
+    const seenIds = new Set();
+    const seenProjects = new Set(); // For title+creator deduplication
+    const projects = [];
+    
+    for (const p of combined) {
+      // Check by ID first
+      if (seenIds.has(p.id)) {
+        continue;
+      }
+      
+      // Create a unique key from title + creator
+      const creator = p.raw?.project?.created_by?.username || p.raw?.site?.owner?.username || 'unknown';
+      const title = p.title || '';
+      const projectKey = `${title.toLowerCase().trim()}|${creator.toLowerCase().trim()}`;
+      
+      // Check if we've seen this project before
+      if (seenProjects.has(projectKey)) {
+        continue;
+      }
+      
+      // Add to both sets and include this project
+      seenIds.add(p.id);
+      seenProjects.add(projectKey);
+      projects.push(p);
+    }
+    
+    return {projects, anyHasMore: Object.values(this.sourceHasMore).some(Boolean), totalFetched: combined.length};
   }
 
   async fetchTechnicalProjects() {
