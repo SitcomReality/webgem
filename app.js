@@ -45,10 +45,10 @@ class HiddenGemsApp {
       // Get discovery parameters
       const minVersions = 50; // Hardcoded value
       const maxViews = 5000; // Hardcoded value - increased from 1000
-      const timeRange = window.uiManager.elements.timeRange.value;
-      const feedSource = window.uiManager.elements.feedSource.value;
-      const sortBy = window.uiManager.elements.sortBy.value;
-      const sortOrder = window.uiManager.elements.sortOrder.value;
+      const timeRange = 'day'; // Hardcoded value
+      const feedSource = 'unified'; // Hardcoded value
+      const sortBy = 'prestige'; // Hardcoded value
+      const sortOrder = 'desc'; // Hardcoded value
       
       // Fetch and score projects
       const { projects: projectSources, anyHasMore, totalFetched } = await this.fetchProjectSources(loadMore);
