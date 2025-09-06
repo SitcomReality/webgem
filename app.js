@@ -2,6 +2,8 @@ class HiddenGemsApp {
   constructor() {
     this.isLoading = false;
     this.currentProjects = [];
+    this.currentOffset = 0;
+    this.projectsPerBatch = 100;
   }
 
   async initialize() {
@@ -24,11 +26,19 @@ class HiddenGemsApp {
     }
   }
 
-  async discoverGems() {
+  async discoverGems(loadMore = false) {
     if (this.isLoading) return;
     
     this.isLoading = true;
-    window.uiManager.showLoading();
+
+    if (loadMore) {
+        this.currentOffset += this.projectsPerBatch;
+        window.uiManager.showLoadMoreLoading();
+    } else {
+        this.currentOffset = 0;
+        this.currentProjects = [];
+        window.uiManager.showLoading();
+    }
     
     try {
       console.log('🔍 Starting gem discovery process...');
@@ -46,22 +56,36 @@ class HiddenGemsApp {
       const scoredProjects = await this.scoreProjects(projectSources);
       const gems = this.filterGems(scoredProjects, minVersions, maxViews);
       
-      // Sort the gems
-      const sortedGems = this.sortProjects(gems, sortBy, sortOrder);
+      // Sort the new gems before appending
+      const newGems = this.sortProjects(gems, sortBy, sortOrder);
       
-      console.log(`💎 Found ${sortedGems.length} hidden gems in ${timeRange} range`);
+      if (loadMore) {
+        // Append new gems and remove duplicates that might have slipped in
+        const allGems = [...this.currentProjects, ...newGems];
+        this.currentProjects = allGems.filter((project, index, self) =>
+            index === self.findIndex((p) => (
+                p.id === project.id
+            ))
+        );
+      } else {
+        this.currentProjects = newGems;
+      }
+
+      console.log(`💎 Found ${this.currentProjects.length} total hidden gems in ${timeRange} range`);
       
       // Calculate average quality
-      const avgQuality = sortedGems.length > 0 
-        ? sortedGems.reduce((sum, p) => sum + p.qualityScore, 0) / sortedGems.length 
+      const avgQuality = this.currentProjects.length > 0 
+        ? this.currentProjects.reduce((sum, p) => sum + p.qualityScore, 0) / this.currentProjects.length 
         : 0;
       
-      window.uiManager.updateStats(projectSources.length, sortedGems.length, avgQuality);
+      const totalAnalyzed = this.currentOffset + projectSources.length;
+      window.uiManager.updateStats(totalAnalyzed, this.currentProjects.length, avgQuality);
       
       // Render results
-      window.uiManager.renderProjects(sortedGems);
+      window.uiManager.renderProjects(this.currentProjects, loadMore);
       
-      this.currentProjects = sortedGems;
+      // Show or hide load more button
+      window.uiManager.toggleLoadMore(projectSources.length === this.projectsPerBatch);
       
     } catch (error) {
       console.error('❌ Gem discovery failed:', error);
@@ -78,19 +102,23 @@ class HiddenGemsApp {
     
     try {
       let results;
+      const params = {
+          limit: this.projectsPerBatch,
+          offset: this.currentOffset,
+          range: range
+      };
+
       switch(feedSource) {
         case 'trending':
           console.log('🔍 Fetching projects from trending feed...');
-          results = await window.websimAPI.getTrendingFeed({ 
-            limit: 100,
-            range: range 
-          });
+          results = await window.websimAPI.getTrendingFeed(params);
           console.log(`📈 Projects from trending feed: ${results.data?.length || 0}`);
           break;
         case 'posts':
           console.log('🔍 Fetching projects from posts feed...');
           results = await window.websimAPI.getPostsFeed({ 
-            limit: 100,
+            limit: this.projectsPerBatch,
+            offset: this.currentOffset,
             sort: 'latest'
           });
           console.log(`📝 Projects from posts feed: ${results.data?.length || 0}`);
@@ -98,10 +126,7 @@ class HiddenGemsApp {
         case 'search':
         default:
           console.log('🔍 Fetching projects from search feed...');
-          results = await window.websimAPI.getSearchFeed('newest', '*', { 
-            limit: 100,
-            range: range 
-          });
+          results = await window.websimAPI.getSearchFeed('newest', '*', params);
           console.log(`🔍 Projects from search feed: ${results.data?.length || 0}`);
           break;
       }

@@ -85,6 +85,11 @@
   grid-template-columns: 1fr;
 }
 
+.load-more-container {
+  text-align: center;
+  padding: var(--space-xl) 0;
+}
+
 /* Footer */
 .footer {
   margin-top: var(--space-3xl);

@@ -197,10 +197,15 @@ class GridRenderer {
     return div.innerHTML;
   }
 
-  static renderProjects(projects, container) {
-    container.innerHTML = '';
+  static renderProjects(projects, container, append = false) {
+    if (!append) {
+        container.innerHTML = '';
+    }
     
-    projects.forEach((project, index) => {
+    // Find the starting index for new cards to apply staggered animation
+    const startIndex = append ? container.children.length : 0;
+    
+    projects.slice(startIndex).forEach((project, index) => {
       const card = this.createProjectCard(project);
       container.appendChild(card);
       

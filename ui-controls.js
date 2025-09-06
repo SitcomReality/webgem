@@ -14,7 +14,9 @@ class UIManager {
       refreshBtn: document.getElementById('refreshBtn'),
       timeRange: document.getElementById('timeRange'),
       feedSource: document.getElementById('feedSource'),
-      maxViews: document.getElementById('maxViews')
+      maxViews: document.getElementById('maxViews'),
+      loadMoreContainer: document.getElementById('loadMoreContainer'),
+      loadMoreBtn: document.getElementById('loadMoreBtn')
     };
 
     this.isCurator = false;
@@ -40,6 +42,7 @@ class UIManager {
     this.elements.sortBy.addEventListener('change', () => this.refresh());
     this.elements.sortOrder.addEventListener('change', () => this.refresh());
     this.elements.refreshBtn.addEventListener('click', () => this.refresh());
+    this.elements.loadMoreBtn.addEventListener('click', () => this.loadMore());
 
     // Time range buttons
     this.bindSegmentButtons('.seg-btn[data-range]', 'timeRange', false);
@@ -126,6 +129,12 @@ class UIManager {
     }
   }
 
+  loadMore() {
+    if (window.app) {
+        window.app.discoverGems(true);
+    }
+  }
+
   refresh() {
     if (window.app) window.app.discoverGems();
   }
@@ -134,10 +143,26 @@ class UIManager {
   showLoading() {
     this.elements.loading.classList.remove('hidden');
     this.elements.results.innerHTML = '';
+    this.elements.loadMoreContainer.classList.add('hidden');
   }
 
   hideLoading() {
     this.elements.loading.classList.add('hidden');
+    this.elements.loadMoreBtn.disabled = false;
+    this.elements.loadMoreBtn.textContent = 'Load More Gems';
+  }
+
+  showLoadMoreLoading() {
+    this.elements.loadMoreBtn.disabled = true;
+    this.elements.loadMoreBtn.textContent = 'Loading...';
+  }
+
+  toggleLoadMore(show) {
+    if (show) {
+        this.elements.loadMoreContainer.classList.remove('hidden');
+    } else {
+        this.elements.loadMoreContainer.classList.add('hidden');
+    }
   }
 
   updateStats(analyzing, found, avgQuality) {
@@ -146,8 +171,8 @@ class UIManager {
     this.elements.avgQuality.textContent = avgQuality.toFixed(2);
   }
 
-  renderProjects(projects) {
-    window.GridRenderer.renderProjects(projects, this.elements.results);
+  renderProjects(projects, append = false) {
+    window.GridRenderer.renderProjects(projects, this.elements.results, append);
   }
 
   showError(message) {
