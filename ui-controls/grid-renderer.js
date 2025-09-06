@@ -176,11 +176,11 @@ class GridRenderer {
 
     if (versionCount >= 100) {
       let effortClass = 'tag-effort';
-      let effortText = 'High Effort'; // Changed to text for grid view
+      let effortText = 'High Effort'; // Keep text for grid view
       
       if (versionCount >= 500) {
         effortClass = 'tag-passion';
-        effortText = 'Passion Project!'; // Changed to text for grid view
+        effortText = 'Passion Project!'; // Keep text for grid view
       }
       
       tags.push(`<span class="tag ${effortClass}">${effortText}</span>`);
