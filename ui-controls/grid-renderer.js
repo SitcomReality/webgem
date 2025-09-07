@@ -191,7 +191,7 @@ class GridRenderer {
     const versionCount = project.raw?.project?.current_version || 1;
 
     if (qualityScore >= 0.8) {
-      tags.push('<span class="tag tag-excellent">★</span>');
+      tags.push('<span class="tag tag-excellent" title="Exceptional Quality">★</span>');
     }
 
     // Check for unique projects
@@ -216,23 +216,25 @@ class GridRenderer {
     }
 
     if (uniquenessScore >= 0.99) {
-      tags.push('<span class="tag tag-unique">✦</span>');
+      tags.push('<span class="tag tag-unique" title="Unique Project">✦</span>');
     }
 
     if (window.gemFilter?.qualityTerms?.some(term => text.includes(term))) {
-      tags.push('<span class="tag tag-technical">⚙</span>');
+      tags.push('<span class="tag tag-technical" title="Technical Project">⚙</span>');
     }
 
     if (versionCount >= 100) {
       let effortClass = 'tag-effort';
-      let effortText = '⚡️'; // Changed to icon for compact view
+      let effortText = '⚡️';
+      let effortTitle = 'High Effort';
       
       if (versionCount >= 500) {
         effortClass = 'tag-passion';
-        effortText = '❤'; // Keep icon for compact view
+        effortText = '❤';
+        effortTitle = 'Passion Project';
       }
       
-      tags.push(`<span class="tag ${effortClass}">${effortText}</span>`);
+      tags.push(`<span class="tag ${effortClass}" title="${effortTitle}">${effortText}</span>`);
     }
 
     return tags.join('');
