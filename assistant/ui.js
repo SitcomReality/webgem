@@ -11,13 +11,14 @@ window.AssistantUI = {
     document.body.appendChild(this.panel);
 
     this.output = document.createElement('div');
-    this.output.className = 'assistant-output';
+    this.output.className = 'assistant-overlay';
     this.output.innerHTML = `
-      <div class="header">
-        <strong>Buddy says</strong>
-        <button class="close" aria-label="Close">Close</button>
+      <div class="beam"></div><div class="beam beam-2"></div><div class="beam beam-3"></div>
+      <div class="assistant-output buddy-window">
+        <div class="header"><span class="flare">GLORIOUS BUDDY TRANSMISSION</span><button class="close" aria-label="Close">✖</button></div>
+        <div class="marquee">🚪🚪🚪🚪🚪🚪🚪🚪🚪🚪🚪🚪🚪🚪¿🚪¿🚪🚪🚪🚪🍟🚪🚪🚪</div>
+        <div class="content">...</div>
       </div>
-      <div class="content">...</div>
     `;
     document.body.appendChild(this.output);
 
