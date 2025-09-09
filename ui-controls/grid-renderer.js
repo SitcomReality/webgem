@@ -1,6 +1,7 @@
 class GridRenderer {
   static createProjectCard(project) {
     const card = document.createElement('div');
+    card.id = `project-card-${project.id}`;
     card.className = 'project-card';
     card.style.opacity = '0';
     card.style.transform = 'translateY(20px)';

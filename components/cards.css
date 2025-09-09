@@ -17,6 +17,12 @@
   transform: translateY(-4px);
 }
 
+.project-card.highlighted {
+  border-color: var(--accent-sapphire);
+  box-shadow: 0 0 20px rgba(47, 129, 247, 0.6);
+  transform: translateY(-6px) scale(1.02);
+}
+
 /* Passion Project Card Enhancement */
 .project-card.passion-project {
   position: relative;

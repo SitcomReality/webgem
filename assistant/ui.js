@@ -36,38 +36,9 @@ window.AssistantUI = {
   },
 
   formatResponse(text) {
-    const lines = text.split('\n');
-    let html = '';
-    let inList = false;
-
-    for (const line of lines) {
-      let processedLine = line
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-      if (processedLine.trim().startsWith('* ')) {
-        if (!inList) {
-          html += '<ul>';
-          inList = true;
-        }
-        html += `<li>${processedLine.trim().substring(2)}</li>`;
-      } else {
-        if (inList) {
-          html += '</ul>';
-          inList = false;
-        }
-        if (processedLine.trim()) {
-            html += `<p>${processedLine}</p>`;
-        }
-      }
-    }
-
-    if (inList) {
-      html += '</ul>';
-    }
-
-    return html;
+    // The LLM is now expected to return valid HTML, so we just need to handle basic formatting cleanup.
+    // The previous complex formatter is no longer needed.
+    return text;
   },
 
   async request(intent) {
@@ -77,5 +48,20 @@ window.AssistantUI = {
     this.output.classList.add('active');
     const text = await window.AssistantLLM.getSuggestion(payload);
     contentEl.innerHTML = this.formatResponse(text);
+
+    // Add event listeners for project links
+    contentEl.querySelectorAll('a[data-project-id]').forEach(link => {
+      const projectId = link.dataset.projectId;
+      const targetCard = document.getElementById(`project-card-${projectId}`);
+      if (!targetCard) return;
+      
+      link.addEventListener('mouseenter', () => {
+        targetCard.classList.add('highlighted');
+      });
+      
+      link.addEventListener('mouseleave', () => {
+        targetCard.classList.remove('highlighted');
+      });
+    });
   }
 };
