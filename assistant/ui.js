@@ -35,12 +35,47 @@ window.AssistantUI = {
     });
   },
 
+  formatResponse(text) {
+    const lines = text.split('\n');
+    let html = '';
+    let inList = false;
+
+    for (const line of lines) {
+      let processedLine = line
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      if (processedLine.trim().startsWith('* ')) {
+        if (!inList) {
+          html += '<ul>';
+          inList = true;
+        }
+        html += `<li>${processedLine.trim().substring(2)}</li>`;
+      } else {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+        if (processedLine.trim()) {
+            html += `<p>${processedLine}</p>`;
+        }
+      }
+    }
+
+    if (inList) {
+      html += '</ul>';
+    }
+
+    return html;
+  },
+
   async request(intent) {
     const payload = window.AssistantPrompt.build({ intent });
     const contentEl = this.output.querySelector('.assistant-response-content');
-    contentEl.textContent = 'Summoning sparkle-brain...';
+    contentEl.innerHTML = '<p>Summoning sparkle-brain...</p>';
     this.output.classList.add('active');
     const text = await window.AssistantLLM.getSuggestion(payload);
-    contentEl.textContent = text;
+    contentEl.innerHTML = this.formatResponse(text);
   }
 };
