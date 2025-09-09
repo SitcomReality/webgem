@@ -1,0 +1,95 @@
+:root { 
+  /* Sophisticated Color Palette */
+  --bg-primary: #0D1117;
+  --bg-secondary: #161B22;
+  --bg-tertiary: #21262D;
+  --bg-card: #161B22;
+  --bg-hover: #21262D;
+  
+  /* Refined Accent Colors - Muted Jewel Tones */
+  --accent-emerald: #238636;
+  --accent-sapphire: #2F81F7;
+  --accent-amethyst: #9b59b6;
+  --accent-ruby: #DA3633;
+  --accent-gold: #f39c12;
+  
+  /* Typography Colors */
+  --text-primary: #C9D1D9;
+  --text-secondary: #8B949E;
+  --text-muted: #6E7681;
+  --text-dim: #555555;
+  
+  /* Border & Shadow */
+  --border-subtle: #30363D;
+  --border-accent: #8B949E;
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.5);
+  
+  /* Typography */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Spacing - Refined Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-3xl: 48px;
+  
+  /* Layout */
+  --container-width: 1400px;
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+}
+
+.assistant-panel {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1100;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  box-shadow: var(--shadow-elevated);
+}
+
+.assistant-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+.assistant-btn:hover { background: var(--bg-hover); transform: translateY(-1px); }
+
+.assistant-output {
+  position: fixed;
+  left: 20px;
+  bottom: 72px;
+  width: min(520px, 90vw);
+  max-height: 50vh;
+  overflow: auto;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  box-shadow: var(--shadow-elevated);
+  display: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.assistant-output.active { display: block; }
+.assistant-output .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.assistant-output .close { background:none; border:1px solid var(--border-subtle); color:var(--text-secondary); border-radius:6px; padding:2px 6px; cursor:pointer; }
